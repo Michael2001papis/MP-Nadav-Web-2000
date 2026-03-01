@@ -15,7 +15,27 @@
           <a href="#builder">בונה חלליות</a>
           <a href="#fleet">הצי שלי</a>
           <a href="#gallery">השראה ושרטוטים</a>
+          <button type="button" id="settings-toggle" class="nav-settings-btn" aria-label="הגדרות" aria-expanded="false">⚙️ הגדרות</button>
         </nav>
+      </div>
+      <div id="settings-panel" class="settings-panel hidden" aria-hidden="true">
+        <div class="container settings-panel-inner">
+          <div class="settings-group">
+            <label for="theme-select">מצב צבעים</label>
+            <select id="theme-select" class="settings-select">
+              <option value="normal">נורמל</option>
+              <option value="alien">חייזרי ממש</option>
+              <option value="simple">פשוט (לבן / שחור)</option>
+            </select>
+          </div>
+          <div class="settings-group">
+            <label class="settings-check-label">
+              <input type="checkbox" id="font-size-large" class="settings-checkbox" />
+              <span>הגדלת אותיות</span>
+            </label>
+          </div>
+          <button type="button" id="settings-close" class="btn-ghost btn-sm">סגור</button>
+        </div>
       </div>
     </header>
 

@@ -65,6 +65,63 @@ document.addEventListener("DOMContentLoaded", () => {
   const editIndicator = document.getElementById("edit-indicator");
   const primaryShipBtn = document.getElementById("primary-ship-btn");
   const duplicateShipBtn = document.getElementById("duplicate-ship-btn");
+  const settingsToggle = document.getElementById("settings-toggle");
+  const settingsPanel = document.getElementById("settings-panel");
+  const themeSelect = document.getElementById("theme-select");
+  const fontSizeLarge = document.getElementById("font-size-large");
+  const settingsClose = document.getElementById("settings-close");
+
+  const SETTINGS_KEY = "spaceyard-settings-v1";
+
+  const loadSettings = () => {
+    try {
+      const raw = localStorage.getItem(SETTINGS_KEY);
+      if (!raw) return;
+      const s = JSON.parse(raw);
+      if (s.theme && ["normal", "alien", "simple"].includes(s.theme)) {
+        document.body.setAttribute("data-theme", s.theme === "normal" ? "" : s.theme);
+        if (themeSelect) themeSelect.value = s.theme;
+      }
+      if (s.fontSizeLarge) {
+        document.documentElement.classList.toggle("font-size-large", !!s.fontSizeLarge);
+        if (fontSizeLarge) fontSizeLarge.checked = !!s.fontSizeLarge;
+      }
+    } catch (_) {}
+  };
+
+  const saveSettings = () => {
+    const theme = themeSelect ? themeSelect.value : "normal";
+    const fontSizeLargeVal = fontSizeLarge ? fontSizeLarge.checked : false;
+    document.body.setAttribute("data-theme", theme === "normal" ? "" : theme);
+    document.documentElement.classList.toggle("font-size-large", fontSizeLargeVal);
+    try {
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify({ theme, fontSizeLarge: fontSizeLargeVal }));
+    } catch (_) {}
+  };
+
+  loadSettings();
+
+  if (settingsToggle && settingsPanel) {
+    settingsToggle.addEventListener("click", () => {
+      const isOpen = !settingsPanel.classList.contains("hidden");
+      settingsPanel.classList.toggle("hidden", isOpen);
+      settingsToggle.setAttribute("aria-expanded", isOpen ? "false" : "true");
+      settingsPanel.setAttribute("aria-hidden", isOpen ? "true" : "false");
+    });
+  }
+  if (settingsClose && settingsPanel) {
+    settingsClose.addEventListener("click", () => {
+      settingsPanel.classList.add("hidden");
+      if (settingsToggle) settingsToggle.setAttribute("aria-expanded", "false");
+      settingsPanel.setAttribute("aria-hidden", "true");
+    });
+  }
+  if (themeSelect) {
+    themeSelect.addEventListener("change", saveSettings);
+  }
+  if (fontSizeLarge) {
+    fontSizeLarge.addEventListener("change", saveSettings);
+  }
 
   if (yearSpan) {
     yearSpan.textContent = new Date().getFullYear().toString();

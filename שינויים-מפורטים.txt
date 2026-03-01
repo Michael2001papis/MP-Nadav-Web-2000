@@ -1,0 +1,146 @@
+================================================================================
+                    SpaceYard – דוח שינויים מפורט
+                    (הגדרות, מצב צבעים, הגדלת אותיות, רספונסיביות, אנימציות)
+================================================================================
+
+תאריך: מרץ 2025
+סוג: שינוי קל – הגדרות + UX + אנימציות חלקות ללא באגים
+
+
+--------------------------------------------------------------------------------
+1. הגדרות (Settings)
+--------------------------------------------------------------------------------
+
+1.1 מיקום ותפריט
+    • נוסף כפתור "⚙️ הגדרות" בתפריט הראשי (בצד שמאל של ניווט: ראשי, בונה חלליות, הצי שלי, השראה, הגדרות).
+    • לחיצה על "הגדרות" פותחת פאנל מתחת ל-header עם האפשרויות הבאות.
+
+1.2 מצב צבעים (Theme)
+    • נוסף בורר "מצב צבעים" עם 3 אפשרויות:
+      – נורמל: ערכת הצבעים המקורית (כחול־סגול, רקע כהה).
+      – חייזרי ממש: רקע ירוק כהה, טקסט ירוק־בהיר, דגש ירוק (אווירה חייזרית).
+      – פשוט (לבן / שחור): ערכת בהירה – רקע לבן/אפור, טקסט שחור, מינימלי.
+    • הבחירה נשמרת ב-localStorage (מפתח: spaceyard-settings-v1) ומופעלת מחדש בטעינת הדף.
+    • המעבר בין מצבים מתבצע עם מעבר צבע (transition) חלק.
+
+1.3 הגדלת אותיות
+    • נוסף תיבת סימון "הגדלת אותיות" בהגדרות.
+    • כשמסומן – גודל הבסיס של הטקסט באתר מוגדל (scale כ־1.18) לשם נגישות.
+    • ההעדפה נשמרת ב-localStorage ומופעלת בטעינה.
+    • מיושם באמצעות class על אלמנט html: font-size-large.
+
+1.4 סגירת פאנל
+    • כפתור "סגור" בפאנל ההגדרות סוגר את הפאנל.
+    • לחיצה חוזרת על "הגדרות" גם פותחת/סוגרת את הפאנל.
+    • נגישות: aria-expanded על הכפתור, aria-hidden על הפאנל.
+
+
+--------------------------------------------------------------------------------
+2. שינויי CSS – ערכות צבעים (Themes)
+--------------------------------------------------------------------------------
+
+2.1 משתנים גלובליים
+    • נוסף --transition-smooth (0.28s cubic-bezier) למעברים חלקים יותר.
+    • נוסף --font-scale (ברירת מחדל 1) לשימוש בהגדלת אותיות.
+
+2.2 ערכת נורמל (ברירת מחדל)
+    • ללא data-theme – נשארת המראה המקורי (רקע כהה, סגול/כחול).
+
+2.3 ערכת חייזרי (data-theme="alien")
+    • --bg: #022c22, --bg-alt: #064e3b.
+    • --accent: #34d399, --text: #ecfdf5, --text-muted: #a7f3d0.
+    • --bg-gradient: גרדיאנט ירוק כהה.
+    • מתאים לכפתורים, גבולות, רקעים שמשתמשים ב-var(--accent) ו-var(--text).
+
+2.4 ערכת פשוט (data-theme="simple")
+    • --bg: #f8fafc, --bg-alt: #f1f5f9, --text: #0f172a, --text-muted: #475569.
+    • --bg-gradient: גרדיאנט לבן־אפור.
+    • .section-alt מקבל רקע #e2e8f0.
+    • .ship-form, .ship-preview-panel, .fleet-card: רקע לבן־שקוף וגבול אפור בהיר.
+    • שדות טופס: רקע #f8fafc וגבול אפור.
+
+
+--------------------------------------------------------------------------------
+3. רספונסיביות ברמה גבוהה
+--------------------------------------------------------------------------------
+
+3.1 נקודות שבירה (Breakpoints)
+    • 679px ומטה: גלריה – כרטיסים בעמודה אחת; פאנל הגדרות – אלמנטים בעמודה.
+    • 640px ומטה: ניווט מצומצם, כפתור הגדרות קטן יותר, header עם flex-wrap, hero עם padding מותאם, כותרת hero עם clamp, טופס עם padding קטן, container עם ריווח 24px, fleet-controls בעמודה, תצוגת 3D עם min-height 320px.
+    • 400px ומטה: קישורי ניווט ו-logo קטנים יותר.
+
+3.2 אלמנטים שעודכנו
+    • .container: ברוחב צר משתמש ב-100% - 24px.
+    • .section: padding מופחת במסכים קטנים.
+    • .fleet-controls: במסך צר – כיוון עמודה ו-align-items stretch.
+    • .gallery-card: מתחת 680px – grid-template-columns: 1fr (תוכן ומדיה אחד מתחת לשני).
+    • .ship-canvas-layer / .ship-preview-wrapper: min-height 320px במסך קטן.
+
+
+--------------------------------------------------------------------------------
+4. אנימציות חלקות (ללא באגים)
+--------------------------------------------------------------------------------
+
+4.1 מעברים (Transitions)
+    • body: מעבר על background ו-color עם --transition-smooth.
+    • .site-header: מעבר על background ו-border.
+    • .section-alt: מעבר על background.
+    • .fleet-card: transition-smooth על transform, box-shadow, border-color, background.
+    • .gallery-card: transition-smooth על transform, box-shadow, border-color.
+    • .site-footer: מעבר על color.
+    • כפתור ההגדרות (.nav-settings-btn): מעבר על רקע, צבע, transform.
+    • .settings-select, .settings-checkbox: מעבר/שינוי צבע לפי נושא.
+
+4.2 שימוש ב-CSS Variables
+    • כרטיס צי (.fleet-card): גבול ורקע מבוססי var(--border-subtle), var(--accent-soft) כדי שיגיבו למצב הצבעים.
+    • גלריה (.gallery-card): border ו-background מותאמים ל-theme.
+    • Header: רקע וגבול מ-var(--bg), var(--border-subtle).
+    • Footer: גבול מ-var(--border-subtle).
+
+4.3 מניעת באגים
+    • אין שינוי ב-logic של Toast, טופס או 3D – רק עיצוב והגדרות.
+    • החלפת theme ו-font size מתבצעת דרך data-theme ו-class על ה-root; אין הסרת/הוספת אלמנטים שמשבשים אירועים.
+    • שמירת ההגדרות ב-localStorage עם try/catch כדי למנוע קריסה במצב פרטי או מחסום.
+
+
+--------------------------------------------------------------------------------
+5. קבצים ששונו
+--------------------------------------------------------------------------------
+
+5.1 index.html
+    • הוספת כפתור <button id="settings-toggle" class="nav-settings-btn">⚙️ הגדרות</button> בתוך <nav>.
+    • הוספת <div id="settings-panel" class="settings-panel hidden"> עם:
+      – <select id="theme-select"> (נורמל, חייזרי ממש, פשוט).
+      – <input type="checkbox" id="font-size-large"> עם תווית "הגדלת אותיות".
+      – כפתור "סגור" id="settings-close".
+
+5.2 style.css
+    • :root: הוספת --transition-smooth, --font-scale; כללי html.font-size-large.
+    • body: הוספת --bg-gradient, שימוש ב-var(--bg-gradient) ו-transition.
+    • body[data-theme="simple"] ו-body[data-theme="alien"]: ערכות צבעים מלאות.
+    • .site-header, .section-alt, .site-footer: מעבר ל-variables ו-transitions.
+    • .nav-settings-btn, .settings-panel, .settings-panel-inner, .settings-group, .settings-select, .settings-check-label, .settings-checkbox, .btn-sm.
+    • .fleet-card, .gallery-card: שימוש ב-variables ו-transition-smooth.
+    • מדיה חדשות: max-width 679px (גלריה, הגדרות), עדכון 640px (רספונסיביות מורחבת), 400px (ניווט ו-logo).
+
+5.3 script.js
+    • קבלת אלמנטים: settingsToggle, settingsPanel, themeSelect, fontSizeLarge, settingsClose.
+    • קבוע SETTINGS_KEY = "spaceyard-settings-v1".
+    • פונקציה loadSettings(): קריאה מ-localStorage, הפעלת data-theme על body, הפעלת font-size-large על html, עדכון ערכי select ו-checkbox.
+    • פונקציה saveSettings(): עדכון data-theme, class font-size-large, שמירה ל-localStorage.
+    • מאזיני אירועים: פתיחה/סגירה של פאנל, change על theme-select ו-font-size-large.
+    • קריאה ל-loadSettings() בטעינת הדף.
+
+
+--------------------------------------------------------------------------------
+6. סיכום
+--------------------------------------------------------------------------------
+
+    • הגדרות: מצב צבעים (נורמל / חייזרי ממש / פשוט) + הגדלת אותיות; נשמר ב-localStorage.
+    • רספונסיביות: שלוש רמות breakpoint (679, 640, 400) עם התאמת גלריה, טופס, צי, תצוגת 3D וניווט.
+    • אנימציות: מעברים חלקים על גופים, כותרות, כרטיסים וכפתורים; שימוש ב-CSS variables כדי שהמעבר בין themes יהיה חלק וללא באגים.
+    • לא שונו: לוגיקת טופס, 3D, Toast, שמירת צי – רק UI והגדרות.
+
+================================================================================
+                              סוף דוח שינויים מפורט
+================================================================================
