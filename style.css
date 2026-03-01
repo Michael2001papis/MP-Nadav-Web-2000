@@ -1295,6 +1295,12 @@ body[data-theme="simple"] .ship-form textarea {
   display: grid;
   grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.2fr);
   transition: transform var(--transition-smooth), box-shadow var(--transition-smooth), border-color var(--transition-smooth);
+  cursor: pointer;
+}
+
+.gallery-card:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .gallery-image-wrapper {
@@ -1330,6 +1336,112 @@ body[data-theme="simple"] .ship-form textarea {
   margin: 0;
   font-size: 0.92rem;
   color: var(--text-muted);
+}
+
+/* ---------- Gallery Lightbox ---------- */
+.gallery-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.gallery-lightbox.hidden {
+  display: none !important;
+}
+
+.gallery-lightbox-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(6px);
+}
+
+.gallery-lightbox-box {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.gallery-lightbox-close {
+  position: absolute;
+  top: -44px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  border: none;
+  background: var(--bg-alt);
+  color: var(--text);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.gallery-lightbox-close:hover {
+  background: var(--accent-soft);
+}
+
+.gallery-lightbox-content {
+  max-width: 100%;
+  max-height: 75vh;
+  overflow: auto;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--bg);
+  border: 1px solid var(--border-subtle);
+}
+
+.gallery-lightbox-content img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  max-height: 70vh;
+  object-fit: contain;
+}
+
+.gallery-lightbox-content .blueprint-canvas,
+.gallery-lightbox-content .alien-canvas {
+  min-height: 260px;
+  width: 100%;
+  max-width: 480px;
+}
+
+.gallery-lightbox-caption {
+  text-align: center;
+  max-width: 420px;
+}
+
+.gallery-lightbox-caption h3 {
+  margin: 0 0 6px;
+  font-size: 1.1rem;
+}
+
+.gallery-lightbox-caption p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+[dir="rtl"] .gallery-lightbox-close {
+  left: auto;
+  right: auto;
 }
 
 .blueprint-card {

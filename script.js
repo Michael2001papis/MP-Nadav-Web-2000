@@ -305,6 +305,77 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  const galleryLightbox = document.getElementById("gallery-lightbox");
+  const galleryLightboxContent = document.querySelector(".gallery-lightbox-content");
+  const galleryLightboxCaption = document.querySelector(".gallery-lightbox-caption");
+  const galleryLightboxOverlay = document.querySelector(".gallery-lightbox-overlay");
+  const galleryLightboxClose = document.querySelector(".gallery-lightbox-close");
+
+  const openGalleryLightbox = (card) => {
+    if (!galleryLightbox || !galleryLightboxContent || !galleryLightboxCaption) return;
+    const img = card.querySelector(".gallery-image-wrapper img");
+    const visual = card.querySelector(".blueprint-canvas, .alien-canvas");
+    const text = card.querySelector(".gallery-text");
+    galleryLightboxContent.innerHTML = "";
+    galleryLightboxCaption.innerHTML = "";
+    if (img) {
+      const fullImg = document.createElement("img");
+      fullImg.src = img.src.replace(/&w=\d+/, "&w=1200");
+      fullImg.alt = img.alt || "";
+      galleryLightboxContent.appendChild(fullImg);
+    } else if (visual) {
+      const clone = visual.cloneNode(true);
+      galleryLightboxContent.appendChild(clone);
+    }
+    if (text) {
+      const h3 = text.querySelector("h3");
+      const p = text.querySelector("p");
+      if (h3) {
+        const title = document.createElement("h3");
+        title.textContent = h3.textContent;
+        galleryLightboxCaption.appendChild(title);
+      }
+      if (p) {
+        const desc = document.createElement("p");
+        desc.textContent = p.textContent;
+        galleryLightboxCaption.appendChild(desc);
+      }
+    }
+    galleryLightbox.classList.remove("hidden");
+    galleryLightbox.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+    galleryLightboxClose?.focus();
+  };
+
+  const closeGalleryLightbox = () => {
+    if (!galleryLightbox) return;
+    galleryLightbox.classList.add("hidden");
+    galleryLightbox.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+  };
+
+  document.querySelectorAll(".gallery-card").forEach((c) => c.setAttribute("tabindex", "0"));
+  document.querySelector(".gallery-grid")?.addEventListener("click", (e) => {
+    const card = e.target.closest(".gallery-card");
+    if (!card) return;
+    e.preventDefault();
+    openGalleryLightbox(card);
+  });
+
+  document.querySelector(".gallery-grid")?.addEventListener("keydown", (e) => {
+    if (e.key !== "Enter" && e.key !== " ") return;
+    const card = e.target.closest(".gallery-card");
+    if (!card) return;
+    e.preventDefault();
+    openGalleryLightbox(card);
+  });
+
+  galleryLightboxOverlay?.addEventListener("click", closeGalleryLightbox);
+  galleryLightboxClose?.addEventListener("click", closeGalleryLightbox);
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && galleryLightbox && !galleryLightbox.classList.contains("hidden")) closeGalleryLightbox();
+  });
+
   const showToast = (message, type = "info") => {
     if (!toastContainer) return;
     const toast = document.createElement("div");
@@ -384,6 +455,7 @@ document.addEventListener("DOMContentLoaded", () => {
       alienType: formData.get("alienType")?.toString() || "",
       features: formData.getAll("features").map((f) => f.toString()),
       advanced: formData.getAll("advanced").map((a) => a.toString()),
+      shipShape3D: formData.get("shipShape3D")?.toString() || "classic",
       primaryColor3D: formData.get("primaryColor3D")?.toString() || "",
       secondaryColor3D: formData.get("secondaryColor3D")?.toString() || "",
       materialType3D: formData.get("materialType3D")?.toString() || "",
@@ -508,6 +580,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setValue("alien-type", ship.alienType || "");
     if (ship.config3D) {
       const cfg = mergeConfig3D(defaultShipConfig3D, ship.config3D);
+      setValue("ship-shape-3d", cfg.shipShape || "classic");
       setValue("primary-color-3d", cfg.primaryColor);
       setValue("secondary-color-3d", cfg.secondaryColor);
       setValue("material-type-3d", cfg.materialType);
@@ -519,9 +592,10 @@ document.addEventListener("DOMContentLoaded", () => {
       setValue("cockpit-tint-3d", String(cfg.cockpitTint));
       setValue("decals-3d", cfg.decals);
       setValue("alien-tech-level-3d", String(cfg.alienTechLevel));
-      if (threeContext && currentShip3D && currentShip3D.parts) {
-        updateShipFromConfig(currentShip3D.parts, cfg);
-        currentShip3D.config3D = cfg;
+      if (threeContext) {
+        const { group, parts } = createShip(cfg);
+        threeContext.setShipGroup(group);
+        currentShip3D = { group, parts, config3D: cfg };
       }
     }
 
@@ -894,10 +968,11 @@ document.addEventListener("DOMContentLoaded", () => {
       );
       shipSummary.innerHTML = buildSummaryText(normalized);
       applyShipColor(normalized.shipColor);
-      if (threeContext && currentShip3D && currentShip3D.parts) {
+      if (threeContext && currentShip3D) {
         const cfg = buildConfig3DFromRaw(raw, currentShip3D.config3D);
-        updateShipFromConfig(currentShip3D.parts, cfg);
-        currentShip3D.config3D = cfg;
+        const { group, parts } = createShip(cfg);
+        threeContext.setShipGroup(group);
+        currentShip3D = { group, parts, config3D: cfg };
       }
       syncStudioShip();
     });

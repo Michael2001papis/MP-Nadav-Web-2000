@@ -303,6 +303,15 @@
               <fieldset class="form-group features-group">
                 <legend>עריכת 3D</legend>
                 <div class="form-group">
+                  <label for="ship-shape-3d">צורת חללית</label>
+                  <select id="ship-shape-3d" name="shipShape3D">
+                    <option value="classic">קלאסית – גליל, כנפיים, מנוע אחורי</option>
+                    <option value="sleek">חנית – צרה ומחודדת</option>
+                    <option value="heavy">כבדה – גוף רחב ומוצק</option>
+                    <option value="ring">טבעת – חללית טבעתית</option>
+                  </select>
+                </div>
+                <div class="form-group">
                   <label for="primary-color-3d">צבע ראשי (גוף)</label>
                   <input
                     type="color"
@@ -541,9 +550,8 @@
         <div class="container">
           <h2 id="gallery-heading">גלריית השראה ושרטוטים</h2>
           <p class="gallery-intro">
-            הגלריה כאן לא רק להציץ – היא עוזרת <strong>להבין</strong> איך חללית נראית ומתנהגת,
-            ו<strong>לחדד מחשבה</strong> לפני שאתה בונה. תמונות האווירה מחזקות את הדמיון,
-            השרטוטים הסכמטיים מחזקים את ההבנה הטכנית. כשתחזור למגדל ההרכבה – תוכל לבחור עם יותר בהירות.
+            תמונות אווירה ושרטוטים טכניים – עוזרים להבין איך חללית נראית ולחדד מחשבה לפני בנייה.
+            <strong>לחץ על כרטיס להגדלה.</strong>
           </p>
 
           <div class="gallery-grid" role="list">
@@ -696,6 +704,15 @@
     </footer>
 
     <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+    <div id="gallery-lightbox" class="gallery-lightbox hidden" aria-hidden="true" role="dialog" aria-modal="true" aria-label="תצוגה מוגדלת">
+      <div class="gallery-lightbox-overlay"></div>
+      <div class="gallery-lightbox-box">
+        <button type="button" class="gallery-lightbox-close" aria-label="סגור">×</button>
+        <div class="gallery-lightbox-content"></div>
+        <div class="gallery-lightbox-caption"></div>
+      </div>
+    </div>
 
     <script type="module" src="script.js"></script>
   </body>

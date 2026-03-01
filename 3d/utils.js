@@ -1,4 +1,5 @@
 export const defaultShipConfig3D = {
+  shipShape: "classic", // 'classic' | 'sleek' | 'heavy' | 'ring'
   primaryColor: "#38bdf8",
   secondaryColor: "#a855f7",
   materialType: "metal", // 'metal' | 'matte' | 'glass' | 'alien'
@@ -36,6 +37,7 @@ export const buildConfig3DFromRaw = (raw, existing = null) => {
   };
 
   return mergeConfig3D(base, {
+    shipShape: raw.shipShape3D || base.shipShape,
     primaryColor: raw.primaryColor3D || raw.shipColor || base.primaryColor,
     secondaryColor:
       raw.secondaryColor3D || raw.shipColor || base.secondaryColor,
