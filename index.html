@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>בונה החלליות שלך</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-content">
+        <div class="logo">SpaceYard</div>
+        <nav class="nav">
+          <a href="#home">ראשי</a>
+          <a href="#builder">בונה חלליות</a>
+          <a href="#fleet">הצי שלי</a>
+          <a href="#gallery">השראה ושרטוטים</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section id="home" class="hero">
+        <div class="container hero-content">
+          <h1>בונה החלליות הפרטי שלך</h1>
+          <p>
+            תכנן חללית, בחר צבעים, מהירות, צוות ויכולות – ובנה צי חלליות דמיוני
+            משלך, הכל ישר מתוך הדפדפן.
+          </p>
+          <button id="cta-button" class="btn-primary">
+            בוא נבנה חללית
+          </button>
+        </div>
+      </section>
+
+      <section id="builder" class="section builder-section">
+        <div class="container">
+          <h2>מגדל ההרכבה</h2>
+          <p>
+            מלא את הפרטים, שחק עם האפשרויות, וצפה בחללית שלך נבנית בתצוגה החיה.
+          </p>
+
+          <div class="builder-grid">
+            <form id="ship-form" class="ship-form" novalidate>
+              <p id="edit-indicator" class="edit-indicator hidden"></p>
+              <div id="form-errors" class="form-errors" aria-live="polite"></div>
+
+              <div class="form-group">
+                <label for="ship-name">שם החללית</label>
+                <input type="text" id="ship-name" name="shipName" placeholder="לדוגמה: נשר גלקטי" />
+                <p class="field-error" data-error-for="shipName"></p>
+              </div>
+
+              <div class="form-group">
+                <label for="ship-type">סוג המשימה</label>
+                <select id="ship-type" name="shipType">
+                  <option value="explorer">חקר וגילוי</option>
+                  <option value="fighter">חללית קרב</option>
+                  <option value="cargo">הובלה ומשא</option>
+                  <option value="luxury">יאכטת חלל יוקרתית</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="ship-color">צבע החללית</label>
+                <input type="color" id="ship-color" name="shipColor" value="#7c3aed" />
+              </div>
+
+              <div class="form-group range-group">
+                <label for="ship-speed">מהירות (עיוות חלל)</label>
+                <input type="range" id="ship-speed" name="shipSpeed" min="1" max="10" value="6" />
+                <span class="range-value" data-for="ship-speed">6</span>
+              </div>
+
+              <div class="form-group range-group">
+                <label for="ship-size">גודל</label>
+                <input type="range" id="ship-size" name="shipSize" min="1" max="10" value="5" />
+                <span class="range-value" data-for="ship-size">5</span>
+              </div>
+
+              <div class="form-group">
+                <label for="ship-crew">מספר אנשי צוות</label>
+                <input
+                  type="number"
+                  id="ship-crew"
+                  name="shipCrew"
+                  min="1"
+                  max="500"
+                  step="1"
+                  value="12"
+                />
+                <p class="field-error" data-error-for="shipCrew"></p>
+              </div>
+
+              <div class="form-group">
+                <label for="commander-name">שם מפקד/ת המשימה</label>
+                <input
+                  type="text"
+                  id="commander-name"
+                  name="commanderName"
+                  placeholder="לדוגמה: סרן עדי אוריון"
+                />
+                <p class="field-error" data-error-for="commanderName"></p>
+              </div>
+
+              <div class="form-group">
+                <label for="mission-description">תיאור קצר של המשימה</label>
+                <textarea
+                  id="mission-description"
+                  name="missionDescription"
+                  rows="3"
+                  placeholder="חקר טבעות שבתאי, בדיקת חיים מיקרוסקופיים, צילום תלת־ממדי של הסביבה..."
+                ></textarea>
+              </div>
+
+              <div class="form-group">
+                <label for="risk-level">רמת סיכון משוערת</label>
+                <select id="risk-level" name="riskLevel">
+                  <option value="low">נמוכה</option>
+                  <option value="medium">בינונית</option>
+                  <option value="high">גבוהה</option>
+                  <option value="extreme">קצה גבול היכולת</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="alien-type">סוג חייזר מלווה</label>
+                <select id="alien-type" name="alienType">
+                  <option value="">ללא חייזר מלווה</option>
+                  <option value="scout">Scout – סייר חלל</option>
+                  <option value="engineer">Engineer – מהנדס מערכות</option>
+                  <option value="warrior">Warrior – לוחם הגנה</option>
+                  <option value="diplomat">Diplomat – דיפלומט בין-גלקטי</option>
+                </select>
+              </div>
+
+              <fieldset class="form-group features-group">
+                <legend>יכולות מיוחדות</legend>
+                <label class="checkbox-row">
+                  <input type="checkbox" name="features" value="shield" checked />
+                  מגן אנרגיה
+                </label>
+                <label class="checkbox-row">
+                  <input type="checkbox" name="features" value="lasers" />
+                  תותחי לייזר
+                </label>
+                <label class="checkbox-row">
+                  <input type="checkbox" name="features" value="cloak" />
+                  מערכת הסתרה
+                </label>
+                <label class="checkbox-row">
+                  <input type="checkbox" name="features" value="drones" />
+                  רחפני שירות
+                </label>
+              </fieldset>
+
+              <fieldset class="form-group features-group">
+                <legend>מערכות מתקדמות</legend>
+                <label class="checkbox-row">
+                  <input type="checkbox" name="advanced" value="autopilot" />
+                  טייס אוטומטי מלא
+                </label>
+                <label class="checkbox-row">
+                  <input type="checkbox" name="advanced" value="ai" />
+                  בינה מלאכותית טקטית
+                </label>
+                <label class="checkbox-row">
+                  <input type="checkbox" name="advanced" value="quantumCore" />
+                  ליבת עיבוד קוואנטית
+                </label>
+                <label class="checkbox-row">
+                  <input type="checkbox" name="advanced" value="escapeSystem" />
+                  מערכת מילוט חכמה לכל הצוות
+                </label>
+              </fieldset>
+
+              <fieldset class="form-group features-group">
+                <legend>עריכת 3D</legend>
+                <div class="form-group">
+                  <label for="primary-color-3d">צבע ראשי (גוף)</label>
+                  <input
+                    type="color"
+                    id="primary-color-3d"
+                    name="primaryColor3D"
+                    value="#38bdf8"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="secondary-color-3d">צבע משני (כנפיים/מנוע)</label>
+                  <input
+                    type="color"
+                    id="secondary-color-3d"
+                    name="secondaryColor3D"
+                    value="#a855f7"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="material-type-3d">סוג חומר</label>
+                  <select id="material-type-3d" name="materialType3D">
+                    <option value="metal">Metal – מתכתי</option>
+                    <option value="matte">Matte – מט</option>
+                    <option value="glass">Glass – זכוכית</option>
+                    <option value="alien">Alien – טכנולוגיה חייזרית</option>
+                  </select>
+                </div>
+                <div class="form-group range-group">
+                  <label for="body-length-3d">אורך גוף</label>
+                  <input
+                    type="range"
+                    id="body-length-3d"
+                    name="bodyLength3D"
+                    min="1"
+                    max="10"
+                    value="6"
+                  />
+                  <span class="range-value" data-for="body-length-3d">6</span>
+                </div>
+                <div class="form-group range-group">
+                  <label for="wing-span-3d">רוחב כנפיים</label>
+                  <input
+                    type="range"
+                    id="wing-span-3d"
+                    name="wingSpan3D"
+                    min="1"
+                    max="10"
+                    value="5"
+                  />
+                  <span class="range-value" data-for="wing-span-3d">5</span>
+                </div>
+                <div class="form-group range-group">
+                  <label for="wing-angle-3d">זווית כנפיים</label>
+                  <input
+                    type="range"
+                    id="wing-angle-3d"
+                    name="wingAngle3D"
+                    min="-30"
+                    max="30"
+                    value="0"
+                  />
+                  <span class="range-value" data-for="wing-angle-3d">0</span>
+                </div>
+                <div class="form-group range-group">
+                  <label for="engine-size-3d">גודל מנוע</label>
+                  <input
+                    type="range"
+                    id="engine-size-3d"
+                    name="engineSize3D"
+                    min="1"
+                    max="10"
+                    value="5"
+                  />
+                  <span class="range-value" data-for="engine-size-3d">5</span>
+                </div>
+                <div class="form-group range-group">
+                  <label for="engine-glow-3d">זוהר מנוע</label>
+                  <input
+                    type="range"
+                    id="engine-glow-3d"
+                    name="engineGlow3D"
+                    min="0"
+                    max="1"
+                    step="0.1"
+                    value="0.6"
+                  />
+                  <span class="range-value" data-for="engine-glow-3d">0.6</span>
+                </div>
+                <div class="form-group range-group">
+                  <label for="cockpit-tint-3d">שקיפות קוקפיט</label>
+                  <input
+                    type="range"
+                    id="cockpit-tint-3d"
+                    name="cockpitTint3D"
+                    min="0"
+                    max="1"
+                    step="0.1"
+                    value="0.4"
+                  />
+                  <span class="range-value" data-for="cockpit-tint-3d">0.4</span>
+                </div>
+                <div class="form-group">
+                  <label for="decals-3d">סימונים/דקלים</label>
+                  <select id="decals-3d" name="decals3D">
+                    <option value="none">ללא</option>
+                    <option value="stripes">פסי מרוץ</option>
+                    <option value="runes">סימני רונות</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="alien-tech-level-3d">רמת טכנולוגיה חייזרית</label>
+                  <select id="alien-tech-level-3d" name="alienTechLevel3D">
+                    <option value="0">0 – ללא</option>
+                    <option value="1">1 – קלה</option>
+                    <option value="2">2 – בינונית</option>
+                    <option value="3">3 – מתקדמת</option>
+                  </select>
+                </div>
+              </fieldset>
+
+              <div class="form-actions">
+                <button type="submit" id="primary-ship-btn" class="btn-primary">
+                  הוסף חללית לצי
+                </button>
+                <button type="button" id="duplicate-ship-btn" class="btn-ghost hidden">
+                  שכפל חללית
+                </button>
+              </div>
+            </form>
+
+            <div id="ship-preview" class="ship-preview-panel">
+              <h3>תצוגה חיה</h3>
+              <div class="ship-preview-wrapper">
+                <div class="ship-canvas-layer">
+                  <canvas id="ship-canvas"></canvas>
+                  <div id="ship-canvas-fallback" class="ship-canvas-fallback hidden" aria-live="polite">
+                    <p class="ship-canvas-fallback-title">תצוגת 3D לא זמינה</p>
+                    <p class="ship-canvas-fallback-text">הדפדפן או המכשיר לא תומכים בתצוגה תלת־ממדית. ניתן להמשיך לבנות חלליות ולצפות בהן ברשימת הצי.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="ship-summary" id="ship-summary">
+                בחר שם, סוג ויכולות כדי לראות פירוט טכני של החללית.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="fleet" class="section section-alt">
+        <div class="container">
+          <h2>הצי שבנית</h2>
+          <p>
+            כל חללית שתוסיף תופיע כאן. שמור, השווה, ותחליט מי תוביל את המשימה
+            הבאה.
+          </p>
+          <div class="fleet-controls">
+            <div class="fleet-filters">
+              <div class="fleet-filter-item">
+                <label for="fleet-sort">מיון לפי</label>
+                <select id="fleet-sort">
+                  <option value="created">סדר יצירה</option>
+                  <option value="speed">מהירות</option>
+                  <option value="size">גודל</option>
+                  <option value="crew">צוות</option>
+                  <option value="risk">רמת סיכון</option>
+                </select>
+              </div>
+              <div class="fleet-filter-item">
+                <label for="fleet-filter-type">סוג משימה</label>
+                <select id="fleet-filter-type">
+                  <option value="">הכל</option>
+                  <option value="explorer">חקר וגילוי</option>
+                  <option value="fighter">חללית קרב</option>
+                  <option value="cargo">הובלה ומשא</option>
+                  <option value="luxury">יאכטת חלל יוקרתית</option>
+                </select>
+              </div>
+              <div class="fleet-filter-item">
+                <label for="fleet-search">חיפוש לפי שם</label>
+                <input
+                  type="search"
+                  id="fleet-search"
+                  placeholder="חפש חללית לפי שם..."
+                />
+              </div>
+            </div>
+            <button type="button" id="fleet-reset-btn" class="btn-ghost">
+              איפוס צי
+            </button>
+          </div>
+          <p id="fleet-summary" class="fleet-summary-line">סה"כ חלליות: 0</p>
+          <div id="fleet-list" class="fleet-list empty">
+            עדיין לא נוספו חלליות. בנה את הראשונה שלך למעלה.
+          </div>
+        </div>
+      </section>
+
+      <section id="gallery" class="section gallery-section">
+        <div class="container">
+          <h2>גלריית השראה ושרטוטים</h2>
+          <p>
+            כמה רעיונות ויזואליים שיעזרו לך לדמיין את החללית שלך – גם תמונות אווירה וגם
+            שרטוטים סכמטיים.
+          </p>
+
+          <div class="gallery-grid">
+            <article class="gallery-card">
+              <div class="gallery-image-wrapper">
+                <img
+                  src="https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=800&q=80"
+                  alt="חללית מעל כוכב לכת"
+                  loading="lazy"
+                />
+              </div>
+              <div class="gallery-text">
+                <h3>שיגור מעל כוכב לכת</h3>
+                <p>
+                  אווירה בסגנון סרטי שיגור קלאסיים – מושלם לפתיחת סרט מדע בדיוני
+                  או משימת חקר אטמוספרה.
+                </p>
+              </div>
+            </article>
+
+            <article class="gallery-card blueprint-card">
+              <div class="blueprint-canvas">
+                <div class="blueprint-grid"></div>
+                <div class="blueprint-ship">
+                  <div class="bp-body"></div>
+                  <div class="bp-wing bp-wing-left"></div>
+                  <div class="bp-wing bp-wing-right"></div>
+                  <div class="bp-engine"></div>
+                  <div class="bp-nose"></div>
+                </div>
+                <div class="bp-label bp-label-front">חרטום</div>
+                <div class="bp-label bp-label-engine">מנוע ראשי</div>
+                <div class="bp-label bp-label-wings">כנפיים יציבות</div>
+              </div>
+              <div class="gallery-text">
+                <h3>שרטוט צד טכני</h3>
+                <p>מבנה בסיסי של חללית מחקר – גוף מרכזי, כנפיים ומנוע אחורי.</p>
+              </div>
+            </article>
+
+            <article class="gallery-card">
+              <div class="gallery-image-wrapper">
+                <img
+                  src="https://images.unsplash.com/photo-1447434997603-31f57e52f735?auto=format&fit=crop&w=800&q=80"
+                  alt="תחנת חלל ומודולים מחוברים"
+                  loading="lazy"
+                />
+              </div>
+              <div class="gallery-text">
+                <h3>תחנת חלל ומודולים</h3>
+                <p>
+                  השראה לסדרות על תחנות חלל – מודולים שמתחברים ומתנתקים לפי
+                  משימה ועלילה.
+                </p>
+              </div>
+            </article>
+
+            <article class="gallery-card blueprint-card">
+              <div class="blueprint-canvas top-view">
+                <div class="blueprint-grid"></div>
+                <div class="blueprint-ship-top">
+                  <div class="bp-top-core"></div>
+                  <div class="bp-top-ring"></div>
+                  <div class="bp-top-engine bp-top-engine-left"></div>
+                  <div class="bp-top-engine bp-top-engine-right"></div>
+                </div>
+                <div class="bp-label bp-label-core">ליבת בקרה</div>
+                <div class="bp-label bp-label-ring">טבעת מגורים</div>
+              </div>
+              <div class="gallery-text">
+                <h3>מבט על חללית טבעתית</h3>
+                <p>
+                  מזכיר חלליות איטיות למסעות ארוכים – טבעת מסתובבת ליצירת כבידה
+                  מדומה לצוות.
+                </p>
+              </div>
+            </article>
+
+            <article class="gallery-card">
+              <div class="gallery-image-wrapper">
+                <img
+                  src="https://images.unsplash.com/photo-1517976487492-5750f3195933?auto=format&fit=crop&w=800&q=80"
+                  alt="מסדרון חללית מואר"
+                  loading="lazy"
+                />
+              </div>
+              <div class="gallery-text">
+                <h3>פנים חללית קולנועית</h3>
+                <p>
+                  מזכיר מסדרונות ממתח מדע בדיוני: אורות ניאון, צינורות, ותחושת
+                  מסע מתמשך בין כוכבים.
+                </p>
+              </div>
+            </article>
+
+            <article class="gallery-card">
+              <div class="gallery-image-wrapper">
+                <img
+                  src="https://images.unsplash.com/photo-1547234935-80c7145ec969?auto=format&fit=crop&w=800&q=80"
+                  alt="דמות חללית מסתורית על רקע כוכבים"
+                  loading="lazy"
+                />
+              </div>
+              <div class="gallery-text">
+                <h3>גיבור/ה על רקע הגלקסיה</h3>
+                <p>
+                  השראה לסצנות איקוניות מסרטים וסדרות – דמות בודדה מול אינסוף
+                  הכוכבים והחללית ברקע.
+                </p>
+              </div>
+            </article>
+
+            <article class="gallery-card blueprint-card">
+              <div class="alien-canvas">
+                <div class="alien-planet"></div>
+                <div class="alien-orbit"></div>
+                <div class="alien-body">
+                  <div class="alien-head">
+                    <div class="alien-eye alien-eye-left"></div>
+                    <div class="alien-eye alien-eye-right"></div>
+                    <div class="alien-antenna alien-antenna-left"></div>
+                    <div class="alien-antenna alien-antenna-right"></div>
+                  </div>
+                  <div class="alien-torso"></div>
+                  <div class="alien-arm alien-arm-left"></div>
+                  <div class="alien-arm alien-arm-right"></div>
+                  <div class="alien-leg alien-leg-left"></div>
+                  <div class="alien-leg alien-leg-right"></div>
+                </div>
+                <div class="alien-symbol alien-symbol-1"></div>
+                <div class="alien-symbol alien-symbol-2"></div>
+              </div>
+              <div class="gallery-text">
+                <h3>שרטוט חייזר ידידותי</h3>
+                <p>
+                  יצור דו–עיני עם מחושיים, מותאם לכוכב בעל כבידה נמוכה – מושלם
+                  לסדרת הרפתקאות לילדים או לצוות משולב חייזרים–בני אדם.
+                </p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <p>© <span id="year"></span> SpaceYard – מספנת החלל שלך</p>
+      </div>
+    </footer>
+
+    <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+    <script type="module" src="script.js"></script>
+  </body>
+</html>
+
