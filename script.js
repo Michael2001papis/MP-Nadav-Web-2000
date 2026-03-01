@@ -45,6 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let selectedShipId = null;
   let isEditMode = false;
   let threeContext = null;
+  let threeContextStudio = null;
   let currentShip3D = null;
 
   const yearSpan = document.getElementById("year");
@@ -54,6 +55,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const shipSummary = document.getElementById("ship-summary");
   const shipCanvas = document.getElementById("ship-canvas");
   const shipCanvasFallback = document.getElementById("ship-canvas-fallback");
+  const studioCanvas = document.getElementById("studio-canvas");
+  const studioCanvasFallback = document.getElementById("studio-canvas-fallback");
   const fleetList = document.getElementById("fleet-list");
   const fleetSort = document.getElementById("fleet-sort");
   const fleetFilterType = document.getElementById("fleet-filter-type");
@@ -188,11 +191,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (settingsToggle && settingsModal) {
     settingsToggle.addEventListener("click", () => {
-      const isOpen = !settingsModal.classList.contains("hidden");
-      settingsModal.classList.toggle("hidden", !isOpen);
-      settingsToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
-      settingsModal.setAttribute("aria-hidden", isOpen ? "false" : "true");
-      if (isOpen && typeof updateRangeLabels === "function") updateRangeLabels();
+      const wasOpen = !settingsModal.classList.contains("hidden");
+      const willOpen = !wasOpen;
+      settingsModal.classList.toggle("hidden", !willOpen);
+      settingsToggle.setAttribute("aria-expanded", willOpen ? "true" : "false");
+      settingsModal.setAttribute("aria-hidden", willOpen ? "false" : "true");
+      if (willOpen && typeof updateRangeLabels === "function") updateRangeLabels();
     });
   }
   const closeModal = () => {
@@ -202,6 +206,43 @@ document.addEventListener("DOMContentLoaded", () => {
   };
   if (settingsModalClose) settingsModalClose.addEventListener("click", closeModal);
   if (settingsModalOverlay) settingsModalOverlay.addEventListener("click", closeModal);
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && settingsModal && !settingsModal.classList.contains("hidden")) closeModal();
+  });
+
+  const navMenuBtn = document.getElementById("nav-menu-btn");
+  const navDrawer = document.getElementById("nav-drawer");
+  const navDrawerOverlay = navDrawer?.querySelector(".nav-drawer-overlay");
+  const navDrawerSettings = document.getElementById("nav-drawer-settings");
+  const openDrawer = () => {
+    if (navDrawer) navDrawer.classList.add("open");
+    if (navMenuBtn) navMenuBtn.setAttribute("aria-expanded", "true");
+    document.body.style.overflow = "hidden";
+  };
+  const closeDrawer = () => {
+    if (navDrawer) navDrawer.classList.remove("open");
+    if (navMenuBtn) navMenuBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = "";
+  };
+  if (navMenuBtn && navDrawer) {
+    navMenuBtn.addEventListener("click", () => {
+      if (navDrawer.classList.contains("open")) closeDrawer();
+      else openDrawer();
+    });
+  }
+  if (navDrawerOverlay) navDrawerOverlay.addEventListener("click", closeDrawer);
+  document.querySelectorAll(".nav-drawer-link").forEach((link) => {
+    link.addEventListener("click", closeDrawer);
+  });
+  if (navDrawerSettings && settingsToggle) {
+    navDrawerSettings.addEventListener("click", () => {
+      closeDrawer();
+      settingsModal?.classList.remove("hidden");
+      if (settingsToggle) settingsToggle.setAttribute("aria-expanded", "true");
+      if (settingsModal) settingsModal.setAttribute("aria-hidden", "false");
+    });
+  }
+
   if (settingsDone) {
     settingsDone.addEventListener("click", () => {
       saveSettings();
@@ -737,6 +778,110 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  const syncStudioShip = () => {
+    if (!threeContextStudio) return;
+    try {
+      const cfg = currentShip3D?.config3D || defaultShipConfig3D;
+      const { group } = createShip(cfg);
+      threeContextStudio.setShipGroup(group);
+    } catch (_) {}
+  };
+
+  const initStudio3D = () => {
+    if (threeContextStudio || !studioCanvas) return;
+    try {
+      const s3d = getSettings();
+      threeContextStudio = initScene(studioCanvas, {
+        autoRotate: s3d.reducedMotion ? false : s3d.autoRotate,
+        rotationSpeed: s3d.rotationSpeed,
+        qualityMode: s3d.qualityMode,
+        showAxis: s3d.showAxis,
+        enablePan: true,
+      });
+      syncStudioShip();
+      if (studioCanvasFallback) studioCanvasFallback.classList.add("hidden");
+
+      document.querySelectorAll(".studio3d-btn[data-preset]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const preset = btn.dataset.preset;
+          if (preset && threeContextStudio?.setCameraPreset) threeContextStudio.setCameraPreset(preset);
+        });
+      });
+      const resetBtn = document.getElementById("studio-reset-view");
+      if (resetBtn && threeContextStudio?.resetView) resetBtn.addEventListener("click", () => threeContextStudio.resetView());
+      const zoomInBtn = document.getElementById("studio-zoom-in");
+      if (zoomInBtn && threeContextStudio?.zoomIn) zoomInBtn.addEventListener("click", () => threeContextStudio.zoomIn());
+      const zoomOutBtn = document.getElementById("studio-zoom-out");
+      if (zoomOutBtn && threeContextStudio?.zoomOut) zoomOutBtn.addEventListener("click", () => threeContextStudio.zoomOut());
+
+      const autoRotateBtn = document.getElementById("studio-auto-rotate");
+      if (autoRotateBtn && threeContextStudio?.set3DOptions) {
+        let studioAutoRotate = !s3d.reducedMotion && s3d.autoRotate;
+        autoRotateBtn.classList.toggle("active", studioAutoRotate);
+        autoRotateBtn.addEventListener("click", () => {
+          studioAutoRotate = !studioAutoRotate;
+          threeContextStudio.set3DOptions({ autoRotate: studioAutoRotate });
+          autoRotateBtn.classList.toggle("active", studioAutoRotate);
+        });
+      }
+      const showAxisBtn = document.getElementById("studio-show-axis");
+      if (showAxisBtn && threeContextStudio?.set3DOptions) {
+        let studioShowAxis = s3d.showAxis;
+        showAxisBtn.classList.toggle("active", studioShowAxis);
+        showAxisBtn.addEventListener("click", () => {
+          studioShowAxis = !studioShowAxis;
+          threeContextStudio.set3DOptions({ showAxis: studioShowAxis });
+          showAxisBtn.classList.toggle("active", studioShowAxis);
+        });
+      }
+      const fullscreenBtn = document.getElementById("studio-fullscreen");
+      const canvasWrap = studioCanvas?.closest(".studio3d-canvas-wrap");
+      if (fullscreenBtn && canvasWrap) {
+        fullscreenBtn.addEventListener("click", () => {
+          if (!document.fullscreenElement) canvasWrap.requestFullscreen?.();
+          else document.exitFullscreen?.();
+        });
+      }
+      const screenshotBtn = document.getElementById("studio-screenshot");
+      if (screenshotBtn && threeContextStudio?.renderer) {
+        screenshotBtn.addEventListener("click", () => {
+          try {
+            const dataUrl = threeContextStudio.renderer.domElement.toDataURL("image/png");
+            const a = document.createElement("a");
+            a.href = dataUrl;
+            a.download = `spaceyard-${Date.now()}.png`;
+            a.click();
+            if (toastContainer) showToast("התמונה נשמרה", "success");
+          } catch (_) {
+            if (toastContainer) showToast("שמירת תמונה נכשלה", "error");
+          }
+        });
+      }
+
+      studioCanvas?.addEventListener("wheel", (e) => {
+        if (!threeContextStudio) return;
+        e.preventDefault();
+        if (e.deltaY > 0) threeContextStudio.zoomOut();
+        else threeContextStudio.zoomIn();
+      }, { passive: false });
+    } catch (err) {
+      console.warn("SpaceYard: Studio 3D not available", err);
+      threeContextStudio = null;
+      if (studioCanvasFallback) studioCanvasFallback.classList.remove("hidden");
+    }
+  };
+
+  const tryInitStudioOnView = () => {
+    const studioSection = document.getElementById("studio3d");
+    if (!studioSection) return;
+    const inView = studioSection.getBoundingClientRect().top < window.innerHeight * 0.9;
+    if (inView) initStudio3D();
+  };
+
+  window.addEventListener("hashchange", tryInitStudioOnView);
+  window.addEventListener("scroll", tryInitStudioOnView, { passive: true });
+  if (window.location.hash === "#studio3d") setTimeout(tryInitStudioOnView, 100);
+
   if (shipForm && shipSummary && fleetList) {
     shipForm.addEventListener("input", () => {
       clearFormErrors();
@@ -754,6 +899,7 @@ document.addEventListener("DOMContentLoaded", () => {
         updateShipFromConfig(currentShip3D.parts, cfg);
         currentShip3D.config3D = cfg;
       }
+      syncStudioShip();
     });
 
     shipForm.addEventListener("submit", (event) => {

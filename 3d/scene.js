@@ -8,8 +8,16 @@ const DEFAULT_3D_OPTIONS = {
   showAxis: false,
 };
 
+const CAMERA_PRESETS = {
+  front: { pos: [0, 0, 12], label: "חזית" },
+  side: { pos: [12, 0, 0], label: "צד" },
+  top: { pos: [0, 12, 0.01], label: "מלמעלה" },
+  iso: { pos: [6, 4, 10], label: "איזומטרי" },
+};
+
 export const initScene = (canvas, initialOptions = {}) => {
   const options = { ...DEFAULT_3D_OPTIONS, ...initialOptions };
+  const enablePan = !!initialOptions.enablePan;
 
   const renderer = new THREE.WebGLRenderer({
     canvas,
@@ -37,9 +45,9 @@ export const initScene = (canvas, initialOptions = {}) => {
   const controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
   controls.dampingFactor = 0.08;
-  controls.enablePan = false;
-  controls.minDistance = 5;
-  controls.maxDistance = 18;
+  controls.enablePan = enablePan;
+  controls.minDistance = 3;
+  controls.maxDistance = 25;
   controls.target.set(0, 0, 0);
 
   const ambient = new THREE.AmbientLight(0xffffff, 0.5);
@@ -95,7 +103,26 @@ export const initScene = (canvas, initialOptions = {}) => {
         scene.add(axesHelper);
       }
     }
+    if (opts.enablePan !== undefined) controls.enablePan = !!opts.enablePan;
   };
+
+  const setCameraPreset = (name) => {
+    const preset = CAMERA_PRESETS[name] || CAMERA_PRESETS.iso;
+    camera.position.set(preset.pos[0], preset.pos[1], preset.pos[2]);
+    controls.target.set(0, 0, 0);
+  };
+
+  const resetView = () => setCameraPreset("iso");
+
+  const zoomBy = (delta) => {
+    const dir = new THREE.Vector3().subVectors(camera.position, controls.target).normalize();
+    const dist = camera.position.distanceTo(controls.target);
+    const newDist = THREE.MathUtils.clamp(dist * (1 - delta), controls.minDistance, controls.maxDistance);
+    camera.position.copy(controls.target).add(dir.multiplyScalar(newDist));
+  };
+
+  const zoomIn = () => zoomBy(0.15);
+  const zoomOut = () => zoomBy(-0.15);
 
   if (options.showAxis) {
     axesHelper = new THREE.AxesHelper(2);
@@ -122,6 +149,10 @@ export const initScene = (canvas, initialOptions = {}) => {
     controls,
     setShipGroup,
     set3DOptions,
+    setCameraPreset,
+    resetView,
+    zoomIn,
+    zoomOut,
   };
 };
 

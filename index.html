@@ -10,13 +10,26 @@
     <header class="site-header">
       <div class="container header-content">
         <div class="logo">SpaceYard</div>
-        <nav class="nav">
+        <button type="button" id="nav-menu-btn" class="nav-menu-btn" aria-label="תפריט" aria-expanded="false" aria-controls="nav-drawer">☰</button>
+        <nav class="nav" aria-label="ניווט ראשי">
           <a href="#home">ראשי</a>
           <a href="#builder">בונה חלליות</a>
+          <a href="#studio3d">סטודיו 3D</a>
           <a href="#fleet">הצי שלי</a>
           <a href="#gallery">השראה ושרטוטים</a>
           <button type="button" id="settings-toggle" class="nav-settings-btn" aria-label="הגדרות" aria-expanded="false">⚙️ הגדרות</button>
         </nav>
+      </div>
+      <div id="nav-drawer" class="nav-drawer" aria-hidden="true">
+        <div class="nav-drawer-overlay" aria-hidden="true"></div>
+        <div class="nav-drawer-panel">
+          <a href="#home" class="nav-drawer-link">ראשי</a>
+          <a href="#builder" class="nav-drawer-link">בונה חלליות</a>
+          <a href="#studio3d" class="nav-drawer-link">סטודיו 3D</a>
+          <a href="#fleet" class="nav-drawer-link">הצי שלי</a>
+          <a href="#gallery" class="nav-drawer-link">השראה ושרטוטים</a>
+          <button type="button" id="nav-drawer-settings" class="nav-settings-btn nav-drawer-settings">⚙️ הגדרות</button>
+        </div>
       </div>
     </header>
 
@@ -144,6 +157,8 @@
               <p id="edit-indicator" class="edit-indicator hidden"></p>
               <div id="form-errors" class="form-errors" aria-live="polite"></div>
 
+              <details class="builder-accordion" open>
+                <summary class="builder-accordion-summary">בסיס</summary>
               <div class="form-group">
                 <label for="ship-name">שם החללית</label>
                 <input type="text" id="ship-name" name="shipName" placeholder="לדוגמה: נשר גלקטי" />
@@ -176,7 +191,10 @@
                 <input type="range" id="ship-size" name="shipSize" min="1" max="10" value="5" />
                 <span class="range-value" data-for="ship-size">5</span>
               </div>
+              </details>
 
+              <details class="builder-accordion">
+                <summary class="builder-accordion-summary">צוות ומשימה</summary>
               <div class="form-group">
                 <label for="ship-crew">מספר אנשי צוות</label>
                 <input
@@ -232,7 +250,10 @@
                   <option value="diplomat">Diplomat – דיפלומט בין-גלקטי</option>
                 </select>
               </div>
+              </details>
 
+              <details class="builder-accordion">
+                <summary class="builder-accordion-summary">יכולות</summary>
               <fieldset class="form-group features-group">
                 <legend>יכולות מיוחדות</legend>
                 <label class="checkbox-row">
@@ -252,7 +273,10 @@
                   רחפני שירות
                 </label>
               </fieldset>
+              </details>
 
+              <details class="builder-accordion">
+                <summary class="builder-accordion-summary">מערכות</summary>
               <fieldset class="form-group features-group">
                 <legend>מערכות מתקדמות</legend>
                 <label class="checkbox-row">
@@ -272,7 +296,10 @@
                   מערכת מילוט חכמה לכל הצוות
                 </label>
               </fieldset>
+              </details>
 
+              <details class="builder-accordion">
+                <summary class="builder-accordion-summary">הגדרות 3D</summary>
               <fieldset class="form-group features-group">
                 <legend>עריכת 3D</legend>
                 <div class="form-group">
@@ -394,6 +421,7 @@
                   </select>
                 </div>
               </fieldset>
+              </details>
 
               <div class="form-actions">
                 <button type="submit" id="primary-ship-btn" class="btn-primary">
@@ -421,6 +449,41 @@
                 בחר שם, סוג ויכולות כדי לראות פירוט טכני של החללית.
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="studio3d" class="section studio3d-section" aria-labelledby="studio3d-heading">
+        <div class="container">
+          <h2 id="studio3d-heading">סטודיו 3D</h2>
+          <p class="studio3d-intro">
+            תצוגה מלאה ועריכה ויזואלית של החללית – סובב, זום, בחר זווית. מתאים לשרטוט לפני הדפסה תלת־ממדית.
+          </p>
+          <div class="studio3d-toolbar" role="toolbar" aria-label="כלי תצוגת 3D">
+            <div class="studio3d-toolbar-group" aria-label="זווית מצלמה">
+              <button type="button" class="studio3d-btn" data-preset="front" title="חזית">חזית</button>
+              <button type="button" class="studio3d-btn" data-preset="side" title="צד">צד</button>
+              <button type="button" class="studio3d-btn" data-preset="top" title="מלמעלה">מלמעלה</button>
+              <button type="button" class="studio3d-btn" data-preset="iso" title="איזומטרי">איזו</button>
+            </div>
+            <div class="studio3d-toolbar-group" aria-label="זום ותצוגה">
+              <button type="button" class="studio3d-btn" id="studio-reset-view" title="איפוס תצוגה">איפוס</button>
+              <button type="button" class="studio3d-btn" id="studio-zoom-out" title="הקטן">−</button>
+              <button type="button" class="studio3d-btn" id="studio-zoom-in" title="הגדל">+</button>
+            </div>
+            <div class="studio3d-toolbar-group" aria-label="אפשרויות">
+              <button type="button" class="studio3d-btn" id="studio-auto-rotate" title="סיבוב אוטומטי">סיבוב</button>
+              <button type="button" class="studio3d-btn" id="studio-show-axis" title="צירי XYZ">צירים</button>
+              <button type="button" class="studio3d-btn" id="studio-fullscreen" title="מסך מלא">מסך מלא</button>
+              <button type="button" class="studio3d-btn" id="studio-screenshot" title="שמירת תמונה">צילום</button>
+            </div>
+          </div>
+          <div class="studio3d-canvas-wrap">
+            <canvas id="studio-canvas" tabindex="0"></canvas>
+            <div id="studio-canvas-fallback" class="studio3d-fallback hidden" aria-live="polite">
+              <p>תצוגת 3D לא זמינה בסטודיו. עבר לבונה חלליות לתצוגה חיה.</p>
+            </div>
+            <p class="studio3d-hint" aria-hidden="true">גרור לסיבוב • גלילה לזום • גרור עם Shift להזזה</p>
           </div>
         </div>
       </section>
