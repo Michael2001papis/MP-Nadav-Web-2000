@@ -18,8 +18,6 @@ npm run build
 npm run preview
 ```
 
-או הרץ: `הרץ-build.cmd`
-
 ## טכנולוגיות
 
 - HTML, CSS, JavaScript (ES modules)
