@@ -1,13 +1,28 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
-export const initScene = (canvas) => {
+const DEFAULT_3D_OPTIONS = {
+  autoRotate: true,
+  rotationSpeed: 0.5,
+  qualityMode: "auto",
+  showAxis: false,
+};
+
+export const initScene = (canvas, initialOptions = {}) => {
+  const options = { ...DEFAULT_3D_OPTIONS, ...initialOptions };
+
   const renderer = new THREE.WebGLRenderer({
     canvas,
-    antialias: true,
+    antialias: options.qualityMode !== "low",
     alpha: true,
   });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+  const setPixelRatioFromQuality = (mode) => {
+    if (mode === "low") renderer.setPixelRatio(1);
+    else if (mode === "high") renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    else renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  };
+  setPixelRatioFromQuality(options.qualityMode);
 
   const scene = new THREE.Scene();
 
@@ -39,6 +54,9 @@ export const initScene = (canvas) => {
   scene.add(rimLight);
 
   let shipGroup = null;
+  let axesHelper = null;
+  let autoRotate = options.autoRotate;
+  let rotationSpeed = options.rotationSpeed;
 
   const setShipGroup = (group) => {
     if (shipGroup) {
@@ -62,11 +80,34 @@ export const initScene = (canvas) => {
   resize();
   window.addEventListener("resize", resize);
 
+  const set3DOptions = (opts) => {
+    if (opts.autoRotate !== undefined) autoRotate = !!opts.autoRotate;
+    if (opts.rotationSpeed !== undefined) rotationSpeed = Math.max(0, Math.min(1, Number(opts.rotationSpeed)));
+    if (opts.qualityMode !== undefined) setPixelRatioFromQuality(opts.qualityMode);
+    if (opts.showAxis !== undefined) {
+      if (axesHelper) {
+        scene.remove(axesHelper);
+        axesHelper.geometry.dispose();
+        axesHelper = null;
+      }
+      if (opts.showAxis) {
+        axesHelper = new THREE.AxesHelper(2);
+        scene.add(axesHelper);
+      }
+    }
+  };
+
+  if (options.showAxis) {
+    axesHelper = new THREE.AxesHelper(2);
+    scene.add(axesHelper);
+  }
+
   const animate = () => {
     requestAnimationFrame(animate);
     controls.update();
-    if (shipGroup) {
-      shipGroup.rotation.y += 0.003;
+    if (shipGroup && autoRotate) {
+      const speed = 0.002 + rotationSpeed * 0.004;
+      shipGroup.rotation.y += speed;
       shipGroup.position.y = Math.sin(Date.now() * 0.001) * 0.1;
     }
     renderer.render(scene, camera);
@@ -80,6 +121,7 @@ export const initScene = (canvas) => {
     renderer,
     controls,
     setShipGroup,
+    set3DOptions,
   };
 };
 

@@ -18,26 +18,105 @@
           <button type="button" id="settings-toggle" class="nav-settings-btn" aria-label="הגדרות" aria-expanded="false">⚙️ הגדרות</button>
         </nav>
       </div>
-      <div id="settings-panel" class="settings-panel hidden" aria-hidden="true">
-        <div class="container settings-panel-inner">
-          <div class="settings-group">
-            <label for="theme-select">מצב צבעים</label>
-            <select id="theme-select" class="settings-select">
-              <option value="normal">נורמל</option>
-              <option value="alien">חייזרי ממש</option>
-              <option value="simple">פשוט (לבן / שחור)</option>
-            </select>
+    </header>
+
+    <div id="settings-modal" class="settings-modal hidden" aria-modal="true" aria-labelledby="settings-modal-title" role="dialog">
+      <div class="settings-modal-overlay"></div>
+      <div class="settings-modal-box">
+        <div class="settings-modal-header">
+          <h2 id="settings-modal-title">הגדרות</h2>
+          <button type="button" id="settings-modal-close" class="settings-modal-close" aria-label="סגור">×</button>
+        </div>
+        <div class="settings-tabs" role="tablist">
+          <button type="button" class="settings-tab active" role="tab" aria-selected="true" data-tab="display">תצוגה</button>
+          <button type="button" class="settings-tab" role="tab" aria-selected="false" data-tab="3d">3D</button>
+          <button type="button" class="settings-tab" role="tab" aria-selected="false" data-tab="storage">צי ואחסון</button>
+          <button type="button" class="settings-tab" role="tab" aria-selected="false" data-tab="privacy">פרטיות</button>
+        </div>
+        <div class="settings-tab-panels">
+          <div id="tab-display" class="settings-tab-panel active" role="tabpanel">
+            <div class="settings-group">
+              <label for="theme-select">מצב צבעים</label>
+              <select id="theme-select" class="settings-select">
+                <option value="normal">נורמל</option>
+                <option value="alien">חייזרי ממש</option>
+                <option value="simple">פשוט (לבן / שחור)</option>
+              </select>
+            </div>
+            <div class="settings-group">
+              <label class="settings-check-label">
+                <input type="checkbox" id="font-size-large" class="settings-checkbox" />
+                <span>הגדלת אותיות</span>
+              </label>
+            </div>
+            <div class="settings-group">
+              <label class="settings-check-label">
+                <input type="checkbox" id="reduced-motion" class="settings-checkbox" />
+                <span>הפחתת תנועה</span>
+              </label>
+            </div>
+            <div class="settings-group">
+              <label class="settings-check-label">
+                <input type="checkbox" id="high-contrast" class="settings-checkbox" />
+                <span>ניגודיות גבוהה</span>
+              </label>
+            </div>
           </div>
-          <div class="settings-group">
-            <label class="settings-check-label">
-              <input type="checkbox" id="font-size-large" class="settings-checkbox" />
-              <span>הגדלת אותיות</span>
-            </label>
+          <div id="tab-3d" class="settings-tab-panel" role="tabpanel" hidden>
+            <div class="settings-group">
+              <label class="settings-check-label">
+                <input type="checkbox" id="auto-rotate" class="settings-checkbox" />
+                <span>סיבוב אוטומטי</span>
+              </label>
+            </div>
+            <div class="settings-group range-group">
+              <label for="rotation-speed">מהירות סיבוב</label>
+              <input type="range" id="rotation-speed" min="0" max="1" step="0.1" value="0.5" />
+              <span class="range-value" data-for="rotation-speed">0.5</span>
+            </div>
+            <div class="settings-group">
+              <label for="quality-mode">איכות 3D</label>
+              <select id="quality-mode" class="settings-select">
+                <option value="auto">אוטומטי</option>
+                <option value="high">גבוהה</option>
+                <option value="low">נמוכה (מובייל)</option>
+              </select>
+            </div>
+            <div class="settings-group">
+              <label class="settings-check-label">
+                <input type="checkbox" id="show-axis" class="settings-checkbox" />
+                <span>הצג צירי XYZ</span>
+              </label>
+            </div>
           </div>
-          <button type="button" id="settings-close" class="btn-ghost btn-sm">סגור</button>
+          <div id="tab-storage" class="settings-tab-panel" role="tabpanel" hidden>
+            <div class="settings-group">
+              <label class="settings-check-label">
+                <input type="checkbox" id="auto-save" class="settings-checkbox" checked />
+                <span>שמירה אוטומטית</span>
+              </label>
+            </div>
+            <div class="settings-group">
+              <label for="fleet-limit">מגבלת חלליות בצי</label>
+              <input type="number" id="fleet-limit" min="5" max="500" value="50" class="settings-input" />
+            </div>
+            <div class="settings-group">
+              <label class="settings-check-label">
+                <input type="checkbox" id="confirm-reset" class="settings-checkbox" checked />
+                <span>אישור לפני איפוס צי</span>
+              </label>
+            </div>
+          </div>
+          <div id="tab-privacy" class="settings-tab-panel" role="tabpanel" hidden>
+            <button type="button" id="clear-local-data" class="btn-ghost settings-danger-btn">מחק את כל הנתונים המקומיים</button>
+          </div>
+        </div>
+        <div class="settings-modal-footer">
+          <button type="button" id="reset-settings" class="btn-ghost btn-sm">איפוס להגדרות ברירת מחדל</button>
+          <button type="button" id="settings-done" class="btn-primary btn-sm">סיום</button>
         </div>
       </div>
-    </header>
+    </div>
 
     <main>
       <section id="home" class="hero">
@@ -395,33 +474,34 @@
         </div>
       </section>
 
-      <section id="gallery" class="section gallery-section">
+      <section id="gallery" class="section gallery-section" aria-labelledby="gallery-heading" role="region">
         <div class="container">
-          <h2>גלריית השראה ושרטוטים</h2>
-          <p>
-            כמה רעיונות ויזואליים שיעזרו לך לדמיין את החללית שלך – גם תמונות אווירה וגם
-            שרטוטים סכמטיים.
+          <h2 id="gallery-heading">גלריית השראה ושרטוטים</h2>
+          <p class="gallery-intro">
+            הגלריה כאן לא רק להציץ – היא עוזרת <strong>להבין</strong> איך חללית נראית ומתנהגת,
+            ו<strong>לחדד מחשבה</strong> לפני שאתה בונה. תמונות האווירה מחזקות את הדמיון,
+            השרטוטים הסכמטיים מחזקים את ההבנה הטכנית. כשתחזור למגדל ההרכבה – תוכל לבחור עם יותר בהירות.
           </p>
 
-          <div class="gallery-grid">
-            <article class="gallery-card">
+          <div class="gallery-grid" role="list">
+            <article class="gallery-card gallery-card-atmosphere" role="listitem">
               <div class="gallery-image-wrapper">
                 <img
                   src="https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=800&q=80"
-                  alt="חללית מעל כוכב לכת"
+                  alt="חללית מעל כוכב לכת – שיגור קלאסי"
                   loading="lazy"
                 />
               </div>
               <div class="gallery-text">
                 <h3>שיגור מעל כוכב לכת</h3>
                 <p>
-                  אווירה בסגנון סרטי שיגור קלאסיים – מושלם לפתיחת סרט מדע בדיוני
-                  או משימת חקר אטמוספרה.
+                  אווירה בסגנון סרטי שיגור קלאסיים – עוזר לדמיין משימת חקר אטמוספרה
+                  או פתיחת סיפור מדע בדיוני.
                 </p>
               </div>
             </article>
 
-            <article class="gallery-card blueprint-card">
+            <article class="gallery-card blueprint-card" role="listitem">
               <div class="blueprint-canvas">
                 <div class="blueprint-grid"></div>
                 <div class="blueprint-ship">
@@ -437,11 +517,11 @@
               </div>
               <div class="gallery-text">
                 <h3>שרטוט צד טכני</h3>
-                <p>מבנה בסיסי של חללית מחקר – גוף מרכזי, כנפיים ומנוע אחורי.</p>
+                <p>מבנה בסיסי של חללית מחקר – גוף מרכזי, כנפיים ומנוע אחורי. עוזר להבין איך החלקים מתחברים.</p>
               </div>
             </article>
 
-            <article class="gallery-card">
+            <article class="gallery-card gallery-card-atmosphere" role="listitem">
               <div class="gallery-image-wrapper">
                 <img
                   src="https://images.unsplash.com/photo-1447434997603-31f57e52f735?auto=format&fit=crop&w=800&q=80"
@@ -453,12 +533,12 @@
                 <h3>תחנת חלל ומודולים</h3>
                 <p>
                   השראה לסדרות על תחנות חלל – מודולים שמתחברים ומתנתקים לפי
-                  משימה ועלילה.
+                  משימה ועלילה. מחדד מחשבה על גמישות ומבנה מודולרי.
                 </p>
               </div>
             </article>
 
-            <article class="gallery-card blueprint-card">
+            <article class="gallery-card blueprint-card" role="listitem">
               <div class="blueprint-canvas top-view">
                 <div class="blueprint-grid"></div>
                 <div class="blueprint-ship-top">
@@ -474,16 +554,16 @@
                 <h3>מבט על חללית טבעתית</h3>
                 <p>
                   מזכיר חלליות איטיות למסעות ארוכים – טבעת מסתובבת ליצירת כבידה
-                  מדומה לצוות.
+                  מדומה לצוות. עוזר לחשוב על סוג המשימה – מסע ארוך או טיסה קצרה.
                 </p>
               </div>
             </article>
 
-            <article class="gallery-card">
+            <article class="gallery-card gallery-card-atmosphere" role="listitem">
               <div class="gallery-image-wrapper">
                 <img
                   src="https://images.unsplash.com/photo-1517976487492-5750f3195933?auto=format&fit=crop&w=800&q=80"
-                  alt="מסדרון חללית מואר"
+                  alt="מסדרון חללית מואר – אווירת מסע"
                   loading="lazy"
                 />
               </div>
@@ -491,16 +571,16 @@
                 <h3>פנים חללית קולנועית</h3>
                 <p>
                   מזכיר מסדרונות ממתח מדע בדיוני: אורות ניאון, צינורות, ותחושת
-                  מסע מתמשך בין כוכבים.
+                  מסע מתמשך בין כוכבים. מחזק את תחושת "מה קורה בתוך החללית שלי".
                 </p>
               </div>
             </article>
 
-            <article class="gallery-card">
+            <article class="gallery-card gallery-card-atmosphere" role="listitem">
               <div class="gallery-image-wrapper">
                 <img
                   src="https://images.unsplash.com/photo-1547234935-80c7145ec969?auto=format&fit=crop&w=800&q=80"
-                  alt="דמות חללית מסתורית על רקע כוכבים"
+                  alt="דמות על רקע גלקסיה – סצנה איקונית"
                   loading="lazy"
                 />
               </div>
@@ -508,12 +588,12 @@
                 <h3>גיבור/ה על רקע הגלקסיה</h3>
                 <p>
                   השראה לסצנות איקוניות מסרטים וסדרות – דמות בודדה מול אינסוף
-                  הכוכבים והחללית ברקע.
+                  הכוכבים והחללית ברקע. עוזר לחשוב על הסיפור שמאחורי הצי שלך.
                 </p>
               </div>
             </article>
 
-            <article class="gallery-card blueprint-card">
+            <article class="gallery-card blueprint-card" role="listitem">
               <div class="alien-canvas">
                 <div class="alien-planet"></div>
                 <div class="alien-orbit"></div>
@@ -536,8 +616,8 @@
               <div class="gallery-text">
                 <h3>שרטוט חייזר ידידותי</h3>
                 <p>
-                  יצור דו–עיני עם מחושיים, מותאם לכוכב בעל כבידה נמוכה – מושלם
-                  לסדרת הרפתקאות לילדים או לצוות משולב חייזרים–בני אדם.
+                  יצור דו–עיני עם מחושיים – מחדד מחשבה על "סוג חייזר מלווה" שבחרת
+                  במגדל ההרכבה ועל צוות משולב חייזרים–בני אדם.
                 </p>
               </div>
             </article>

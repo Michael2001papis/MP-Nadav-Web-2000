@@ -66,61 +66,189 @@ document.addEventListener("DOMContentLoaded", () => {
   const primaryShipBtn = document.getElementById("primary-ship-btn");
   const duplicateShipBtn = document.getElementById("duplicate-ship-btn");
   const settingsToggle = document.getElementById("settings-toggle");
-  const settingsPanel = document.getElementById("settings-panel");
+  const settingsModal = document.getElementById("settings-modal");
+  const settingsModalClose = document.getElementById("settings-modal-close");
+  const settingsModalOverlay = document.querySelector(".settings-modal-overlay");
+  const settingsDone = document.getElementById("settings-done");
   const themeSelect = document.getElementById("theme-select");
   const fontSizeLarge = document.getElementById("font-size-large");
-  const settingsClose = document.getElementById("settings-close");
+  const reducedMotion = document.getElementById("reduced-motion");
+  const highContrast = document.getElementById("high-contrast");
+  const autoRotate = document.getElementById("auto-rotate");
+  const rotationSpeed = document.getElementById("rotation-speed");
+  const qualityMode = document.getElementById("quality-mode");
+  const showAxis = document.getElementById("show-axis");
+  const autoSave = document.getElementById("auto-save");
+  const fleetLimitInput = document.getElementById("fleet-limit");
+  const confirmReset = document.getElementById("confirm-reset");
+  const clearLocalData = document.getElementById("clear-local-data");
+  const resetSettingsBtn = document.getElementById("reset-settings");
 
-  const SETTINGS_KEY = "spaceyard-settings-v1";
+  const SETTINGS_KEY_V2 = "spaceyard-settings-v2";
+  const SETTINGS_KEY_V1 = "spaceyard-settings-v1";
+  const FLEET_KEY = "spaceyard-fleet-v1";
+
+  const DEFAULT_SETTINGS = {
+    theme: "normal",
+    fontSize: "normal",
+    reducedMotion: false,
+    highContrast: false,
+    autoRotate: true,
+    rotationSpeed: 0.5,
+    qualityMode: "auto",
+    showAxis: false,
+    autoSave: true,
+    fleetLimit: 50,
+    confirmReset: true,
+    telemetry: false,
+  };
+
+  const getSettingsFromDOM = () => ({
+    theme: themeSelect ? themeSelect.value : DEFAULT_SETTINGS.theme,
+    fontSize: fontSizeLarge && fontSizeLarge.checked ? "large" : "normal",
+    reducedMotion: !!(reducedMotion && reducedMotion.checked),
+    highContrast: !!(highContrast && highContrast.checked),
+    autoRotate: !!(autoRotate && autoRotate.checked),
+    rotationSpeed: rotationSpeed ? Number(rotationSpeed.value) : DEFAULT_SETTINGS.rotationSpeed,
+    qualityMode: qualityMode ? qualityMode.value : DEFAULT_SETTINGS.qualityMode,
+    showAxis: !!(showAxis && showAxis.checked),
+    autoSave: !!(autoSave && autoSave.checked),
+    fleetLimit: fleetLimitInput ? Math.min(500, Math.max(5, Number(fleetLimitInput.value) || 50)) : 50,
+    confirmReset: !!(confirmReset && confirmReset.checked),
+    telemetry: false,
+  });
+
+  const applySettingsToDOM = (s) => {
+    const o = { ...DEFAULT_SETTINGS, ...s };
+    if (themeSelect) themeSelect.value = o.theme;
+    if (fontSizeLarge) fontSizeLarge.checked = o.fontSize === "large";
+    if (reducedMotion) reducedMotion.checked = o.reducedMotion;
+    if (highContrast) highContrast.checked = o.highContrast;
+    if (autoRotate) autoRotate.checked = o.autoRotate;
+    if (rotationSpeed) { rotationSpeed.value = String(o.rotationSpeed); rotationSpeed.dispatchEvent(new Event("input")); }
+    if (qualityMode) qualityMode.value = o.qualityMode;
+    if (showAxis) showAxis.checked = o.showAxis;
+    if (autoSave) autoSave.checked = o.autoSave;
+    if (fleetLimitInput) fleetLimitInput.value = String(o.fleetLimit);
+    if (confirmReset) confirmReset.checked = o.confirmReset;
+  };
+
+  const applySettingsToSystem = (s) => {
+    const o = { ...DEFAULT_SETTINGS, ...s };
+    document.body.setAttribute("data-theme", o.theme === "normal" ? "" : o.theme);
+    document.documentElement.classList.toggle("font-size-large", o.fontSize === "large");
+    document.body.classList.toggle("reduced-motion", o.reducedMotion);
+    document.body.classList.toggle("high-contrast", o.highContrast);
+    if (threeContext && threeContext.set3DOptions) {
+      threeContext.set3DOptions({
+        autoRotate: o.reducedMotion ? false : o.autoRotate,
+        rotationSpeed: o.rotationSpeed,
+        qualityMode: o.qualityMode,
+        showAxis: o.showAxis,
+      });
+    }
+  };
 
   const loadSettings = () => {
+    let s = null;
     try {
-      const raw = localStorage.getItem(SETTINGS_KEY);
-      if (!raw) return;
-      const s = JSON.parse(raw);
-      if (s.theme && ["normal", "alien", "simple"].includes(s.theme)) {
-        document.body.setAttribute("data-theme", s.theme === "normal" ? "" : s.theme);
-        if (themeSelect) themeSelect.value = s.theme;
-      }
-      if (s.fontSizeLarge) {
-        document.documentElement.classList.toggle("font-size-large", !!s.fontSizeLarge);
-        if (fontSizeLarge) fontSizeLarge.checked = !!s.fontSizeLarge;
+      const raw = localStorage.getItem(SETTINGS_KEY_V2);
+      if (raw) s = JSON.parse(raw);
+      else {
+        const v1 = localStorage.getItem(SETTINGS_KEY_V1);
+        if (v1) {
+          const v1p = JSON.parse(v1);
+          s = { ...DEFAULT_SETTINGS, theme: v1p.theme || DEFAULT_SETTINGS.theme, fontSize: v1p.fontSizeLarge ? "large" : "normal" };
+        }
       }
     } catch (_) {}
+    const o = { ...DEFAULT_SETTINGS, ...s };
+    applySettingsToDOM(o);
+    applySettingsToSystem(o);
+    if (s) try { localStorage.setItem(SETTINGS_KEY_V2, JSON.stringify(o)); } catch (_) {}
   };
 
   const saveSettings = () => {
-    const theme = themeSelect ? themeSelect.value : "normal";
-    const fontSizeLargeVal = fontSizeLarge ? fontSizeLarge.checked : false;
-    document.body.setAttribute("data-theme", theme === "normal" ? "" : theme);
-    document.documentElement.classList.toggle("font-size-large", fontSizeLargeVal);
+    const o = getSettingsFromDOM();
+    applySettingsToSystem(o);
     try {
-      localStorage.setItem(SETTINGS_KEY, JSON.stringify({ theme, fontSizeLarge: fontSizeLargeVal }));
+      localStorage.setItem(SETTINGS_KEY_V2, JSON.stringify(o));
     } catch (_) {}
+  };
+
+  const getSettings = () => {
+    try {
+      const raw = localStorage.getItem(SETTINGS_KEY_V2);
+      if (raw) return { ...DEFAULT_SETTINGS, ...JSON.parse(raw) };
+    } catch (_) {}
+    return { ...DEFAULT_SETTINGS };
   };
 
   loadSettings();
 
-  if (settingsToggle && settingsPanel) {
+  if (settingsToggle && settingsModal) {
     settingsToggle.addEventListener("click", () => {
-      const isOpen = !settingsPanel.classList.contains("hidden");
-      settingsPanel.classList.toggle("hidden", isOpen);
-      settingsToggle.setAttribute("aria-expanded", isOpen ? "false" : "true");
-      settingsPanel.setAttribute("aria-hidden", isOpen ? "true" : "false");
+      const isOpen = !settingsModal.classList.contains("hidden");
+      settingsModal.classList.toggle("hidden", !isOpen);
+      settingsToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+      settingsModal.setAttribute("aria-hidden", isOpen ? "false" : "true");
+      if (isOpen && typeof updateRangeLabels === "function") updateRangeLabels();
     });
   }
-  if (settingsClose && settingsPanel) {
-    settingsClose.addEventListener("click", () => {
-      settingsPanel.classList.add("hidden");
-      if (settingsToggle) settingsToggle.setAttribute("aria-expanded", "false");
-      settingsPanel.setAttribute("aria-hidden", "true");
+  const closeModal = () => {
+    if (settingsModal) settingsModal.classList.add("hidden");
+    if (settingsToggle) settingsToggle.setAttribute("aria-expanded", "false");
+    if (settingsModal) settingsModal.setAttribute("aria-hidden", "true");
+  };
+  if (settingsModalClose) settingsModalClose.addEventListener("click", closeModal);
+  if (settingsModalOverlay) settingsModalOverlay.addEventListener("click", closeModal);
+  if (settingsDone) {
+    settingsDone.addEventListener("click", () => {
+      saveSettings();
+      if (toastContainer) showToast("ההגדרות נשמרו", "success");
+      closeModal();
     });
   }
-  if (themeSelect) {
-    themeSelect.addEventListener("change", saveSettings);
+
+  document.querySelectorAll(".settings-tab").forEach((tab) => {
+    tab.addEventListener("click", () => {
+      const tabId = tab.dataset.tab;
+      document.querySelectorAll(".settings-tab").forEach((t) => { t.classList.remove("active"); t.setAttribute("aria-selected", "false"); });
+      document.querySelectorAll(".settings-tab-panel").forEach((p) => { p.classList.remove("active"); p.hidden = true; });
+      tab.classList.add("active");
+      tab.setAttribute("aria-selected", "true");
+      const panel = document.getElementById("tab-" + tabId);
+      if (panel) { panel.classList.add("active"); panel.hidden = false; }
+    });
+  });
+
+  document.querySelectorAll("#theme-select, #font-size-large, #reduced-motion, #high-contrast, #auto-rotate, #rotation-speed, #quality-mode, #show-axis, #auto-save, #fleet-limit, #confirm-reset").forEach((el) => {
+    if (el) el.addEventListener("change", saveSettings);
+  });
+  if (rotationSpeed) rotationSpeed.addEventListener("input", () => { updateRangeLabels(); saveSettings(); });
+
+  if (resetSettingsBtn) {
+    resetSettingsBtn.addEventListener("click", () => {
+      if (!window.confirm("לאפס את כל ההגדרות לברירת מחדל?")) return;
+      try { localStorage.removeItem(SETTINGS_KEY_V2); } catch (_) {}
+      loadSettings();
+      applySettingsToDOM(DEFAULT_SETTINGS);
+      applySettingsToSystem(DEFAULT_SETTINGS);
+      if (toastContainer) showToast("ההגדרות אופסו", "success");
+    });
   }
-  if (fontSizeLarge) {
-    fontSizeLarge.addEventListener("change", saveSettings);
+
+  if (clearLocalData) {
+    clearLocalData.addEventListener("click", () => {
+      if (!window.confirm("למחוק את כל הנתונים המקומיים? זה כולל את הצי וההגדרות.")) return;
+      if (!window.confirm("בטוח? פעולה זו לא ניתנת לביטול.")) return;
+      try {
+        localStorage.removeItem(SETTINGS_KEY_V2);
+        localStorage.removeItem(SETTINGS_KEY_V1);
+        localStorage.removeItem(FLEET_KEY);
+      } catch (_) {}
+      window.location.reload();
+    });
   }
 
   if (yearSpan) {
@@ -410,6 +538,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const saveFleetToStorage = () => {
+    if (!getSettings().autoSave) return;
     try {
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(fleet));
     } catch {
@@ -588,7 +717,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (shipCanvas) {
     try {
-      threeContext = initScene(shipCanvas);
+      const s3d = getSettings();
+      threeContext = initScene(shipCanvas, {
+        autoRotate: s3d.reducedMotion ? false : s3d.autoRotate,
+        rotationSpeed: s3d.rotationSpeed,
+        qualityMode: s3d.qualityMode,
+        showAxis: s3d.showAxis,
+      });
       if (!threeContext) throw new Error("initScene returned null");
       const initialConfig3D = defaultShipConfig3D;
       const { group, parts } = createShip(initialConfig3D);
@@ -644,6 +779,11 @@ document.addEventListener("DOMContentLoaded", () => {
         renderFleet();
         showToast("החללית עודכנה בהצלחה.", "success");
       } else {
+        const limit = getSettings().fleetLimit;
+        if (fleet.length >= limit) {
+          showToast(`הגעת למספר החלליות המקסימלי (${limit}).`, "error");
+          return;
+        }
         const normalized = normalizeShip(raw);
         fleet.push(normalized);
         if (currentShip3D) {
@@ -662,6 +802,11 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!isValid) {
           showFormErrors(errors);
           showToast("לא ניתן לשכפל – יש שגיאות בטופס.", "error");
+          return;
+        }
+        const limit = getSettings().fleetLimit;
+        if (fleet.length >= limit) {
+          showToast(`הגעת למספר החלליות המקסימלי (${limit}).`, "error");
           return;
         }
         const duplicated = normalizeShip(raw);
@@ -683,8 +828,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     if (fleetResetBtn) {
       fleetResetBtn.addEventListener("click", () => {
-        const confirmed = window.confirm("לאפס את כל צי החלליות?");
-        if (!confirmed) return;
+        if (getSettings().confirmReset && !window.confirm("לאפס את כל צי החלליות?")) return;
         fleet = [];
         exitEditMode();
         saveFleetToStorage();
