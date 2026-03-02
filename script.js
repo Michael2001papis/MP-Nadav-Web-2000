@@ -246,6 +246,17 @@ document.addEventListener("DOMContentLoaded", () => {
       } catch {}
       document.body.removeAttribute("data-role");
       if (logoutBtn) logoutBtn.classList.add("hidden");
+      const adv = document.getElementById("advanced-part-colors");
+      if (adv) {
+        adv.classList.add("hidden");
+        adv.setAttribute("aria-hidden", "true");
+      }
+      document
+        .querySelectorAll(".business-only-section")
+        .forEach((el) => el.classList.add("hidden"));
+      document
+        .querySelectorAll(".developer-only-section")
+        .forEach((el) => el.classList.add("hidden"));
       return;
     }
     try {
@@ -1469,6 +1480,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     loadProfile();
 
+    if (form.dataset.bound === "1") return;
+    form.dataset.bound = "1";
+
     form.addEventListener("submit", (e) => {
       e.preventDefault();
       const profile = {
@@ -1489,7 +1503,7 @@ document.addEventListener("DOMContentLoaded", () => {
         statusEl.classList.remove("success");
         statusEl.classList.add("error");
       }
-    }, { once: true });
+    });
   }
 
   function applyDeveloperTextConfig(config) {
@@ -1541,6 +1555,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     applyDeveloperTextConfig(data);
 
+    if (form.dataset.bound === "1") return;
+    form.dataset.bound = "1";
+
     form.addEventListener("submit", (e) => {
       e.preventDefault();
       const updated = {
@@ -1567,7 +1584,7 @@ document.addEventListener("DOMContentLoaded", () => {
         statusEl.classList.remove("success");
         statusEl.classList.add("error");
       }
-    }, { once: true });
+    });
   }
 
   function initBusinessTextPanel() {
@@ -1588,6 +1605,9 @@ document.addEventListener("DOMContentLoaded", () => {
     form.studioIntro.value = data.studioIntro || document.getElementById("studio3d-intro")?.textContent || "";
     form.fleetSubtitle.value = data.fleetSubtitle || document.getElementById("fleet-subtitle")?.textContent || "";
     form.galleryIntro.value = data.galleryIntro || document.getElementById("gallery-intro")?.textContent || "";
+
+    if (form.dataset.bound === "1") return;
+    form.dataset.bound = "1";
 
     form.addEventListener("submit", (e) => {
       e.preventDefault();
@@ -1615,7 +1635,7 @@ document.addEventListener("DOMContentLoaded", () => {
         statusEl.classList.remove("success");
         statusEl.classList.add("error");
       }
-    }, { once: true });
+    });
   }
 });
 
