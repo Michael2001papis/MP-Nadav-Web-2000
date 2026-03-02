@@ -171,8 +171,8 @@
     <main>
       <section id="home" class="hero">
         <div class="container hero-content">
-          <h1>בונה החלליות הפרטי שלך</h1>
-          <p>
+          <h1 id="hero-title">בונה החלליות הפרטי שלך</h1>
+          <p id="hero-subtitle">
             תכנן חללית, בחר צבעים, מהירות, צוות ויכולות – ובנה צי חלליות דמיוני
             משלך, הכל ישר מתוך הדפדפן.
           </p>
@@ -184,8 +184,8 @@
 
       <section id="builder" class="section builder-section">
         <div class="container">
-          <h2>מגדל ההרכבה</h2>
-          <p>
+          <h2 id="builder-title">מגדל ההרכבה</h2>
+          <p id="builder-subtitle">
             מלא את הפרטים, שחק עם האפשרויות, וצפה בחללית שלך נבנית בתצוגה החיה.
           </p>
 
@@ -613,8 +613,8 @@
 
       <section id="fleet" class="section section-alt">
         <div class="container">
-          <h2>הצי שבנית</h2>
-          <p>
+          <h2 id="fleet-title">הצי שבנית</h2>
+          <p id="fleet-subtitle">
             כל חללית שתוסיף תופיע כאן. שמור, השווה, ותחליט מי תוביל את המשימה
             הבאה.
           </p>
@@ -663,7 +663,7 @@
       <section id="gallery" class="section gallery-section" aria-labelledby="gallery-heading" role="region">
         <div class="container">
           <h2 id="gallery-heading">גלריית השראה ושרטוטים</h2>
-          <p class="gallery-intro">
+          <p id="gallery-intro" class="gallery-intro">
             תמונות אווירה ושרטוטים טכניים – עוזרים להבין איך חללית נראית ולחדד מחשבה לפני בנייה.
             <strong>לחץ על כרטיס להגדלה.</strong>
           </p>
@@ -864,6 +864,55 @@
               <button type="submit" class="btn-primary btn-sm">שמור פרופיל</button>
             </form>
           </div>
+        </div>
+      </section>
+
+      <section id="developer-text-panel" class="section section-alt developer-only-section hidden" aria-labelledby="developer-text-panel-heading">
+        <div class="container">
+          <h2 id="developer-text-panel-heading">עריכת טקסטים – מפתח המערכת</h2>
+          <p>
+            כאן ניתן לעדכן טקסטים מרכזיים באתר (כותרות ופסקאות הסבר). השינויים נשמרים באופן מקומי בדפדפן הנוכחי בלבד.
+          </p>
+          <form id="dev-text-form" class="contact-form" novalidate>
+            <div class="form-group">
+              <label for="dev-hero-title">כותרת ראשית (Hero)</label>
+              <input id="dev-hero-title" name="heroTitle" type="text" />
+            </div>
+            <div class="form-group">
+              <label for="dev-hero-subtitle">תיאור ראשי</label>
+              <textarea id="dev-hero-subtitle" name="heroSubtitle" rows="2"></textarea>
+            </div>
+            <div class="form-group">
+              <label for="dev-builder-title">כותרת מגדל ההרכבה</label>
+              <input id="dev-builder-title" name="builderTitle" type="text" />
+            </div>
+            <div class="form-group">
+              <label for="dev-builder-subtitle">תיאור מגדל ההרכבה</label>
+              <textarea id="dev-builder-subtitle" name="builderSubtitle" rows="2"></textarea>
+            </div>
+            <div class="form-group">
+              <label for="dev-fleet-title">כותרת הצי</label>
+              <input id="dev-fleet-title" name="fleetTitle" type="text" />
+            </div>
+            <div class="form-group">
+              <label for="dev-fleet-subtitle">תיאור הצי</label>
+              <textarea id="dev-fleet-subtitle" name="fleetSubtitle" rows="2"></textarea>
+            </div>
+            <div class="form-group">
+              <label for="dev-gallery-intro">טקסט גלריית השראה</label>
+              <textarea id="dev-gallery-intro" name="galleryIntro" rows="3"></textarea>
+            </div>
+            <div class="form-group">
+              <label for="dev-user-requests-title">כותרת ניהול משתמשים</label>
+              <input id="dev-user-requests-title" name="userRequestsTitle" type="text" />
+            </div>
+            <div class="form-group">
+              <label for="dev-user-requests-text">תיאור ניהול משתמשים</label>
+              <textarea id="dev-user-requests-text" name="userRequestsText" rows="3"></textarea>
+            </div>
+            <p id="dev-text-status" class="form-status" aria-live="polite"></p>
+            <button type="submit" class="btn-primary btn-sm">שמור טקסטים</button>
+          </form>
         </div>
       </section>
 

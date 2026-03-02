@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const STORAGE_KEY = "spaceyard-fleet-v1";
   const AUTH_KEY = "spaceyard-auth-user-v1";
   const BUSINESS_PROFILE_KEY = "spaceyard-business-profile-v1";
+  const DEV_TEXT_KEY = "spaceyard-dev-text-v1";
 
   const TYPE_LABELS = {
     explorer: "ספינת מחקר",
@@ -254,8 +255,17 @@ document.addEventListener("DOMContentLoaded", () => {
         const isBusiness = user.role === "business";
         el.classList.toggle("hidden", !isBusiness);
       });
+    document
+      .querySelectorAll(".developer-only-section")
+      .forEach((el) => {
+        const isDev = user.role === "developer";
+        el.classList.toggle("hidden", !isDev);
+      });
     if (user.role === "business") {
       initBusinessProfile();
+    }
+    if (user.role === "developer") {
+      initDeveloperTextPanel();
     }
   };
 
@@ -1464,6 +1474,81 @@ document.addEventListener("DOMContentLoaded", () => {
         if (toastContainer) showToast("פרופיל משתמש עודכן.", "success");
       } catch {
         statusEl.textContent = "שמירת הפרופיל נכשלה.";
+        statusEl.classList.remove("success");
+        statusEl.classList.add("error");
+      }
+    }, { once: true });
+  }
+
+  function applyDeveloperTextConfig(config) {
+    const c = config || {};
+    const heroTitle = document.getElementById("hero-title");
+    const heroSubtitle = document.getElementById("hero-subtitle");
+    const builderTitle = document.getElementById("builder-title");
+    const builderSubtitle = document.getElementById("builder-subtitle");
+    const fleetTitle = document.getElementById("fleet-title");
+    const fleetSubtitle = document.getElementById("fleet-subtitle");
+    const galleryIntro = document.getElementById("gallery-intro");
+    const userReqTitle = document.getElementById("user-requests-heading");
+    const userReqText = document.querySelector("#user-requests p");
+
+    if (heroTitle && c.heroTitle) heroTitle.textContent = c.heroTitle;
+    if (heroSubtitle && c.heroSubtitle) heroSubtitle.textContent = c.heroSubtitle;
+    if (builderTitle && c.builderTitle) builderTitle.textContent = c.builderTitle;
+    if (builderSubtitle && c.builderSubtitle) builderSubtitle.textContent = c.builderSubtitle;
+    if (fleetTitle && c.fleetTitle) fleetTitle.textContent = c.fleetTitle;
+    if (fleetSubtitle && c.fleetSubtitle) fleetSubtitle.textContent = c.fleetSubtitle;
+    if (galleryIntro && c.galleryIntro) galleryIntro.textContent = c.galleryIntro;
+    if (userReqTitle && c.userRequestsTitle) userReqTitle.textContent = c.userRequestsTitle;
+    if (userReqText && c.userRequestsText) userReqText.textContent = c.userRequestsText;
+  }
+
+  function initDeveloperTextPanel() {
+    const form = document.getElementById("dev-text-form");
+    const statusEl = document.getElementById("dev-text-status");
+    if (!form || !statusEl) return;
+
+    let config = null;
+    try {
+      const raw = localStorage.getItem(DEV_TEXT_KEY);
+      if (raw) config = JSON.parse(raw);
+    } catch {}
+    const data = config || {};
+
+    form.heroTitle.value = data.heroTitle || document.getElementById("hero-title")?.textContent || "";
+    form.heroSubtitle.value = data.heroSubtitle || document.getElementById("hero-subtitle")?.textContent || "";
+    form.builderTitle.value = data.builderTitle || document.getElementById("builder-title")?.textContent || "";
+    form.builderSubtitle.value = data.builderSubtitle || document.getElementById("builder-subtitle")?.textContent || "";
+    form.fleetTitle.value = data.fleetTitle || document.getElementById("fleet-title")?.textContent || "";
+    form.fleetSubtitle.value = data.fleetSubtitle || document.getElementById("fleet-subtitle")?.textContent || "";
+    form.galleryIntro.value = data.galleryIntro || document.getElementById("gallery-intro")?.textContent || "";
+    form.userRequestsTitle.value = data.userRequestsTitle || document.getElementById("user-requests-heading")?.textContent || "";
+    form.userRequestsText.value = data.userRequestsText || document.querySelector("#user-requests p")?.textContent || "";
+
+    applyDeveloperTextConfig(data);
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const updated = {
+        heroTitle: form.heroTitle.value.trim(),
+        heroSubtitle: form.heroSubtitle.value.trim(),
+        builderTitle: form.builderTitle.value.trim(),
+        builderSubtitle: form.builderSubtitle.value.trim(),
+        fleetTitle: form.fleetTitle.value.trim(),
+        fleetSubtitle: form.fleetSubtitle.value.trim(),
+        galleryIntro: form.galleryIntro.value.trim(),
+        userRequestsTitle: form.userRequestsTitle.value.trim(),
+        userRequestsText: form.userRequestsText.value.trim(),
+      };
+      try {
+        localStorage.setItem(DEV_TEXT_KEY, JSON.stringify(updated));
+        statusEl.textContent = "הטקסטים נשמרו בדפדפן הנוכחי.";
+        statusEl.classList.remove("error");
+        statusEl.classList.add("success");
+        applyDeveloperTextConfig(updated);
+        if (toastContainer) showToast("טקסטים עודכנו.", "success");
+      } catch {
+        statusEl.textContent = "שמירת הטקסטים נכשלה.";
         statusEl.classList.remove("success");
         statusEl.classList.add("error");
       }
