@@ -94,7 +94,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const authError = document.getElementById("auth-error");
   const logoutBtn = document.getElementById("logout-btn");
   const loginOpenBtn = document.getElementById("login-open-btn");
-  const systemStatusPill = document.getElementById("system-status-pill");
   const heroMetricFleet = document.getElementById("hero-metric-fleet");
   const heroMetric3D = document.getElementById("hero-metric-3d");
   const heroMetricTheme = document.getElementById("hero-metric-theme");
@@ -203,9 +202,7 @@ document.addEventListener("DOMContentLoaded", () => {
   loadSettings();
 
   const updateSystemStatus = (threeOk = null) => {
-    if (!systemStatusPill) return;
     const threeState = threeOk === null ? "INIT" : threeOk ? "ON" : "OFF";
-    systemStatusPill.textContent = `SYNC: LOCAL · 3D: ${threeState}`;
     if (heroMetric3D) heroMetric3D.textContent = threeState;
   };
 
