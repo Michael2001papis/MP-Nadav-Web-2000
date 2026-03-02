@@ -206,12 +206,22 @@
                 <label for="ship-speed">מהירות (עיוות חלל)</label>
                 <input type="range" id="ship-speed" name="shipSpeed" min="1" max="10" value="6" />
                 <span class="range-value" data-for="ship-speed">6</span>
+                <div class="range-legend">
+                  <span>איטי – שיגור כוכבי</span>
+                  <span>טיסה טקטית</span>
+                  <span>עיוות חלל אגרסיבי</span>
+                </div>
               </div>
 
               <div class="form-group range-group">
                 <label for="ship-size">גודל</label>
                 <input type="range" id="ship-size" name="shipSize" min="1" max="10" value="5" />
                 <span class="range-value" data-for="ship-size">5</span>
+                <div class="range-legend">
+                  <span>חללית סיור קטנה</span>
+                  <span>פריגטה / משא בינוני</span>
+                  <span>ספינת אם / נושאת צי</span>
+                </div>
               </div>
               </details>
 
@@ -280,19 +290,23 @@
                 <legend>יכולות מיוחדות</legend>
                 <label class="checkbox-row">
                   <input type="checkbox" name="features" value="shield" checked />
-                  מגן אנרגיה
+                  <span>מגן אנרגיה</span>
+                  <small>מקטין נזק ישיר מפגיעות וחימום יתר.</small>
                 </label>
                 <label class="checkbox-row">
                   <input type="checkbox" name="features" value="lasers" />
-                  תותחי לייזר
+                  <span>תותחי לייזר</span>
+                  <small>חימוש קו ראשון – קרבות טווח בינוני.</small>
                 </label>
                 <label class="checkbox-row">
                   <input type="checkbox" name="features" value="cloak" />
-                  מערכת הסתרה
+                  <span>מערכת הסתרה</span>
+                  <small>חתימה נמוכה לחמקנות, מתאים למשימות ריגול.</small>
                 </label>
                 <label class="checkbox-row">
                   <input type="checkbox" name="features" value="drones" />
-                  רחפני שירות
+                  <span>רחפני שירות</span>
+                  <small>רחפנים לתיקונים חיצוניים, סריקה והגנה היקפית.</small>
                 </label>
               </fieldset>
               </details>
@@ -303,19 +317,23 @@
                 <legend>מערכות מתקדמות</legend>
                 <label class="checkbox-row">
                   <input type="checkbox" name="advanced" value="autopilot" />
-                  טייס אוטומטי מלא
+                  <span>טייס אוטומטי מלא</span>
+                  <small>מסלולים מתוכננים מראש, נחיתה/המראה אוטומטית.</small>
                 </label>
                 <label class="checkbox-row">
                   <input type="checkbox" name="advanced" value="ai" />
-                  בינה מלאכותית טקטית
+                  <span>בינה מלאכותית טקטית</span>
+                  <small>קבלת החלטות בזמן אמת בקרב ובניווט.</small>
                 </label>
                 <label class="checkbox-row">
                   <input type="checkbox" name="advanced" value="quantumCore" />
-                  ליבת עיבוד קוואנטית
+                  <span>ליבת עיבוד קוואנטית</span>
+                  <small>חישובי מסלולי קפיצה וניתוח נתונים כבד.</small>
                 </label>
                 <label class="checkbox-row">
                   <input type="checkbox" name="advanced" value="escapeSystem" />
-                  מערכת מילוט חכמה לכל הצוות
+                  <span>מערכת מילוט חכמה לכל הצוות</span>
+                  <small>קפסולות מילוט מתוזמנות לפי מצב חירום.</small>
                 </label>
               </fieldset>
               </details>
@@ -493,6 +511,44 @@
                   <div id="ship-canvas-fallback" class="ship-canvas-fallback hidden" aria-live="polite">
                     <p class="ship-canvas-fallback-title">תצוגת 3D לא זמינה</p>
                     <p class="ship-canvas-fallback-text">הדפדפן או המכשיר לא תומכים בתצוגה תלת־ממדית. ניתן להמשיך לבנות חלליות ולצפות בהן ברשימת הצי.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="ship-preview-meta">
+                <div class="ship-preview-tags">
+                  <span id="ship-type-pill" class="ship-pill ship-pill-type">ספינת מחקר</span>
+                  <span id="ship-risk-pill" class="ship-pill ship-pill-risk">רמת סיכון: נמוכה</span>
+                  <span id="ship-alien-pill" class="ship-pill ship-pill-alien hidden"></span>
+                </div>
+                <div class="ship-preview-stats">
+                  <div class="ship-stat">
+                    <span class="ship-stat-label">מהירות</span>
+                    <div class="ship-stat-bar">
+                      <div id="ship-stat-speed-bar" class="ship-stat-bar-fill"></div>
+                    </div>
+                    <span id="ship-stat-speed" class="ship-stat-value">6 / 10</span>
+                  </div>
+                  <div class="ship-stat">
+                    <span class="ship-stat-label">גודל</span>
+                    <div class="ship-stat-bar">
+                      <div id="ship-stat-size-bar" class="ship-stat-bar-fill"></div>
+                    </div>
+                    <span id="ship-stat-size" class="ship-stat-value">5 / 10</span>
+                  </div>
+                  <div class="ship-stat">
+                    <span class="ship-stat-label">צוות</span>
+                    <span id="ship-stat-crew" class="ship-stat-value">12</span>
+                  </div>
+                </div>
+                <div class="ship-preview-chips">
+                  <div class="ship-chip-group">
+                    <span class="ship-chip-title">יכולות:</span>
+                    <div id="ship-features-chips" class="ship-chips"></div>
+                  </div>
+                  <div class="ship-chip-group">
+                    <span class="ship-chip-title">מערכות:</span>
+                    <div id="ship-advanced-chips" class="ship-chips"></div>
                   </div>
                 </div>
               </div>

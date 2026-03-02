@@ -648,6 +648,90 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
   };
 
+  const updateShipPreviewMeta = (ship) => {
+    const typePill = document.getElementById("ship-type-pill");
+    const riskPill = document.getElementById("ship-risk-pill");
+    const alienPill = document.getElementById("ship-alien-pill");
+    const speedBar = document.getElementById("ship-stat-speed-bar");
+    const sizeBar = document.getElementById("ship-stat-size-bar");
+    const speedValue = document.getElementById("ship-stat-speed");
+    const sizeValue = document.getElementById("ship-stat-size");
+    const crewValue = document.getElementById("ship-stat-crew");
+    const featuresChips = document.getElementById("ship-features-chips");
+    const advancedChips = document.getElementById("ship-advanced-chips");
+
+    const typeLabel = TYPE_LABELS[ship.shipType] || "חללית מותאמת אישית";
+    const riskLabel = RISK_LABELS[ship.riskLevel] || "לא סווגה";
+
+    if (typePill) typePill.textContent = typeLabel;
+    if (riskPill) riskPill.textContent = `רמת סיכון: ${riskLabel}`;
+
+    if (alienPill) {
+      if (ship.alienType && ALIEN_LABELS[ship.alienType]) {
+        alienPill.textContent = `חייזר מלווה: ${ALIEN_LABELS[ship.alienType]}`;
+        alienPill.classList.remove("hidden");
+      } else {
+        alienPill.textContent = "";
+        alienPill.classList.add("hidden");
+      }
+    }
+
+    const speedNorm = Math.max(1, Math.min(10, Number(ship.shipSpeed) || 1));
+    const sizeNorm = Math.max(1, Math.min(10, Number(ship.shipSize) || 1));
+
+    if (speedBar) {
+      const pct = (speedNorm / 10) * 100;
+      speedBar.style.transform = `scaleX(${pct / 100})`;
+    }
+    if (sizeBar) {
+      const pct = (sizeNorm / 10) * 100;
+      sizeBar.style.transform = `scaleX(${pct / 100})`;
+    }
+    if (speedValue) speedValue.textContent = `${speedNorm} / 10`;
+    if (sizeValue) sizeValue.textContent = `${sizeNorm} / 10`;
+    if (crewValue) crewValue.textContent = String(ship.shipCrew ?? 0);
+
+    if (featuresChips) {
+      featuresChips.innerHTML = "";
+      const list = Array.isArray(ship.features) && ship.features.length
+        ? ship.features
+        : [];
+      if (list.length === 0) {
+        const chip = document.createElement("span");
+        chip.className = "ship-chip";
+        chip.textContent = "ללא";
+        featuresChips.appendChild(chip);
+      } else {
+        list.forEach((f) => {
+          const chip = document.createElement("span");
+          chip.className = "ship-chip";
+          chip.textContent = FEATURE_LABELS[f] || f;
+          featuresChips.appendChild(chip);
+        });
+      }
+    }
+
+    if (advancedChips) {
+      advancedChips.innerHTML = "";
+      const list = Array.isArray(ship.advanced) && ship.advanced.length
+        ? ship.advanced
+        : [];
+      if (list.length === 0) {
+        const chip = document.createElement("span");
+        chip.className = "ship-chip";
+        chip.textContent = "ללא";
+        advancedChips.appendChild(chip);
+      } else {
+        list.forEach((a) => {
+          const chip = document.createElement("span");
+          chip.className = "ship-chip";
+          chip.textContent = ADVANCED_LABELS[a] || a;
+          advancedChips.appendChild(chip);
+        });
+      }
+    }
+  };
+
   const applyShipColor = (color) => {
     if (!shipPreview || !shipPreview.style) return;
     shipPreview.style.setProperty("--accent", color || "#7c3aed");
@@ -1062,6 +1146,7 @@ document.addEventListener("DOMContentLoaded", () => {
       );
       shipSummary.innerHTML = buildSummaryText(normalized);
       applyShipColor(normalized.shipColor);
+      updateShipPreviewMeta(normalized);
       if (threeContext && currentShip3D) {
         const cfg = buildConfig3DFromRaw(raw, currentShip3D.config3D);
         const { group, parts } = createShip(cfg);
@@ -1179,6 +1264,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const initialNormalized = normalizeShip(initialRaw);
     shipSummary.innerHTML = buildSummaryText(initialNormalized);
     applyShipColor(initialNormalized.shipColor);
+    updateShipPreviewMeta(initialNormalized);
   }
 
   const userRequestForm = document.getElementById("user-request-form");
