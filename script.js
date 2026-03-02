@@ -7,8 +7,8 @@ const SESSION_KEY = "spaceyard-session-v1";
 const FLEET_STORAGE_KEY = "spaceyard-fleet-v1";
 
 const USERS = {
-  NM1234: { password: "321321", role: "business_admin", displayName: "NM1234" },
-  MP123456: { password: "321321", role: "developer", displayName: "MP123456" },
+  NM1324: { password: "321321", role: "business_admin", displayName: "NM1324" },
+  MP1234: { password: "MP2001", role: "developer", displayName: "MP1234" },
 };
 
 const readSession = () => {
