@@ -12,6 +12,65 @@ export const defaultShipConfig3D = {
   cockpitTint: 0.4,
   decals: "none", // 'none' | 'stripes' | 'runes'
   alienTechLevel: 0,
+  // מבנה חלקים מודולרי – לשימוש עתידי, לא שובר את הקיים
+  parts: {
+    nose: {
+      size: { x: 1, y: 1, z: 1 },
+      position: { x: 0, y: 0, z: 0 },
+      rotation: { x: 0, y: 0, z: 0 },
+      visible: true,
+    },
+    body: {
+      size: { x: 1, y: 1, z: 1 },
+      position: { x: 0, y: 0, z: 0 },
+      rotation: { x: 0, y: 0, z: 0 },
+      visible: true,
+    },
+    wings: [
+      {
+        size: { x: 1, y: 1, z: 1 },
+        position: { x: 0, y: 0, z: 0 },
+        rotation: { x: 0, y: 0, z: 0 },
+        visible: true,
+      },
+      {
+        size: { x: 1, y: 1, z: 1 },
+        position: { x: 0, y: 0, z: 0 },
+        rotation: { x: 0, y: 0, z: 0 },
+        visible: true,
+      },
+    ],
+    engines: [
+      {
+        size: { x: 1, y: 1, z: 1 },
+        position: { x: 0, y: 0, z: 0 },
+        rotation: { x: 0, y: 0, z: 0 },
+        visible: true,
+      },
+    ],
+    cockpit: {
+      size: { x: 1, y: 1, z: 1 },
+      position: { x: 0, y: 0, z: 0 },
+      rotation: { x: 0, y: 0, z: 0 },
+      visible: true,
+    },
+    tail: {
+      size: { x: 1, y: 1, z: 1 },
+      position: { x: 0, y: 0, z: 0 },
+      rotation: { x: 0, y: 0, z: 0 },
+      visible: true,
+    },
+  },
+  // שכבות סגנון ואפקטים – לשימוש במודולים מתקדמים
+  style: {
+    basePrimary: "#38bdf8",
+    baseSecondary: "#a855f7",
+  },
+  fx: {
+    hoverSpeed: 0.4,
+    enginePulse: 0.6,
+    rotationIdle: 0.2,
+  },
 };
 
 export const clamp = (value, min, max) => {
@@ -27,6 +86,40 @@ export const mergeConfig3D = (base, override) => {
   };
 };
 
+const ensurePartsConfig = (config) => {
+  const basePart = {
+    size: { x: 1, y: 1, z: 1 },
+    position: { x: 0, y: 0, z: 0 },
+    rotation: { x: 0, y: 0, z: 0 },
+    visible: true,
+  };
+
+  const parts = config.parts || {};
+  const clonePart = (p) => ({
+    size: { ...basePart.size, ...(p?.size || {}) },
+    position: { ...basePart.position, ...(p?.position || {}) },
+    rotation: { ...basePart.rotation, ...(p?.rotation || {}) },
+    visible: typeof p?.visible === "boolean" ? p.visible : true,
+  });
+
+  const wingsSource = Array.isArray(parts.wings) && parts.wings.length ? parts.wings : defaultShipConfig3D.parts.wings;
+  const enginesSource = Array.isArray(parts.engines) && parts.engines.length
+    ? parts.engines
+    : defaultShipConfig3D.parts.engines;
+
+  return {
+    ...config,
+    parts: {
+      nose: clonePart(parts.nose || defaultShipConfig3D.parts.nose),
+      body: clonePart(parts.body || defaultShipConfig3D.parts.body),
+      wings: wingsSource.map((w) => clonePart(w)),
+      engines: enginesSource.map((e) => clonePart(e)),
+      cockpit: clonePart(parts.cockpit || defaultShipConfig3D.parts.cockpit),
+      tail: clonePart(parts.tail || defaultShipConfig3D.parts.tail),
+    },
+  };
+};
+
 export const buildConfig3DFromRaw = (raw, existing = null) => {
   const base = existing || defaultShipConfig3D;
 
@@ -36,7 +129,7 @@ export const buildConfig3DFromRaw = (raw, existing = null) => {
     return clamp(n, min, max);
   };
 
-  return mergeConfig3D(base, {
+  const merged = mergeConfig3D(base, {
     shipShape: raw.shipShape3D || base.shipShape,
     primaryColor: raw.primaryColor3D || raw.shipColor || base.primaryColor,
     secondaryColor:
@@ -52,5 +145,7 @@ export const buildConfig3DFromRaw = (raw, existing = null) => {
     decals: raw.decals3D || base.decals,
     alienTechLevel: num(raw.alienTechLevel3D, base.alienTechLevel, 0, 3),
   });
+
+  return ensurePartsConfig(merged);
 };
 

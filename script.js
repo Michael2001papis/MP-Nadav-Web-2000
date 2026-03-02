@@ -3,8 +3,45 @@ import { createShip } from "./3d/shipFactory.js";
 import { updateShipFromConfig } from "./3d/shipEditor.js";
 import { defaultShipConfig3D, mergeConfig3D, buildConfig3DFromRaw } from "./3d/utils.js";
 
+const SESSION_KEY = "spaceyard-session-v1";
+const FLEET_STORAGE_KEY = "spaceyard-fleet-v1";
+const WELCOME_STORAGE_KEY = "spaceyard-welcome-v1";
+
+const USERS = {
+  NM1324: { password: "321321", role: "business_admin", displayName: "NM1324" },
+  MP1234: { password: "MP2001", role: "developer", displayName: "MP1234" },
+};
+
+const readSession = () => {
+  try {
+    const raw = window.localStorage.getItem(SESSION_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed.username !== "string" || typeof parsed.role !== "string") return null;
+    return parsed;
+  } catch {
+    return null;
+  }
+};
+
+const writeSession = (session) => {
+  try {
+    window.localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+  } catch {
+    // ignore
+  }
+};
+
+const clearSession = () => {
+  try {
+    window.localStorage.removeItem(SESSION_KEY);
+  } catch {
+    // ignore
+  }
+};
+
 document.addEventListener("DOMContentLoaded", () => {
-  const STORAGE_KEY = "spaceyard-fleet-v1";
+  const STORAGE_KEY = FLEET_STORAGE_KEY;
 
   const TYPE_LABELS = {
     explorer: "ספינת מחקר",
@@ -86,6 +123,23 @@ document.addEventListener("DOMContentLoaded", () => {
   const confirmReset = document.getElementById("confirm-reset");
   const clearLocalData = document.getElementById("clear-local-data");
   const resetSettingsBtn = document.getElementById("reset-settings");
+
+  const authScreen = document.getElementById("auth-screen");
+  const loginForm = document.getElementById("login-form");
+  const loginError = document.getElementById("login-error");
+  const userLabel = document.getElementById("user-label");
+  const logoutBtn = document.getElementById("logout-btn");
+  const requestAccessHeader = document.getElementById("request-access-header");
+  const requestUserModal = document.getElementById("request-user-modal");
+  const requestUserForm = document.getElementById("request-user-form");
+  const requestModalClose = document.getElementById("request-modal-close");
+  const requestError = document.getElementById("request-error");
+  const requestSuccess = document.getElementById("request-success");
+  const openRequestModalBtn = document.getElementById("open-request-modal");
+  const navDrawerRequest = document.getElementById("nav-drawer-request");
+  const navDrawerLogout = document.getElementById("nav-drawer-logout");
+  const welcomeModal = document.getElementById("welcome-modal");
+  const welcomeModalClose = document.getElementById("welcome-modal-close");
 
   const SETTINGS_KEY_V2 = "spaceyard-settings-v2";
   const SETTINGS_KEY_V1 = "spaceyard-settings-v1";
@@ -189,6 +243,128 @@ document.addEventListener("DOMContentLoaded", () => {
 
   loadSettings();
 
+  const showToast = (message, type = "info") => {
+    if (!toastContainer) return;
+    const toast = document.createElement("div");
+    toast.className = `toast toast-${type}`;
+    toast.textContent = message;
+    toastContainer.appendChild(toast);
+    setTimeout(() => {
+      toast.classList.add("fade-out");
+      toast.addEventListener(
+        "transitionend",
+        () => {
+          toast.remove();
+        },
+        { once: true }
+      );
+    }, 2600);
+  };
+
+  const applyRoleUI = (session) => {
+    const role = session && session.role ? session.role : "guest";
+    document.body.dataset.role = role;
+    if (userLabel) {
+      if (session) {
+        userLabel.textContent = `שלום, ${session.displayName || session.username}`;
+      } else {
+        userLabel.textContent = "";
+      }
+    }
+    const authButtons = document.querySelectorAll(".auth-only-btn");
+    authButtons.forEach((btn) => {
+      if (!session) {
+        btn.hidden = true;
+      } else {
+        btn.hidden = false;
+      }
+    });
+    if (role !== "developer" && clearLocalData) {
+      clearLocalData.disabled = true;
+      clearLocalData.classList.add("settings-disabled");
+    } else if (clearLocalData) {
+      clearLocalData.disabled = false;
+      clearLocalData.classList.remove("settings-disabled");
+    }
+  };
+
+  const openWelcomeModal = () => {
+    if (!welcomeModal) return;
+    welcomeModal.classList.remove("hidden");
+    welcomeModal.setAttribute("aria-hidden", "false");
+  };
+
+  const closeWelcomeModal = () => {
+    if (!welcomeModal) return;
+    welcomeModal.classList.add("hidden");
+    welcomeModal.setAttribute("aria-hidden", "true");
+    try {
+      window.localStorage.setItem(WELCOME_STORAGE_KEY, "seen");
+    } catch {
+      // ignore
+    }
+  };
+
+  const maybeShowWelcome = (session) => {
+    if (!session) return;
+    try {
+      const flag = window.localStorage.getItem(WELCOME_STORAGE_KEY);
+      if (flag === "seen") return;
+    } catch {
+      // ignore
+    }
+    openWelcomeModal();
+  };
+
+  if (welcomeModalClose) {
+    welcomeModalClose.addEventListener("click", closeWelcomeModal);
+  }
+  const welcomeOverlay = welcomeModal ? welcomeModal.querySelector(".welcome-modal-overlay") : null;
+  if (welcomeOverlay) {
+    welcomeOverlay.addEventListener("click", closeWelcomeModal);
+  }
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && welcomeModal && !welcomeModal.classList.contains("hidden")) {
+      closeWelcomeModal();
+    }
+  });
+
+  const openRequestModal = () => {
+    if (!requestUserModal) return;
+    requestUserModal.classList.remove("hidden");
+    requestUserModal.setAttribute("aria-hidden", "false");
+  };
+
+  const closeRequestModal = () => {
+    if (!requestUserModal) return;
+    requestUserModal.classList.add("hidden");
+    requestUserModal.setAttribute("aria-hidden", "true");
+    if (requestError) requestError.textContent = "";
+    if (requestSuccess) requestSuccess.textContent = "";
+    requestUserForm?.reset();
+  };
+
+  if (openRequestModalBtn) {
+    openRequestModalBtn.addEventListener("click", openRequestModal);
+  }
+  if (requestAccessHeader) {
+    requestAccessHeader.addEventListener("click", openRequestModal);
+  }
+  if (navDrawerRequest) {
+    navDrawerRequest.addEventListener("click", () => {
+      closeDrawer();
+      openRequestModal();
+    });
+  }
+  if (requestModalClose) {
+    requestModalClose.addEventListener("click", closeRequestModal);
+  }
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && requestUserModal && !requestUserModal.classList.contains("hidden")) {
+      closeRequestModal();
+    }
+  });
+
   if (settingsToggle && settingsModal) {
     settingsToggle.addEventListener("click", () => {
       const wasOpen = !settingsModal.classList.contains("hidden");
@@ -212,7 +388,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const navMenuBtn = document.getElementById("nav-menu-btn");
   const navDrawer = document.getElementById("nav-drawer");
-  const navDrawerOverlay = navDrawer?.querySelector(".nav-drawer-overlay");
+  const navDrawerOverlay = navDrawer ? navDrawer.querySelector(".nav-drawer-overlay") : null;
   const navDrawerSettings = document.getElementById("nav-drawer-settings");
   const openDrawer = () => {
     if (navDrawer) navDrawer.classList.add("open");
@@ -254,8 +430,14 @@ document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll(".settings-tab").forEach((tab) => {
     tab.addEventListener("click", () => {
       const tabId = tab.dataset.tab;
-      document.querySelectorAll(".settings-tab").forEach((t) => { t.classList.remove("active"); t.setAttribute("aria-selected", "false"); });
-      document.querySelectorAll(".settings-tab-panel").forEach((p) => { p.classList.remove("active"); p.hidden = true; });
+      document.querySelectorAll(".settings-tab").forEach((t) => {
+        t.classList.remove("active");
+        t.setAttribute("aria-selected", "false");
+      });
+      document.querySelectorAll(".settings-tab-panel").forEach((p) => {
+        p.classList.remove("active");
+        p.hidden = true;
+      });
       tab.classList.add("active");
       tab.setAttribute("aria-selected", "true");
       const panel = document.getElementById("tab-" + tabId);
@@ -355,44 +537,28 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   document.querySelectorAll(".gallery-card").forEach((c) => c.setAttribute("tabindex", "0"));
-  document.querySelector(".gallery-grid")?.addEventListener("click", (e) => {
+  const galleryGrid = document.querySelector(".gallery-grid");
+  if (galleryGrid) {
+    galleryGrid.addEventListener("click", (e) => {
     const card = e.target.closest(".gallery-card");
     if (!card) return;
     e.preventDefault();
     openGalleryLightbox(card);
-  });
+    });
+    galleryGrid.addEventListener("keydown", (e) => {
+      if (e.key !== "Enter" && e.key !== " ") return;
+      const card = e.target.closest(".gallery-card");
+      if (!card) return;
+      e.preventDefault();
+      openGalleryLightbox(card);
+    });
+  }
 
-  document.querySelector(".gallery-grid")?.addEventListener("keydown", (e) => {
-    if (e.key !== "Enter" && e.key !== " ") return;
-    const card = e.target.closest(".gallery-card");
-    if (!card) return;
-    e.preventDefault();
-    openGalleryLightbox(card);
-  });
-
-  galleryLightboxOverlay?.addEventListener("click", closeGalleryLightbox);
-  galleryLightboxClose?.addEventListener("click", closeGalleryLightbox);
+  if (galleryLightboxOverlay) galleryLightboxOverlay.addEventListener("click", closeGalleryLightbox);
+  if (galleryLightboxClose) galleryLightboxClose.addEventListener("click", closeGalleryLightbox);
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && galleryLightbox && !galleryLightbox.classList.contains("hidden")) closeGalleryLightbox();
   });
-
-  const showToast = (message, type = "info") => {
-    if (!toastContainer) return;
-    const toast = document.createElement("div");
-    toast.className = `toast toast-${type}`;
-    toast.textContent = message;
-    toastContainer.appendChild(toast);
-    setTimeout(() => {
-      toast.classList.add("fade-out");
-      toast.addEventListener(
-        "transitionend",
-        () => {
-          toast.remove();
-        },
-        { once: true }
-      );
-    }, 2600);
-  };
 
   const updateRangeLabels = () => {
     document.querySelectorAll(".range-group input[type='range']").forEach((input) => {
@@ -500,7 +666,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const config3D = buildConfig3DFromRaw(raw, existingConfig3D || raw.config3D || null);
 
     return {
-      id: existingId || `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+      id: existingId || (Date.now().toString() + "-" + Math.random().toString(36).slice(2, 7)),
       createdAt: existingCreatedAt || Date.now(),
       shipName: raw.shipName || "חללית ללא שם",
       shipType: raw.shipType || "explorer",
@@ -531,27 +697,41 @@ document.addEventListener("DOMContentLoaded", () => {
     const riskText = RISK_LABELS[ship.riskLevel] || "לא סווגה";
     const commander = ship.commanderName || "לא הוגדר";
     const mission =
-      ship.missionDescription && ship.missionDescription.trim().length > 0
+      ship.missionDescription && ship.shipDescription && ship.shipDescription.trim
+        ? String(ship.missionDescription).trim()
+        : ship.missionDescription && ship.missionDescription.trim
         ? ship.missionDescription.trim()
         : null;
     const alien =
       ship.alienType && ALIEN_LABELS[ship.alienType]
-        ? ` · חייזר מלווה: ${ALIEN_LABELS[ship.alienType]}`
+        ? " · חייזר מלווה: " + ALIEN_LABELS[ship.alienType]
         : "";
 
-    return `
-      <strong>${ship.shipName || "חללית ללא שם"}</strong> היא ${typeLabel}
-      בצבע מותאם, למהירות עיוות של <strong>${ship.shipSpeed}</strong>,
-      בגודל יחסי <strong>${ship.shipSize}</strong> וצוות של
-      <strong>${ship.shipCrew}</strong> אסטרונאוטים.
-      <br />
-      יכולות מיוחדות: <strong>${featuresText}</strong>.
-      <br />
-      מערכות מתקדמות: <strong>${advancedText}</strong>.
-      <br />
-      מפקד/ת המשימה: <strong>${commander}</strong>, רמת סיכון: <strong>${riskText}</strong>${alien}.
-      ${mission ? `<br />תיאור המשימה: ${mission}` : ""}
-    `;
+    return (
+      (ship.shipName || "חללית ללא שם") +
+      " היא " +
+      typeLabel +
+      "\nבצבע מותאם, למהירות עיוות של " +
+      ship.shipSpeed +
+      ",\nבגודל יחסי " +
+      ship.shipSize +
+      " וצוות של\n" +
+      ship.shipCrew +
+      " אסטרונאוטים.\n\n" +
+      "יכולות מיוחדות: " +
+      featuresText +
+      ".\n\n" +
+      "מערכות מתקדמות: " +
+      advancedText +
+      ".\n\n" +
+      "מפקד/ת המשימה: " +
+      commander +
+      ", רמת סיכון: " +
+      riskText +
+      alien +
+      "." +
+      (mission ? " תיאור המשימה: " + mission : "")
+    );
   };
 
   const applyShipColor = (color) => {
@@ -571,9 +751,18 @@ document.addEventListener("DOMContentLoaded", () => {
     setValue("ship-name", ship.shipName || "");
     setValue("ship-type", ship.shipType || "explorer");
     setValue("ship-color", ship.shipColor || "#7c3aed");
-    setValue("ship-speed", ship.shipSpeed ?? 5);
-    setValue("ship-size", ship.shipSize ?? 5);
-    setValue("ship-crew", ship.shipCrew ?? 1);
+    setValue(
+      "ship-speed",
+      typeof ship.shipSpeed === "number" ? ship.shipSpeed : 5
+    );
+    setValue(
+      "ship-size",
+      typeof ship.shipSize === "number" ? ship.shipSize : 5
+    );
+    setValue(
+      "ship-crew",
+      typeof ship.shipCrew === "number" ? ship.shipCrew : 1
+    );
     setValue("commander-name", ship.commanderName || "");
     setValue("mission-description", ship.missionDescription || "");
     setValue("risk-level", ship.riskLevel || "medium");
@@ -855,7 +1044,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const syncStudioShip = () => {
     if (!threeContextStudio) return;
     try {
-      const cfg = currentShip3D?.config3D || defaultShipConfig3D;
+      const cfg = (currentShip3D && currentShip3D.config3D) ? currentShip3D.config3D : defaultShipConfig3D;
       const { group } = createShip(cfg);
       threeContextStudio.setShipGroup(group);
     } catch (_) {}
@@ -909,7 +1098,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
       const fullscreenBtn = document.getElementById("studio-fullscreen");
-      const canvasWrap = studioCanvas?.closest(".studio3d-canvas-wrap");
+      const canvasWrap = studioCanvas ? studioCanvas.closest(".studio3d-canvas-wrap") : null;
       if (fullscreenBtn && canvasWrap) {
         fullscreenBtn.addEventListener("click", () => {
           if (!document.fullscreenElement) canvasWrap.requestFullscreen?.();
@@ -917,7 +1106,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
       const screenshotBtn = document.getElementById("studio-screenshot");
-      if (screenshotBtn && threeContextStudio?.renderer) {
+      if (screenshotBtn && threeContextStudio && threeContextStudio.renderer) {
         screenshotBtn.addEventListener("click", () => {
           try {
             const dataUrl = threeContextStudio.renderer.domElement.toDataURL("image/png");
@@ -932,12 +1121,14 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
 
-      studioCanvas?.addEventListener("wheel", (e) => {
+      if (studioCanvas) {
+        studioCanvas.addEventListener("wheel", (e) => {
         if (!threeContextStudio) return;
         e.preventDefault();
         if (e.deltaY > 0) threeContextStudio.zoomOut();
         else threeContextStudio.zoomIn();
       }, { passive: false });
+      }
     } catch (err) {
       console.warn("SpaceYard: Studio 3D not available", err);
       threeContextStudio = null;
@@ -956,26 +1147,98 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("scroll", tryInitStudioOnView, { passive: true });
   if (window.location.hash === "#studio3d") setTimeout(tryInitStudioOnView, 100);
 
-  if (shipForm && shipSummary && fleetList) {
-    shipForm.addEventListener("input", () => {
-      clearFormErrors();
-      const raw = getRawFormData();
-      const normalized = normalizeShip(
-        raw,
-        selectedShipId,
-        null,
-        currentShip3D?.config3D || null
-      );
-      shipSummary.innerHTML = buildSummaryText(normalized);
-      applyShipColor(normalized.shipColor);
-      if (threeContext && currentShip3D) {
-        const cfg = buildConfig3DFromRaw(raw, currentShip3D.config3D);
-        const { group, parts } = createShip(cfg);
-        threeContext.setShipGroup(group);
-        currentShip3D = { group, parts, config3D: cfg };
+  const handleRequestSubmit = async (event) => {
+    if (!requestUserForm) return;
+    event.preventDefault();
+    if (requestError) requestError.textContent = "";
+    if (requestSuccess) requestSuccess.textContent = "";
+    const formData = new FormData(requestUserForm);
+    const hp = (formData.get("hp") && formData.get("hp").toString()) || "";
+    if (hp.trim() !== "") {
+      return;
+    }
+    const lastTsRaw = window.localStorage.getItem("spaceyard-request-last-ts");
+    const now = Date.now();
+    if (lastTsRaw) {
+      const last = Number(lastTsRaw);
+      if (Number.isFinite(last) && now - last < 30000) {
+        if (requestError) requestError.textContent = "ניתן לשלוח בקשה אחת כל 30 שניות.";
+        showToast("ההודעה נשלחה כבר, המתן מעט לפני נסיון נוסף.", "info");
+        return;
       }
-      syncStudioShip();
-    });
+    }
+    const payload = {
+      firstName: (formData.get("firstName") && formData.get("firstName").toString()) || "",
+      lastName: (formData.get("lastName") && formData.get("lastName").toString()) || "",
+      phone: (formData.get("phone") && formData.get("phone").toString()) || "",
+      reason: (formData.get("reason") && formData.get("reason").toString()) || "",
+      message: (formData.get("message") && formData.get("message").toString()) || "",
+      sentAt: new Date().toISOString(),
+    };
+    if (!payload.firstName || !payload.lastName || !payload.phone || !payload.reason || !payload.message) {
+      if (requestError) requestError.textContent = "נא למלא את כל השדות החובה.";
+      return;
+    }
+    if (!/^[0-9+()\-\s]{6,20}$/.test(payload.phone)) {
+      if (requestError) requestError.textContent = "מספר הטלפון אינו תקין.";
+      return;
+    }
+    try {
+      const res = await fetch("https://formsubmit.co/ajax/dvnka2@gmail.com", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error("Request failed");
+      window.localStorage.setItem("spaceyard-request-last-ts", String(now));
+      if (requestSuccess) requestSuccess.textContent = "הבקשה נשלחה בהצלחה.";
+      showToast("הבקשה נשלחה בהצלחה.", "success");
+      requestUserForm.reset();
+    } catch {
+      if (requestError) requestError.textContent = "שליחת הבקשה נכשלה. נסה שוב מאוחר יותר.";
+      showToast("שליחת הבקשה נכשלה.", "error");
+    }
+  };
+
+  if (requestUserForm) {
+    requestUserForm.addEventListener("submit", handleRequestSubmit);
+  }
+
+  const initAppLogic = () => {
+    if (shipForm && shipSummary && fleetList) {
+      shipForm.addEventListener("input", () => {
+        clearFormErrors();
+        const raw = getRawFormData();
+        const normalized = normalizeShip(
+          raw,
+          selectedShipId,
+          null,
+          currentShip3D && currentShip3D.config3D ? currentShip3D.config3D : null
+        );
+        shipSummary.innerHTML = buildSummaryText(normalized);
+        applyShipColor(normalized.shipColor);
+        if (threeContext && currentShip3D) {
+          const cfg = buildConfig3DFromRaw(raw, currentShip3D.config3D);
+          const shapeChanged =
+            !currentShip3D.config3D ||
+            cfg.shipShape !== currentShip3D.config3D.shipShape;
+
+          if (!shapeChanged && currentShip3D.parts) {
+            // עדכון פרמטרי בלבד – לא בונים חללית חדשה
+            updateShipFromConfig(currentShip3D.parts, cfg);
+            currentShip3D.config3D = cfg;
+          } else {
+            // שינוי צורה או מצב התחלתי – בנייה מחודשת
+            const { group, parts } = createShip(cfg);
+            threeContext.setShipGroup(group);
+            currentShip3D = { group, parts, config3D: cfg };
+          }
+        }
+        syncStudioShip();
+      });
 
     shipForm.addEventListener("submit", (event) => {
       event.preventDefault();
@@ -1085,6 +1348,67 @@ document.addEventListener("DOMContentLoaded", () => {
     const initialNormalized = normalizeShip(initialRaw);
     shipSummary.innerHTML = buildSummaryText(initialNormalized);
     applyShipColor(initialNormalized.shipColor);
+  };
+
+  const applyAuthState = (session) => {
+    if (session) {
+      document.body.classList.remove("no-session");
+      document.body.classList.add("has-session");
+      if (authScreen) authScreen.hidden = true;
+    } else {
+      document.body.classList.add("no-session");
+      document.body.classList.remove("has-session");
+      if (authScreen) authScreen.hidden = false;
+    }
+    applyRoleUI(session);
+  };
+
+  const handleLogout = () => {
+    clearSession();
+    applyAuthState(null);
+    showToast("התנתקת מהמערכת.", "info");
+  };
+
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", handleLogout);
+  }
+  if (navDrawerLogout) {
+    navDrawerLogout.addEventListener("click", () => {
+      closeDrawer();
+      handleLogout();
+    });
+  }
+
+  const initialSession = readSession();
+  if (initialSession) {
+    applyAuthState(initialSession);
+    initAppLogic();
+    maybeShowWelcome(initialSession);
+  } else {
+    applyAuthState(null);
+  }
+
+  if (loginForm) {
+    loginForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      if (loginError) loginError.textContent = "";
+      const formData = new FormData(loginForm);
+      const username = (formData.get("username") && formData.get("username").toString().trim()) || "";
+      const password = (formData.get("password") && formData.get("password").toString()) || "";
+      const user = USERS[username];
+      if (!user || user.password !== password) {
+        if (loginError) loginError.textContent = "שם משתמש או סיסמה שגויים.";
+        return;
+      }
+      const session = { username, role: user.role, displayName: user.displayName };
+      writeSession(session);
+      applyAuthState(session);
+      if (!initialSession) {
+        initAppLogic();
+      }
+      maybeShowWelcome(session);
+      showToast("התחברת בהצלחה.", "success");
+    });
   }
 });
 
