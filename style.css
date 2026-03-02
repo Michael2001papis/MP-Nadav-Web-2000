@@ -2014,28 +2014,11 @@ body[data-theme="simple"] .ship-form textarea {
 
 .site-footer {
   border-top: 1px solid var(--border-subtle);
-  padding: 16px 0 22px;
+  padding: 14px 0 18px;
   margin-top: 20px;
   font-size: 0.85rem;
   color: var(--text-muted);
   transition: color var(--transition-smooth);
-}
-
-.site-footer-secondary {
-  margin-top: 4px;
-  font-size: 0.8rem;
-  opacity: 0.9;
-}
-
-.footer-link {
-  color: var(--accent);
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 2px;
-}
-
-.footer-link:hover {
-  color: #bfdbfe;
 }
 
 .welcome-modal {

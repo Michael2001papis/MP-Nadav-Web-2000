@@ -341,7 +341,7 @@ document.addEventListener("DOMContentLoaded", () => {
     requestUserModal.setAttribute("aria-hidden", "true");
     if (requestError) requestError.textContent = "";
     if (requestSuccess) requestSuccess.textContent = "";
-    if (requestUserForm) requestUserForm.reset();
+    requestUserForm?.reset();
   };
 
   if (openRequestModalBtn) {
@@ -413,7 +413,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (navDrawerSettings && settingsToggle) {
     navDrawerSettings.addEventListener("click", () => {
       closeDrawer();
-      if (settingsModal) settingsModal.classList.remove("hidden");
+      settingsModal?.classList.remove("hidden");
       if (settingsToggle) settingsToggle.setAttribute("aria-expanded", "true");
       if (settingsModal) settingsModal.setAttribute("aria-hidden", "false");
     });
@@ -526,7 +526,7 @@ document.addEventListener("DOMContentLoaded", () => {
     galleryLightbox.classList.remove("hidden");
     galleryLightbox.setAttribute("aria-hidden", "false");
     document.body.style.overflow = "hidden";
-    if (galleryLightboxClose) galleryLightboxClose.focus();
+    galleryLightboxClose?.focus();
   };
 
   const closeGalleryLightbox = () => {
@@ -608,35 +608,31 @@ document.addEventListener("DOMContentLoaded", () => {
   const getRawFormData = () => {
     if (!shipForm) return {};
     const formData = new FormData(shipForm);
-    const getVal = (name) => {
-      const v = formData.get(name);
-      return v == null ? "" : v.toString();
-    };
     return {
-      shipName: getVal("shipName").trim() || "",
-      shipType: getVal("shipType") || "",
-      shipColor: getVal("shipColor") || "#7c3aed",
-      shipSpeed: getVal("shipSpeed") || "5",
-      shipSize: getVal("shipSize") || "5",
-      shipCrew: getVal("shipCrew") || "1",
-      commanderName: getVal("commanderName").trim() || "",
-      missionDescription: getVal("missionDescription") || "",
-      riskLevel: getVal("riskLevel") || "medium",
-      alienType: getVal("alienType") || "",
+      shipName: formData.get("shipName")?.toString().trim() || "",
+      shipType: formData.get("shipType")?.toString() || "",
+      shipColor: formData.get("shipColor")?.toString() || "#7c3aed",
+      shipSpeed: formData.get("shipSpeed")?.toString() || "5",
+      shipSize: formData.get("shipSize")?.toString() || "5",
+      shipCrew: formData.get("shipCrew")?.toString() || "1",
+      commanderName: formData.get("commanderName")?.toString().trim() || "",
+      missionDescription: formData.get("missionDescription")?.toString() || "",
+      riskLevel: formData.get("riskLevel")?.toString() || "medium",
+      alienType: formData.get("alienType")?.toString() || "",
       features: formData.getAll("features").map((f) => f.toString()),
       advanced: formData.getAll("advanced").map((a) => a.toString()),
-      shipShape3D: getVal("shipShape3D") || "classic",
-      primaryColor3D: getVal("primaryColor3D") || "",
-      secondaryColor3D: getVal("secondaryColor3D") || "",
-      materialType3D: getVal("materialType3D") || "",
-      bodyLength3D: getVal("bodyLength3D") || "",
-      wingSpan3D: getVal("wingSpan3D") || "",
-      wingAngle3D: getVal("wingAngle3D") || "",
-      engineSize3D: getVal("engineSize3D") || "",
-      engineGlow3D: getVal("engineGlow3D") || "",
-      cockpitTint3D: getVal("cockpitTint3D") || "",
-      decals3D: getVal("decals3D") || "",
-      alienTechLevel3D: getVal("alienTechLevel3D") || "",
+      shipShape3D: formData.get("shipShape3D")?.toString() || "classic",
+      primaryColor3D: formData.get("primaryColor3D")?.toString() || "",
+      secondaryColor3D: formData.get("secondaryColor3D")?.toString() || "",
+      materialType3D: formData.get("materialType3D")?.toString() || "",
+      bodyLength3D: formData.get("bodyLength3D")?.toString() || "",
+      wingSpan3D: formData.get("wingSpan3D")?.toString() || "",
+      wingAngle3D: formData.get("wingAngle3D")?.toString() || "",
+      engineSize3D: formData.get("engineSize3D")?.toString() || "",
+      engineGlow3D: formData.get("engineGlow3D")?.toString() || "",
+      cockpitTint3D: formData.get("cockpitTint3D")?.toString() || "",
+      decals3D: formData.get("decals3D")?.toString() || "",
+      alienTechLevel3D: formData.get("alienTechLevel3D")?.toString() || "",
     };
   };
 
@@ -1071,26 +1067,18 @@ document.addEventListener("DOMContentLoaded", () => {
       document.querySelectorAll(".studio3d-btn[data-preset]").forEach((btn) => {
         btn.addEventListener("click", () => {
           const preset = btn.dataset.preset;
-          if (preset && threeContextStudio && threeContextStudio.setCameraPreset) {
-            threeContextStudio.setCameraPreset(preset);
-          }
+          if (preset && threeContextStudio?.setCameraPreset) threeContextStudio.setCameraPreset(preset);
         });
       });
       const resetBtn = document.getElementById("studio-reset-view");
-      if (resetBtn && threeContextStudio && threeContextStudio.resetView) {
-        resetBtn.addEventListener("click", () => threeContextStudio.resetView());
-      }
+      if (resetBtn && threeContextStudio?.resetView) resetBtn.addEventListener("click", () => threeContextStudio.resetView());
       const zoomInBtn = document.getElementById("studio-zoom-in");
-      if (zoomInBtn && threeContextStudio && threeContextStudio.zoomIn) {
-        zoomInBtn.addEventListener("click", () => threeContextStudio.zoomIn());
-      }
+      if (zoomInBtn && threeContextStudio?.zoomIn) zoomInBtn.addEventListener("click", () => threeContextStudio.zoomIn());
       const zoomOutBtn = document.getElementById("studio-zoom-out");
-      if (zoomOutBtn && threeContextStudio && threeContextStudio.zoomOut) {
-        zoomOutBtn.addEventListener("click", () => threeContextStudio.zoomOut());
-      }
+      if (zoomOutBtn && threeContextStudio?.zoomOut) zoomOutBtn.addEventListener("click", () => threeContextStudio.zoomOut());
 
       const autoRotateBtn = document.getElementById("studio-auto-rotate");
-      if (autoRotateBtn && threeContextStudio && threeContextStudio.set3DOptions) {
+      if (autoRotateBtn && threeContextStudio?.set3DOptions) {
         let studioAutoRotate = !s3d.reducedMotion && s3d.autoRotate;
         autoRotateBtn.classList.toggle("active", studioAutoRotate);
         autoRotateBtn.addEventListener("click", () => {
@@ -1100,7 +1088,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
       const showAxisBtn = document.getElementById("studio-show-axis");
-      if (showAxisBtn && threeContextStudio && threeContextStudio.set3DOptions) {
+      if (showAxisBtn && threeContextStudio?.set3DOptions) {
         let studioShowAxis = s3d.showAxis;
         showAxisBtn.classList.toggle("active", studioShowAxis);
         showAxisBtn.addEventListener("click", () => {
@@ -1113,11 +1101,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const canvasWrap = studioCanvas ? studioCanvas.closest(".studio3d-canvas-wrap") : null;
       if (fullscreenBtn && canvasWrap) {
         fullscreenBtn.addEventListener("click", () => {
-          if (!document.fullscreenElement && canvasWrap.requestFullscreen) {
-            canvasWrap.requestFullscreen();
-          } else if (document.exitFullscreen) {
-            document.exitFullscreen();
-          }
+          if (!document.fullscreenElement) canvasWrap.requestFullscreen?.();
+          else document.exitFullscreen?.();
         });
       }
       const screenshotBtn = document.getElementById("studio-screenshot");
