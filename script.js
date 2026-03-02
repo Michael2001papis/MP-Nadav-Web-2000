@@ -5,6 +5,7 @@ import { defaultShipConfig3D, mergeConfig3D, buildConfig3DFromRaw } from "./3d/u
 
 document.addEventListener("DOMContentLoaded", () => {
   const STORAGE_KEY = "spaceyard-fleet-v1";
+  const AUTH_KEY = "spaceyard-auth-user-v1";
 
   const TYPE_LABELS = {
     explorer: "ספינת מחקר",
@@ -86,6 +87,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const confirmReset = document.getElementById("confirm-reset");
   const clearLocalData = document.getElementById("clear-local-data");
   const resetSettingsBtn = document.getElementById("reset-settings");
+  const authOverlay = document.getElementById("auth-overlay");
+  const authForm = document.getElementById("auth-form");
+  const authError = document.getElementById("auth-error");
 
   const SETTINGS_KEY_V2 = "spaceyard-settings-v2";
   const SETTINGS_KEY_V1 = "spaceyard-settings-v1";
@@ -188,6 +192,92 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   loadSettings();
+
+  const getCurrentUser = () => {
+    try {
+      const raw = localStorage.getItem(AUTH_KEY);
+      if (!raw) return null;
+      return JSON.parse(raw);
+    } catch {
+      return null;
+    }
+  };
+
+  const setCurrentUser = (user) => {
+    if (!user) {
+      try {
+        localStorage.removeItem(AUTH_KEY);
+      } catch {}
+      if (authOverlay) {
+        authOverlay.classList.remove("hidden");
+        authOverlay.setAttribute("aria-hidden", "false");
+      }
+      document.body.removeAttribute("data-role");
+      return;
+    }
+    try {
+      localStorage.setItem(AUTH_KEY, JSON.stringify(user));
+    } catch {}
+    if (authOverlay) {
+      authOverlay.classList.add("hidden");
+      authOverlay.setAttribute("aria-hidden", "true");
+    }
+    document.body.dataset.role = user.role;
+    const adv = document.getElementById("advanced-part-colors");
+    if (adv) {
+      const isDev = user.role === "developer";
+      adv.classList.toggle("hidden", !isDev);
+      adv.setAttribute("aria-hidden", isDev ? "false" : "true");
+    }
+  };
+
+  const AUTH_USERS = [
+    {
+      username: "NM1234",
+      password: "321321",
+      role: "business",
+      displayName: "משתמש עסקי",
+    },
+    {
+      username: "MP123456",
+      password: "321321",
+      role: "developer",
+      displayName: "מפתח המערכת",
+    },
+  ];
+
+  if (authForm) {
+    authForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (authError) {
+        authError.textContent = "";
+      }
+      const formData = new FormData(authForm);
+      const username = formData.get("username")?.toString().trim() || "";
+      const password = formData.get("password")?.toString() || "";
+      const user = AUTH_USERS.find(
+        (u) => u.username === username && u.password === password
+      );
+      if (!user) {
+        if (authError) {
+          authError.textContent = "שם משתמש או סיסמה שגויים.";
+        }
+        return;
+      }
+      setCurrentUser({ username: user.username, role: user.role });
+      if (toastContainer) {
+        showToast(`התחברת כ-${user.displayName}.`, "success");
+      }
+    });
+  }
+
+  const existingUser = getCurrentUser();
+  if (existingUser) {
+    setCurrentUser(existingUser);
+  } else if (authOverlay) {
+    authOverlay.classList.remove("hidden");
+    authOverlay.setAttribute("aria-hidden", "false");
+  }
 
   if (settingsToggle && settingsModal) {
     settingsToggle.addEventListener("click", () => {
@@ -467,6 +557,10 @@ document.addEventListener("DOMContentLoaded", () => {
       cockpitTint3D: formData.get("cockpitTint3D")?.toString() || "",
       decals3D: formData.get("decals3D")?.toString() || "",
       alienTechLevel3D: formData.get("alienTechLevel3D")?.toString() || "",
+      bodyColor3D: formData.get("bodyColor3D")?.toString() || "",
+      wingsColor3D: formData.get("wingsColor3D")?.toString() || "",
+      engineColor3D: formData.get("engineColor3D")?.toString() || "",
+      cockpitColor3D: formData.get("cockpitColor3D")?.toString() || "",
     };
   };
 
@@ -1085,6 +1179,64 @@ document.addEventListener("DOMContentLoaded", () => {
     const initialNormalized = normalizeShip(initialRaw);
     shipSummary.innerHTML = buildSummaryText(initialNormalized);
     applyShipColor(initialNormalized.shipColor);
+  }
+
+  const userRequestForm = document.getElementById("user-request-form");
+  const userRequestStatus = document.getElementById("user-request-status");
+  if (userRequestForm && userRequestStatus) {
+    userRequestForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      userRequestStatus.textContent = "";
+      userRequestStatus.classList.remove("success", "error");
+      const formData = new FormData(userRequestForm);
+      const firstName = formData.get("firstName")?.toString().trim() || "";
+      const lastName = formData.get("lastName")?.toString().trim() || "";
+      const phone = formData.get("phone")?.toString().trim() || "";
+      const reason = formData.get("reason")?.toString() || "";
+      const message = formData.get("message")?.toString().trim() || "";
+
+      if (!firstName || !lastName || !phone || !reason) {
+        userRequestStatus.textContent = "נא למלא את כל השדות החיוניים.";
+        userRequestStatus.classList.add("error");
+        return;
+      }
+
+      const now = new Date();
+      const dateStr = now.toLocaleDateString("he-IL");
+      const timeStr = now.toLocaleTimeString("he-IL");
+
+      const reasonLabelMap = {
+        create: "יצירת משתמש חדש",
+        delete: "מחיקת משתמש",
+        "add-existing": "הוספת משתמש קיים",
+        "reset-password": "שחזור סיסמה",
+        general: "פנייה כללית",
+        other: "אחר",
+      };
+      const reasonLabel = reasonLabelMap[reason] || reason;
+
+      const subject = encodeURIComponent(
+        `בקשת ניהול משתמשים – ${reasonLabel}`
+      );
+      const bodyLines = [
+        `שם פרטי: ${firstName}`,
+        `שם משפחה: ${lastName}`,
+        `טלפון: ${phone}`,
+        `סיבת הפנייה: ${reasonLabel}`,
+        `תאריך ושעה: ${dateStr} ${timeStr}`,
+        "",
+        "פירוט נוסף:",
+        message || "(ללא)",
+      ];
+      const body = encodeURIComponent(bodyLines.join("\n"));
+      const mailtoUrl = `mailto:dvnka2@gmail.com?subject=${subject}&body=${body}`;
+
+      userRequestStatus.textContent =
+        "פותח לך מייל מוכן לשליחה אל מפתח המערכת.";
+      userRequestStatus.classList.add("success");
+
+      window.location.href = mailtoUrl;
+    });
   }
 });
 

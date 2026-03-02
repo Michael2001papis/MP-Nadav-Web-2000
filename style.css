@@ -798,6 +798,12 @@ body[data-theme="simple"] .ship-form textarea {
   display: none !important;
 }
 
+.field-note {
+  margin: 0 0 6px;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
 .ship-preview-panel {
   border-radius: var(--radius-lg);
   border: 1px solid var(--border-subtle);
@@ -1935,6 +1941,69 @@ body[data-theme="simple"] .ship-form textarea {
   font-size: 0.85rem;
   color: var(--text-muted);
   transition: color var(--transition-smooth);
+}
+
+.auth-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: radial-gradient(circle at top, rgba(15, 23, 42, 0.95), rgba(0, 0, 0, 0.98));
+}
+
+.auth-overlay.hidden {
+  display: none !important;
+}
+
+.auth-box {
+  width: 100%;
+  max-width: 420px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-subtle);
+  background: radial-gradient(circle at 0 0, rgba(56, 189, 248, 0.16), transparent 55%),
+    rgba(15, 23, 42, 0.98);
+  box-shadow: var(--shadow-soft);
+  padding: 20px 20px 18px;
+}
+
+.auth-box h1 {
+  margin: 0 0 8px;
+  font-size: 1.3rem;
+}
+
+.auth-subtitle {
+  margin: 0 0 16px;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.auth-form .field-error {
+  min-height: 1.2em;
+}
+
+.auth-submit {
+  width: 100%;
+  margin-top: 6px;
+  justify-content: center;
+}
+
+.auth-hint {
+  margin-top: 10px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.auth-hint code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
+    monospace;
+  font-size: 0.8rem;
+  background: rgba(15, 23, 42, 0.85);
+  padding: 1px 4px;
+  border-radius: 4px;
+  border: 1px solid rgba(148, 163, 184, 0.5);
 }
 
 @media (min-width: 680px) {

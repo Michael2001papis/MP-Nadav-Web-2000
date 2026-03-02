@@ -7,6 +7,29 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
+    <div id="auth-overlay" class="auth-overlay" aria-hidden="false">
+      <div class="auth-box" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+        <h1 id="auth-title">כניסה למערכת SpaceYard</h1>
+        <p class="auth-subtitle">בחר סוג משתמש והתחבר כדי להמשיך לבניית חלליות.</p>
+        <form id="auth-form" class="auth-form" novalidate>
+          <div class="form-group">
+            <label for="auth-username">שם משתמש</label>
+            <input id="auth-username" name="username" type="text" autocomplete="username" />
+          </div>
+          <div class="form-group">
+            <label for="auth-password">סיסמה</label>
+            <input id="auth-password" name="password" type="password" autocomplete="current-password" />
+          </div>
+          <p id="auth-error" class="field-error"></p>
+          <button type="submit" class="btn-primary auth-submit">כניסה</button>
+          <div class="auth-hint">
+            <p><strong>משתמש עסקי</strong> — שם משתמש: <code>NM1234</code>, סיסמה: <code>321321</code></p>
+            <p><strong>משתמש מפתח</strong> — שם משתמש: <code>MP123456</code>, סיסמה: <code>321321</code></p>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <header class="site-header">
       <div class="container header-content">
         <div class="logo">SpaceYard</div>
@@ -302,6 +325,9 @@
                 <summary class="builder-accordion-summary">הגדרות 3D</summary>
               <fieldset class="form-group features-group">
                 <legend>עריכת 3D</legend>
+                <p class="field-note">
+                  משתמש מפתח יכול לשלוט בצבעים וגדלים נפרדים לכל רכיב (גוף, כנפיים, מנוע, קוקפיט).
+                </p>
                 <div class="form-group">
                   <label for="ship-shape-3d">צורת חללית</label>
                   <select id="ship-shape-3d" name="shipShape3D">
@@ -328,6 +354,24 @@
                     name="secondaryColor3D"
                     value="#a855f7"
                   />
+                </div>
+                <div id="advanced-part-colors" class="advanced-part-colors hidden" aria-hidden="true">
+                  <div class="form-group">
+                    <label for="body-color-3d">צבע גוף</label>
+                    <input type="color" id="body-color-3d" name="bodyColor3D" value="#38bdf8" />
+                  </div>
+                  <div class="form-group">
+                    <label for="wings-color-3d">צבע כנפיים</label>
+                    <input type="color" id="wings-color-3d" name="wingsColor3D" value="#a855f7" />
+                  </div>
+                  <div class="form-group">
+                    <label for="engine-color-3d">צבע מנועים</label>
+                    <input type="color" id="engine-color-3d" name="engineColor3D" value="#a855f7" />
+                  </div>
+                  <div class="form-group">
+                    <label for="cockpit-color-3d">צבע קוקפיט</label>
+                    <input type="color" id="cockpit-color-3d" name="cockpitColor3D" value="#e0f2fe" />
+                  </div>
                 </div>
                 <div class="form-group">
                   <label for="material-type-3d">סוג חומר</label>
@@ -693,6 +737,47 @@
               </div>
             </article>
           </div>
+        </div>
+      </section>
+
+      <section id="user-requests" class="section section-alt" aria-labelledby="user-requests-heading">
+        <div class="container">
+          <h2 id="user-requests-heading">ניהול משתמשים – פנייה למפתח</h2>
+          <p>
+            יצירת, מחיקת או שינוי משתמשים מתבצעת רק באישור המפתח. מלא את הטופס ונכין עבורך מייל מוכן לשליחה אל מפתח המערכת.
+          </p>
+          <form id="user-request-form" class="contact-form" novalidate>
+            <div class="form-group">
+              <label for="req-first-name">שם פרטי</label>
+              <input id="req-first-name" name="firstName" type="text" required />
+            </div>
+            <div class="form-group">
+              <label for="req-last-name">שם משפחה</label>
+              <input id="req-last-name" name="lastName" type="text" required />
+            </div>
+            <div class="form-group">
+              <label for="req-phone">מספר טלפון</label>
+              <input id="req-phone" name="phone" type="tel" required />
+            </div>
+            <div class="form-group">
+              <label for="req-reason">סיבת הפנייה</label>
+              <select id="req-reason" name="reason" required>
+                <option value="">בחר סוג פנייה</option>
+                <option value="create">יצירת משתמש חדש</option>
+                <option value="delete">מחיקת משתמש</option>
+                <option value="add-existing">הוספת משתמש קיים</option>
+                <option value="reset-password">שחזור סיסמה</option>
+                <option value="general">פנייה כללית</option>
+                <option value="other">אחר</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="req-message">פירוט נוסף (אופציונלי)</label>
+              <textarea id="req-message" name="message" rows="3"></textarea>
+            </div>
+            <p id="user-request-status" class="form-status" aria-live="polite"></p>
+            <button type="submit" class="btn-primary">הכן ושלח פנייה למפתח</button>
+          </form>
         </div>
       </section>
     </main>

@@ -2,6 +2,10 @@ export const defaultShipConfig3D = {
   shipShape: "classic", // 'classic' | 'sleek' | 'heavy' | 'ring'
   primaryColor: "#38bdf8",
   secondaryColor: "#a855f7",
+  bodyColor: "#38bdf8",
+  wingsColor: "#a855f7",
+  engineColor: "#a855f7",
+  cockpitColor: "#e0f2fe",
   materialType: "metal", // 'metal' | 'matte' | 'glass' | 'alien'
   bodyLength: 6,
   bodyRadius: 2.2,
@@ -41,6 +45,10 @@ export const buildConfig3DFromRaw = (raw, existing = null) => {
     primaryColor: raw.primaryColor3D || raw.shipColor || base.primaryColor,
     secondaryColor:
       raw.secondaryColor3D || raw.shipColor || base.secondaryColor,
+    bodyColor: raw.bodyColor3D || raw.primaryColor3D || base.bodyColor,
+    wingsColor: raw.wingsColor3D || raw.secondaryColor3D || base.wingsColor,
+    engineColor: raw.engineColor3D || raw.secondaryColor3D || base.engineColor,
+    cockpitColor: raw.cockpitColor3D || base.cockpitColor,
     materialType: raw.materialType3D || base.materialType,
     bodyLength: num(raw.bodyLength3D, base.bodyLength, 1, 10),
     bodyRadius: clamp(base.bodyRadius, 0.8, 4.5),
