@@ -262,7 +262,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const applyRoleUI = (session) => {
-    const role = session?.role || "guest";
+    const role = session && session.role ? session.role : "guest";
     document.body.dataset.role = role;
     if (userLabel) {
       if (session) {
@@ -319,7 +319,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (welcomeModalClose) {
     welcomeModalClose.addEventListener("click", closeWelcomeModal);
   }
-  const welcomeOverlay = welcomeModal?.querySelector(".welcome-modal-overlay");
+  const welcomeOverlay = welcomeModal ? welcomeModal.querySelector(".welcome-modal-overlay") : null;
   if (welcomeOverlay) {
     welcomeOverlay.addEventListener("click", closeWelcomeModal);
   }
@@ -388,7 +388,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const navMenuBtn = document.getElementById("nav-menu-btn");
   const navDrawer = document.getElementById("nav-drawer");
-  const navDrawerOverlay = navDrawer?.querySelector(".nav-drawer-overlay");
+  const navDrawerOverlay = navDrawer ? navDrawer.querySelector(".nav-drawer-overlay") : null;
   const navDrawerSettings = document.getElementById("nav-drawer-settings");
   const openDrawer = () => {
     if (navDrawer) navDrawer.classList.add("open");
@@ -430,8 +430,14 @@ document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll(".settings-tab").forEach((tab) => {
     tab.addEventListener("click", () => {
       const tabId = tab.dataset.tab;
-      document.querySelectorAll(".settings-tab").forEach((t) => { t.classList.remove("active"); t.setAttribute("aria-selected", "false"); });
-      document.querySelectorAll(".settings-tab-panel").forEach((p) => { p.classList.remove("active"); p.hidden = true; });
+      document.querySelectorAll(".settings-tab").forEach((t) => {
+        t.classList.remove("active");
+        t.setAttribute("aria-selected", "false");
+      });
+      document.querySelectorAll(".settings-tab-panel").forEach((p) => {
+        p.classList.remove("active");
+        p.hidden = true;
+      });
       tab.classList.add("active");
       tab.setAttribute("aria-selected", "true");
       const panel = document.getElementById("tab-" + tabId);
@@ -531,23 +537,25 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   document.querySelectorAll(".gallery-card").forEach((c) => c.setAttribute("tabindex", "0"));
-  document.querySelector(".gallery-grid")?.addEventListener("click", (e) => {
+  const galleryGrid = document.querySelector(".gallery-grid");
+  if (galleryGrid) {
+    galleryGrid.addEventListener("click", (e) => {
     const card = e.target.closest(".gallery-card");
     if (!card) return;
     e.preventDefault();
     openGalleryLightbox(card);
-  });
+    });
+    galleryGrid.addEventListener("keydown", (e) => {
+      if (e.key !== "Enter" && e.key !== " ") return;
+      const card = e.target.closest(".gallery-card");
+      if (!card) return;
+      e.preventDefault();
+      openGalleryLightbox(card);
+    });
+  }
 
-  document.querySelector(".gallery-grid")?.addEventListener("keydown", (e) => {
-    if (e.key !== "Enter" && e.key !== " ") return;
-    const card = e.target.closest(".gallery-card");
-    if (!card) return;
-    e.preventDefault();
-    openGalleryLightbox(card);
-  });
-
-  galleryLightboxOverlay?.addEventListener("click", closeGalleryLightbox);
-  galleryLightboxClose?.addEventListener("click", closeGalleryLightbox);
+  if (galleryLightboxOverlay) galleryLightboxOverlay.addEventListener("click", closeGalleryLightbox);
+  if (galleryLightboxClose) galleryLightboxClose.addEventListener("click", closeGalleryLightbox);
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && galleryLightbox && !galleryLightbox.classList.contains("hidden")) closeGalleryLightbox();
   });
@@ -658,7 +666,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const config3D = buildConfig3DFromRaw(raw, existingConfig3D || raw.config3D || null);
 
     return {
-      id: existingId || `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+      id: existingId || (Date.now().toString() + "-" + Math.random().toString(36).slice(2, 7)),
       createdAt: existingCreatedAt || Date.now(),
       shipName: raw.shipName || "חללית ללא שם",
       shipType: raw.shipType || "explorer",
@@ -729,9 +737,18 @@ document.addEventListener("DOMContentLoaded", () => {
     setValue("ship-name", ship.shipName || "");
     setValue("ship-type", ship.shipType || "explorer");
     setValue("ship-color", ship.shipColor || "#7c3aed");
-    setValue("ship-speed", ship.shipSpeed ?? 5);
-    setValue("ship-size", ship.shipSize ?? 5);
-    setValue("ship-crew", ship.shipCrew ?? 1);
+    setValue(
+      "ship-speed",
+      typeof ship.shipSpeed === "number" ? ship.shipSpeed : 5
+    );
+    setValue(
+      "ship-size",
+      typeof ship.shipSize === "number" ? ship.shipSize : 5
+    );
+    setValue(
+      "ship-crew",
+      typeof ship.shipCrew === "number" ? ship.shipCrew : 1
+    );
     setValue("commander-name", ship.commanderName || "");
     setValue("mission-description", ship.missionDescription || "");
     setValue("risk-level", ship.riskLevel || "medium");
@@ -1013,7 +1030,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const syncStudioShip = () => {
     if (!threeContextStudio) return;
     try {
-      const cfg = currentShip3D?.config3D || defaultShipConfig3D;
+      const cfg = (currentShip3D && currentShip3D.config3D) ? currentShip3D.config3D : defaultShipConfig3D;
       const { group } = createShip(cfg);
       threeContextStudio.setShipGroup(group);
     } catch (_) {}
@@ -1067,7 +1084,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
       const fullscreenBtn = document.getElementById("studio-fullscreen");
-      const canvasWrap = studioCanvas?.closest(".studio3d-canvas-wrap");
+      const canvasWrap = studioCanvas ? studioCanvas.closest(".studio3d-canvas-wrap") : null;
       if (fullscreenBtn && canvasWrap) {
         fullscreenBtn.addEventListener("click", () => {
           if (!document.fullscreenElement) canvasWrap.requestFullscreen?.();
@@ -1075,7 +1092,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
       const screenshotBtn = document.getElementById("studio-screenshot");
-      if (screenshotBtn && threeContextStudio?.renderer) {
+      if (screenshotBtn && threeContextStudio && threeContextStudio.renderer) {
         screenshotBtn.addEventListener("click", () => {
           try {
             const dataUrl = threeContextStudio.renderer.domElement.toDataURL("image/png");
@@ -1090,12 +1107,14 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
 
-      studioCanvas?.addEventListener("wheel", (e) => {
+      if (studioCanvas) {
+        studioCanvas.addEventListener("wheel", (e) => {
         if (!threeContextStudio) return;
         e.preventDefault();
         if (e.deltaY > 0) threeContextStudio.zoomOut();
         else threeContextStudio.zoomIn();
       }, { passive: false });
+      }
     } catch (err) {
       console.warn("SpaceYard: Studio 3D not available", err);
       threeContextStudio = null;
@@ -1120,7 +1139,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (requestError) requestError.textContent = "";
     if (requestSuccess) requestSuccess.textContent = "";
     const formData = new FormData(requestUserForm);
-    const hp = formData.get("hp")?.toString() || "";
+    const hp = (formData.get("hp") && formData.get("hp").toString()) || "";
     if (hp.trim() !== "") {
       return;
     }
@@ -1135,11 +1154,11 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
     const payload = {
-      firstName: formData.get("firstName")?.toString() || "",
-      lastName: formData.get("lastName")?.toString() || "",
-      phone: formData.get("phone")?.toString() || "",
-      reason: formData.get("reason")?.toString() || "",
-      message: formData.get("message")?.toString() || "",
+      firstName: (formData.get("firstName") && formData.get("firstName").toString()) || "",
+      lastName: (formData.get("lastName") && formData.get("lastName").toString()) || "",
+      phone: (formData.get("phone") && formData.get("phone").toString()) || "",
+      reason: (formData.get("reason") && formData.get("reason").toString()) || "",
+      message: (formData.get("message") && formData.get("message").toString()) || "",
       sentAt: new Date().toISOString(),
     };
     if (!payload.firstName || !payload.lastName || !payload.phone || !payload.reason || !payload.message) {
@@ -1183,7 +1202,7 @@ document.addEventListener("DOMContentLoaded", () => {
           raw,
           selectedShipId,
           null,
-          currentShip3D?.config3D || null
+          currentShip3D && currentShip3D.config3D ? currentShip3D.config3D : null
         );
         shipSummary.innerHTML = buildSummaryText(normalized);
         applyShipColor(normalized.shipColor);
@@ -1360,8 +1379,8 @@ document.addEventListener("DOMContentLoaded", () => {
       event.preventDefault();
       if (loginError) loginError.textContent = "";
       const formData = new FormData(loginForm);
-      const username = formData.get("username")?.toString().trim() || "";
-      const password = formData.get("password")?.toString() || "";
+      const username = (formData.get("username") && formData.get("username").toString().trim()) || "";
+      const password = (formData.get("password") && formData.get("password").toString()) || "";
       const user = USERS[username];
       if (!user || user.password !== password) {
         if (loginError) loginError.textContent = "שם משתמש או סיסמה שגויים.";
