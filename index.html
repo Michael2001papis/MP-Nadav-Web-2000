@@ -10,16 +10,14 @@
     <div id="auth-overlay" class="auth-overlay hidden" aria-hidden="true">
       <div class="auth-box" role="dialog" aria-modal="true" aria-labelledby="welcome-title">
         <div id="welcome-panel">
-          <h1 id="welcome-title">ברוך הבא ל‑SpaceYard</h1>
+          <h1 id="welcome-title">ברוך הבא למעבדת SpaceYard</h1>
           <p class="auth-subtitle">
-            זהו אתר ניסויי לבניית צי חלליות לשימוש חינוכי ויצירתי בלבד. כל הנתונים נשמרים מקומית בדפדפן שלך
-            ואינם נשלחים לשרת.
+            SpaceYard היא מעבדה קוונטית ניסיונית לבניית צי חלליות – עם תצוגת 3D, טלו־מטריה חיה וניהול Hangar אישי.
           </p>
           <p class="auth-subtitle">
-            השימוש באתר מהווה אישור לקרוא ולהבין שהאפליקציה היא לצורכי הדגמה בלבד, ללא אחריות,
-            וכפוף לזכויות היוצר של מפתח המערכת.
+            השימוש באתר מיועד להדגמה בלבד, ללא אחריות, וכל הנתונים נשמרים מקומית בדפדפן שלך ואינם נשלחים לשרת.
           </p>
-          <button type="button" id="welcome-accept-btn" class="btn-primary auth-submit">הבנתי, המשך לאתר</button>
+          <button type="button" id="welcome-accept-btn" class="btn-primary auth-submit">התחל כאורח</button>
         </div>
 
         <form id="auth-form" class="auth-form hidden" novalidate aria-hidden="true">
@@ -43,8 +41,11 @@
     </div>
 
     <header class="site-header">
-      <div class="container header-content">
-        <div class="logo">SpaceYard</div>
+        <div class="container header-content">
+        <div class="logo">
+          SpaceYard
+          <span class="logo-subtitle">Quantum Lab</span>
+        </div>
         <button type="button" id="nav-menu-btn" class="nav-menu-btn" aria-label="תפריט" aria-expanded="false" aria-controls="nav-drawer">☰</button>
         <nav class="nav" aria-label="ניווט ראשי">
           <a href="#home">ראשי</a>
@@ -55,6 +56,10 @@
           <button type="button" id="settings-toggle" class="nav-settings-btn" aria-label="הגדרות" aria-expanded="false">⚙️ הגדרות</button>
           <button type="button" id="login-open-btn" class="nav-settings-btn" aria-label="כניסת משתמשים">כניסת משתמש</button>
           <button type="button" id="logout-btn" class="nav-settings-btn hidden" aria-label="יציאה מהמשתמש">יציאה</button>
+          <span id="system-status-pill" class="status-pill" aria-live="polite">
+            <span class="status-pill-dot"></span>
+            SYNC: LOCAL · 3D: INIT
+          </span>
         </nav>
       </div>
       <div id="nav-drawer" class="nav-drawer" aria-hidden="true">
@@ -171,22 +176,21 @@
     <main>
       <section id="home" class="hero">
         <div class="container hero-content">
-          <h1 id="hero-title">בונה החלליות הפרטי שלך</h1>
+          <h1 id="hero-title">SpaceYard Quantum Ship Lab</h1>
           <p id="hero-subtitle">
-            תכנן חללית, בחר צבעים, מהירות, צוות ויכולות – ובנה צי חלליות דמיוני
-            משלך, הכל ישר מתוך הדפדפן.
+            Design spacecraft prototypes with live telemetry, 3D preview, and a personal hangar – directly in your browser.
           </p>
           <button id="cta-button" class="btn-primary">
-            בוא נבנה חללית
+            התחל לבנות חללית
           </button>
         </div>
       </section>
 
       <section id="builder" class="section builder-section">
         <div class="container">
-          <h2 id="builder-title">מגדל ההרכבה</h2>
+          <h2 id="builder-title">Assembly Tower</h2>
           <p id="builder-subtitle">
-            מלא את הפרטים, שחק עם האפשרויות, וצפה בחללית שלך נבנית בתצוגה החיה.
+            מלא את הפרטים, שחק עם האפשרויות, וצפה בחללית שלך נבנית בתצוגה החיה ובטלו־מטריה בזמן אמת.
           </p>
 
           <div class="builder-grid">
@@ -578,9 +582,9 @@
 
       <section id="studio3d" class="section studio3d-section" aria-labelledby="studio3d-heading">
         <div class="container">
-          <h2 id="studio3d-heading">סטודיו 3D</h2>
+          <h2 id="studio3d-heading">3D Observation Chamber</h2>
           <p id="studio3d-intro" class="studio3d-intro">
-            תצוגה מלאה ועריכה ויזואלית של החללית – סובב, זום, בחר זווית. מתאים לשרטוט לפני הדפסה תלת־ממדית.
+            תצוגה מלאה ועריכה ויזואלית של החללית – סובב, זום, בחר זווית. מתאים לשרטוט לפני הדפסה תלת־ממדית ולבדיקות קוונטיות.
           </p>
           <div class="studio3d-toolbar" role="toolbar" aria-label="כלי תצוגת 3D">
             <div class="studio3d-toolbar-group" aria-label="זווית מצלמה">
@@ -613,10 +617,9 @@
 
       <section id="fleet" class="section section-alt">
         <div class="container">
-          <h2 id="fleet-title">הצי שבנית</h2>
+          <h2 id="fleet-title">Hangar Bay</h2>
           <p id="fleet-subtitle">
-            כל חללית שתוסיף תופיע כאן. שמור, השווה, ותחליט מי תוביל את המשימה
-            הבאה.
+            כל חללית שתוסיף תופיע כאן. שמור, השווה, ותחליט מי תוביל את המשימה הבאה מתוך ה-Hangar הקוונטי שלך.
           </p>
           <div class="fleet-controls">
             <div class="fleet-filters">
@@ -662,7 +665,7 @@
 
       <section id="gallery" class="section gallery-section" aria-labelledby="gallery-heading" role="region">
         <div class="container">
-          <h2 id="gallery-heading">גלריית השראה ושרטוטים</h2>
+          <h2 id="gallery-heading">Inspiration Archive</h2>
           <p id="gallery-intro" class="gallery-intro">
             תמונות אווירה ושרטוטים טכניים – עוזרים להבין איך חללית נראית ולחדד מחשבה לפני בנייה.
             <strong>לחץ על כרטיס להגדלה.</strong>

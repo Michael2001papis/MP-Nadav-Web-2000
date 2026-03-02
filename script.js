@@ -94,6 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const authError = document.getElementById("auth-error");
   const logoutBtn = document.getElementById("logout-btn");
   const loginOpenBtn = document.getElementById("login-open-btn");
+  const systemStatusPill = document.getElementById("system-status-pill");
 
   const SETTINGS_KEY_V2 = "spaceyard-settings-v2";
   const SETTINGS_KEY_V1 = "spaceyard-settings-v1";
@@ -196,6 +197,14 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   loadSettings();
+
+  const updateSystemStatus = (threeOk = null) => {
+    if (!systemStatusPill) return;
+    const threeState = threeOk === null ? "INIT" : threeOk ? "ON" : "OFF";
+    systemStatusPill.textContent = `SYNC: LOCAL · 3D: ${threeState}`;
+  };
+
+  updateSystemStatus(null);
 
   // החלת טקסטים מותאמים (מפתח/משתמש עסקי) מידית על כל האתר
   try {
@@ -1119,11 +1128,13 @@ document.addEventListener("DOMContentLoaded", () => {
       const { group, parts } = createShip(initialConfig3D);
       threeContext.setShipGroup(group);
       currentShip3D = { group, parts, config3D: initialConfig3D };
+      updateSystemStatus(true);
     } catch (err) {
       console.warn("SpaceYard: 3D not available", err);
       threeContext = null;
       currentShip3D = null;
       show3DFallback();
+      updateSystemStatus(false);
     }
   }
 
