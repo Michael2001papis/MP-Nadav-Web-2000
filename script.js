@@ -697,27 +697,41 @@ document.addEventListener("DOMContentLoaded", () => {
     const riskText = RISK_LABELS[ship.riskLevel] || "לא סווגה";
     const commander = ship.commanderName || "לא הוגדר";
     const mission =
-      ship.missionDescription && ship.missionDescription.trim().length > 0
+      ship.missionDescription && ship.shipDescription && ship.shipDescription.trim
+        ? String(ship.missionDescription).trim()
+        : ship.missionDescription && ship.missionDescription.trim
         ? ship.missionDescription.trim()
         : null;
     const alien =
       ship.alienType && ALIEN_LABELS[ship.alienType]
-        ? ` · חייזר מלווה: ${ALIEN_LABELS[ship.alienType]}`
+        ? " · חייזר מלווה: " + ALIEN_LABELS[ship.alienType]
         : "";
 
-    return `
-      <strong>${ship.shipName || "חללית ללא שם"}</strong> היא ${typeLabel}
-      בצבע מותאם, למהירות עיוות של <strong>${ship.shipSpeed}</strong>,
-      בגודל יחסי <strong>${ship.shipSize}</strong> וצוות של
-      <strong>${ship.shipCrew}</strong> אסטרונאוטים.
-      <br />
-      יכולות מיוחדות: <strong>${featuresText}</strong>.
-      <br />
-      מערכות מתקדמות: <strong>${advancedText}</strong>.
-      <br />
-      מפקד/ת המשימה: <strong>${commander}</strong>, רמת סיכון: <strong>${riskText}</strong>${alien}.
-      ${mission ? "<br />תיאור המשימה: " + mission : ""}
-    `;
+    return (
+      (ship.shipName || "חללית ללא שם") +
+      " היא " +
+      typeLabel +
+      "\nבצבע מותאם, למהירות עיוות של " +
+      ship.shipSpeed +
+      ",\nבגודל יחסי " +
+      ship.shipSize +
+      " וצוות של\n" +
+      ship.shipCrew +
+      " אסטרונאוטים.\n\n" +
+      "יכולות מיוחדות: " +
+      featuresText +
+      ".\n\n" +
+      "מערכות מתקדמות: " +
+      advancedText +
+      ".\n\n" +
+      "מפקד/ת המשימה: " +
+      commander +
+      ", רמת סיכון: " +
+      riskText +
+      alien +
+      "." +
+      (mission ? " תיאור המשימה: " + mission : "")
+    );
   };
 
   const applyShipColor = (color) => {
