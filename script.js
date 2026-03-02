@@ -95,6 +95,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const logoutBtn = document.getElementById("logout-btn");
   const loginOpenBtn = document.getElementById("login-open-btn");
   const systemStatusPill = document.getElementById("system-status-pill");
+  const heroMetricFleet = document.getElementById("hero-metric-fleet");
+  const heroMetric3D = document.getElementById("hero-metric-3d");
+  const heroMetricTheme = document.getElementById("hero-metric-theme");
+  const openStudioBtn = document.getElementById("open-studio-btn");
 
   const SETTINGS_KEY_V2 = "spaceyard-settings-v2";
   const SETTINGS_KEY_V1 = "spaceyard-settings-v1";
@@ -202,6 +206,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!systemStatusPill) return;
     const threeState = threeOk === null ? "INIT" : threeOk ? "ON" : "OFF";
     systemStatusPill.textContent = `SYNC: LOCAL · 3D: ${threeState}`;
+    if (heroMetric3D) heroMetric3D.textContent = threeState;
   };
 
   updateSystemStatus(null);
@@ -1028,6 +1033,9 @@ document.addEventListener("DOMContentLoaded", () => {
         fleetSummaryLine.textContent = `סה"כ חלליות: ${total}`;
       } else {
         fleetSummaryLine.textContent = `סה"כ חלליות: ${total} · מוצגות כעת: ${shown}`;
+      }
+      if (heroMetricFleet) {
+        heroMetricFleet.textContent = String(total);
       }
     }
 

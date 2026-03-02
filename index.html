@@ -176,13 +176,38 @@
     <main>
       <section id="home" class="hero">
         <div class="container hero-content">
-          <h1 id="hero-title">SpaceYard Quantum Ship Lab</h1>
-          <p id="hero-subtitle">
-            Design spacecraft prototypes with live telemetry, 3D preview, and a personal hangar – directly in your browser.
-          </p>
-          <button id="cta-button" class="btn-primary">
-            התחל לבנות חללית
-          </button>
+          <div class="hero-copy">
+            <p class="hero-kicker">Build • Simulate • Evolve</p>
+            <h1 id="hero-title">SpaceYard Quantum Ship Lab</h1>
+            <p id="hero-subtitle">
+              Design spacecraft prototypes with live telemetry, 3D preview, and a personal hangar – directly in your browser.
+            </p>
+            <div class="hero-actions">
+              <button id="cta-button" class="btn-primary">
+                התחל לבנות חללית
+              </button>
+              <button type="button" id="open-studio-btn" class="btn-ghost">
+                פתח סטודיו 3D
+              </button>
+            </div>
+          </div>
+          <aside class="hero-panel" aria-label="סיכום מהיר של המערכת">
+            <h3 class="hero-panel-title">Quantum Telemetry</h3>
+            <dl class="hero-metrics">
+              <div>
+                <dt>Ships in Fleet</dt>
+                <dd id="hero-metric-fleet">0</dd>
+              </div>
+              <div>
+                <dt>3D Status</dt>
+                <dd id="hero-metric-3d">INIT</dd>
+              </div>
+              <div>
+                <dt>Theme</dt>
+                <dd id="hero-metric-theme">Quantum Dark</dd>
+              </div>
+            </dl>
+          </aside>
         </div>
       </section>
 
