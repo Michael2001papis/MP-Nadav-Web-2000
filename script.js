@@ -5,6 +5,7 @@ import { defaultShipConfig3D, mergeConfig3D, buildConfig3DFromRaw } from "./3d/u
 
 const SESSION_KEY = "spaceyard-session-v1";
 const FLEET_STORAGE_KEY = "spaceyard-fleet-v1";
+const WELCOME_STORAGE_KEY = "spaceyard-welcome-v1";
 
 const USERS = {
   NM1324: { password: "321321", role: "business_admin", displayName: "NM1324" },
@@ -137,6 +138,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const openRequestModalBtn = document.getElementById("open-request-modal");
   const navDrawerRequest = document.getElementById("nav-drawer-request");
   const navDrawerLogout = document.getElementById("nav-drawer-logout");
+  const welcomeModal = document.getElementById("welcome-modal");
+  const welcomeModalClose = document.getElementById("welcome-modal-close");
 
   const SETTINGS_KEY_V2 = "spaceyard-settings-v2";
   const SETTINGS_KEY_V1 = "spaceyard-settings-v1";
@@ -284,6 +287,47 @@ document.addEventListener("DOMContentLoaded", () => {
       clearLocalData.classList.remove("settings-disabled");
     }
   };
+
+  const openWelcomeModal = () => {
+    if (!welcomeModal) return;
+    welcomeModal.classList.remove("hidden");
+    welcomeModal.setAttribute("aria-hidden", "false");
+  };
+
+  const closeWelcomeModal = () => {
+    if (!welcomeModal) return;
+    welcomeModal.classList.add("hidden");
+    welcomeModal.setAttribute("aria-hidden", "true");
+    try {
+      window.localStorage.setItem(WELCOME_STORAGE_KEY, "seen");
+    } catch {
+      // ignore
+    }
+  };
+
+  const maybeShowWelcome = (session) => {
+    if (!session) return;
+    try {
+      const flag = window.localStorage.getItem(WELCOME_STORAGE_KEY);
+      if (flag === "seen") return;
+    } catch {
+      // ignore
+    }
+    openWelcomeModal();
+  };
+
+  if (welcomeModalClose) {
+    welcomeModalClose.addEventListener("click", closeWelcomeModal);
+  }
+  const welcomeOverlay = welcomeModal?.querySelector(".welcome-modal-overlay");
+  if (welcomeOverlay) {
+    welcomeOverlay.addEventListener("click", closeWelcomeModal);
+  }
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && welcomeModal && !welcomeModal.classList.contains("hidden")) {
+      closeWelcomeModal();
+    }
+  });
 
   const openRequestModal = () => {
     if (!requestUserModal) return;
@@ -1306,6 +1350,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (initialSession) {
     applyAuthState(initialSession);
     initAppLogic();
+    maybeShowWelcome(initialSession);
   } else {
     applyAuthState(null);
   }
@@ -1328,6 +1373,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!initialSession) {
         initAppLogic();
       }
+      maybeShowWelcome(session);
       showToast("התחברת בהצלחה.", "success");
     });
   }

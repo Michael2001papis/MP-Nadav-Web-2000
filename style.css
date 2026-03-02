@@ -2021,6 +2021,61 @@ body[data-theme="simple"] .ship-form textarea {
   transition: color var(--transition-smooth);
 }
 
+.welcome-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 115;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.welcome-modal.hidden {
+  display: none !important;
+}
+
+.welcome-modal-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+}
+
+.welcome-modal-box {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  max-height: 90vh;
+  overflow: auto;
+  background: var(--bg-alt);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7);
+  padding: 20px 22px 22px;
+}
+
+.welcome-modal-box h2 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 1.4rem;
+}
+
+.welcome-modal-box p {
+  margin: 0 0 8px;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+}
+
+.welcome-modal-note {
+  font-size: 0.85rem;
+}
+
+.welcome-modal-box .btn-primary {
+  margin-top: 10px;
+  width: 100%;
+}
+
 .request-modal {
   position: fixed;
   inset: 0;

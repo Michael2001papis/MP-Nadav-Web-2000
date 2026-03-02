@@ -744,6 +744,31 @@
     </footer>
 
     <div
+      id="welcome-modal"
+      class="welcome-modal hidden"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="welcome-modal-title"
+    >
+      <div class="welcome-modal-overlay"></div>
+      <div class="welcome-modal-box">
+        <h2 id="welcome-modal-title">ברוך הבא ל‑SpaceYard</h2>
+        <p>
+          זהו סביבת בילד פנימית לניסוי, תכנון ושרטוט חלליות. המערכת מיועדת לעבודה פנימית בלבד ואינה אתר מסחרי או מוצר סופי.
+        </p>
+        <p>
+          הלקוח המוצג במערכת: <strong>נדב (NM1324)</strong>. מפתח המערכת: <strong>Michael Papismedov (MP1234)</strong>.
+        </p>
+        <p class="welcome-modal-note">
+          הנתונים נשמרים מקומית בדפדפן לצורך בדיקות ובניה, ויכולים להימחק בכל רגע דרך ההגדרות.
+        </p>
+        <button type="button" id="welcome-modal-close" class="btn-primary">
+          הבנתי, המשך לשימוש
+        </button>
+      </div>
+    </div>
+
+    <div
       id="request-user-modal"
       class="request-modal hidden"
       role="dialog"
