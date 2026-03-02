@@ -708,7 +708,7 @@ document.addEventListener("DOMContentLoaded", () => {
       מערכות מתקדמות: <strong>${advancedText}</strong>.
       <br />
       מפקד/ת המשימה: <strong>${commander}</strong>, רמת סיכון: <strong>${riskText}</strong>${alien}.
-      ${mission ? `<br />תיאור המשימה: ${mission}` : ""}
+      ${mission ? "<br />תיאור המשימה: " + mission : ""}
     `;
   };
 
