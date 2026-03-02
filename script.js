@@ -6,6 +6,7 @@ import { defaultShipConfig3D, mergeConfig3D, buildConfig3DFromRaw } from "./3d/u
 document.addEventListener("DOMContentLoaded", () => {
   const STORAGE_KEY = "spaceyard-fleet-v1";
   const AUTH_KEY = "spaceyard-auth-user-v1";
+  const BUSINESS_PROFILE_KEY = "spaceyard-business-profile-v1";
 
   const TYPE_LABELS = {
     explorer: "ספינת מחקר",
@@ -228,6 +229,15 @@ document.addEventListener("DOMContentLoaded", () => {
       const isDev = user.role === "developer";
       adv.classList.toggle("hidden", !isDev);
       adv.setAttribute("aria-hidden", isDev ? "false" : "true");
+    }
+    document
+      .querySelectorAll(".business-only-section")
+      .forEach((el) => {
+        const isBusiness = user.role === "business";
+        el.classList.toggle("hidden", !isBusiness);
+      });
+    if (user.role === "business") {
+      initBusinessProfile();
     }
   };
 
@@ -1323,6 +1333,87 @@ document.addEventListener("DOMContentLoaded", () => {
 
       window.location.href = mailtoUrl;
     });
+  }
+
+  function initBusinessProfile() {
+    const form = document.getElementById("business-profile-form");
+    const statusEl = document.getElementById("business-profile-status");
+    if (!form || !statusEl) return;
+
+    const avatar = document.getElementById("profile-avatar");
+    const avatarInitials = document.getElementById("profile-avatar-initials");
+    const displayNameView = document.getElementById("profile-display-name-view");
+    const taglineView = document.getElementById("profile-tagline-view");
+    const favMissionView = document.getElementById("profile-favorite-mission-view");
+    const colorChip = document.getElementById("profile-color-chip");
+
+    const loadProfile = () => {
+      let profile = null;
+      try {
+        const raw = localStorage.getItem(BUSINESS_PROFILE_KEY);
+        if (raw) profile = JSON.parse(raw);
+      } catch {}
+      const data = profile || {
+        displayName: "משתמש עסקי",
+        tagline: "חלליות הן חלק מהעבודה היומיומית שלי.",
+        color: "#38bdf8",
+        favoriteMission: "explorer",
+      };
+
+      form.displayName.value = data.displayName || "";
+      form.tagline.value = data.tagline || "";
+      form.color.value = data.color || "#38bdf8";
+      form.favoriteMission.value = data.favoriteMission || "explorer";
+
+      if (displayNameView) displayNameView.textContent = data.displayName || "משתמש עסקי";
+      if (taglineView) taglineView.textContent = data.tagline || "חלליות הן חלק מהעבודה היומיומית שלי.";
+      if (favMissionView) {
+        favMissionView.textContent =
+          data.favoriteMission === "fighter"
+            ? "ליווי ואבטחה"
+            : data.favoriteMission === "cargo"
+            ? "לוגיסטיקה ומשא"
+            : data.favoriteMission === "luxury"
+            ? "אירועים ו-PR בחלל"
+            : "חקר וגילוי";
+      }
+      const color = data.color || "#38bdf8";
+      if (colorChip) colorChip.style.background = color;
+      if (avatar) avatar.style.boxShadow = `0 0 18px ${color}80`;
+      const nameForInitials = (data.displayName || "NM1234").trim();
+      const initials =
+        nameForInitials
+          .split(" ")
+          .filter(Boolean)
+          .slice(0, 2)
+          .map((part) => part[0])
+          .join("") || "NM";
+      if (avatarInitials) avatarInitials.textContent = initials.toUpperCase();
+    };
+
+    loadProfile();
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const profile = {
+        displayName: form.displayName.value.trim() || "משתמש עסקי",
+        tagline: form.tagline.value.trim() || "חלליות הן חלק מהעבודה היומיומית שלי.",
+        color: form.color.value || "#38bdf8",
+        favoriteMission: form.favoriteMission.value || "explorer",
+      };
+      try {
+        localStorage.setItem(BUSINESS_PROFILE_KEY, JSON.stringify(profile));
+        statusEl.textContent = "הפרופיל נשמר במכשיר שלך.";
+        statusEl.classList.remove("error");
+        statusEl.classList.add("success");
+        loadProfile();
+        if (toastContainer) showToast("פרופיל משתמש עודכן.", "success");
+      } catch {
+        statusEl.textContent = "שמירת הפרופיל נכשלה.";
+        statusEl.classList.remove("success");
+        statusEl.classList.add("error");
+      }
+    }, { once: true });
   }
 });
 

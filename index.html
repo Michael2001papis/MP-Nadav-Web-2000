@@ -795,6 +795,63 @@
         </div>
       </section>
 
+      <section id="business-profile" class="section section-alt business-only-section hidden" aria-labelledby="business-profile-heading">
+        <div class="container">
+          <h2 id="business-profile-heading">פרופיל משתמש עסקי</h2>
+          <p>
+            כאן תוכל להתאים את פרטי הפרופיל שלך כפי שהם יוצגו במסך – שם מוצג, צבע זיהוי והעדפות משימה. השינויים נשמרים רק במכשיר שלך.
+          </p>
+          <div class="profile-grid">
+            <aside class="profile-card">
+              <div class="profile-avatar" id="profile-avatar">
+                <span id="profile-avatar-initials">NM</span>
+              </div>
+              <div class="profile-card-body">
+                <h3 id="profile-display-name-view">משתמש עסקי</h3>
+                <p class="profile-role-label">SpaceYard Business</p>
+                <p class="profile-tagline" id="profile-tagline-view">חלליות הן חלק מהעבודה היומיומית שלי.</p>
+                <dl class="profile-meta">
+                  <div>
+                    <dt>סוג משימה מועדף</dt>
+                    <dd id="profile-favorite-mission-view">חקר וגילוי</dd>
+                  </div>
+                  <div>
+                    <dt>צבע זיהוי בפרויקט</dt>
+                    <dd><span id="profile-color-chip" class="profile-color-chip"></span></dd>
+                  </div>
+                </dl>
+              </div>
+            </aside>
+
+            <form id="business-profile-form" class="profile-form" novalidate>
+              <div class="form-group">
+                <label for="profile-display-name">שם מוצג</label>
+                <input id="profile-display-name" name="displayName" type="text" placeholder="לדוגמה: מיקי חלל בע״מ" />
+              </div>
+              <div class="form-group">
+                <label for="profile-tagline">שורת תיאור קצרה</label>
+                <input id="profile-tagline" name="tagline" type="text" placeholder="לדוגמה: מתכננים צי חלליות לימי צילום והדגמות." />
+              </div>
+              <div class="form-group">
+                <label for="profile-color">צבע זיהוי</label>
+                <input id="profile-color" name="color" type="color" value="#38bdf8" />
+              </div>
+              <div class="form-group">
+                <label for="profile-favorite-mission">משימה מועדפת</label>
+                <select id="profile-favorite-mission" name="favoriteMission">
+                  <option value="explorer">חקר וגילוי</option>
+                  <option value="fighter">ליווי ואבטחה</option>
+                  <option value="cargo">לוגיסטיקה ומשא</option>
+                  <option value="luxury">אירועים ו-PR בחלל</option>
+                </select>
+              </div>
+              <p id="business-profile-status" class="form-status" aria-live="polite"></p>
+              <button type="submit" class="btn-primary btn-sm">שמור פרופיל</button>
+            </form>
+          </div>
+        </div>
+      </section>
+
       <section id="user-requests" class="section section-alt" aria-labelledby="user-requests-heading">
         <div class="container">
           <h2 id="user-requests-heading">ניהול משתמשים – פנייה למפתח</h2>

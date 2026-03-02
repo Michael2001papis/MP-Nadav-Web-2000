@@ -1253,6 +1253,11 @@ body[data-theme="simple"] .ship-form textarea {
   font-size: 0.9rem;
   color: var(--text-muted);
   line-height: 1.6;
+  max-height: 132px;
+  overflow-y: auto;
+  padding-right: 4px;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
 }
 
 .ship-summary strong {
@@ -2082,6 +2087,88 @@ body[data-theme="simple"] .ship-form textarea {
   font-size: 0.85rem;
   color: var(--text-muted);
   transition: color var(--transition-smooth);
+}
+
+.profile-grid {
+  margin-top: 18px;
+  display: grid;
+  gap: 18px;
+}
+
+.profile-card {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-subtle);
+  padding: 16px 16px 18px;
+  background: radial-gradient(circle at 0 0, rgba(56, 189, 248, 0.16), transparent 55%),
+    rgba(15, 23, 42, 0.96);
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.profile-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 999px;
+  border: 2px solid rgba(148, 163, 184, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 30% 0, #e5e7eb, var(--accent), #020617);
+  box-shadow: 0 0 18px rgba(56, 189, 248, 0.6);
+  flex-shrink: 0;
+}
+
+.profile-avatar span {
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.profile-card-body h3 {
+  margin: 0 0 4px;
+  font-size: 1.05rem;
+}
+
+.profile-role-label {
+  margin: 0 0 6px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.profile-tagline {
+  margin: 0 0 10px;
+  font-size: 0.86rem;
+  color: var(--text-muted);
+}
+
+.profile-meta {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px 12px;
+  font-size: 0.8rem;
+}
+
+.profile-meta dt {
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.profile-meta dd {
+  margin: 0;
+}
+
+.profile-color-chip {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.7);
+  box-shadow: 0 0 8px rgba(15, 23, 42, 0.9);
+}
+
+.profile-form {
+  max-width: 420px;
 }
 
 .auth-overlay {
