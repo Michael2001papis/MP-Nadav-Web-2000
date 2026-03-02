@@ -7,11 +7,24 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <div id="auth-overlay" class="auth-overlay" aria-hidden="false">
-      <div class="auth-box" role="dialog" aria-modal="true" aria-labelledby="auth-title">
-        <h1 id="auth-title">כניסה למערכת SpaceYard</h1>
-        <p class="auth-subtitle">בחר סוג משתמש והתחבר כדי להמשיך לבניית חלליות.</p>
-        <form id="auth-form" class="auth-form" novalidate>
+    <div id="auth-overlay" class="auth-overlay hidden" aria-hidden="true">
+      <div class="auth-box" role="dialog" aria-modal="true" aria-labelledby="welcome-title">
+        <div id="welcome-panel">
+          <h1 id="welcome-title">ברוך הבא ל‑SpaceYard</h1>
+          <p class="auth-subtitle">
+            זהו אתר ניסויי לבניית צי חלליות לשימוש חינוכי ויצירתי בלבד. כל הנתונים נשמרים מקומית בדפדפן שלך
+            ואינם נשלחים לשרת.
+          </p>
+          <p class="auth-subtitle">
+            השימוש באתר מהווה אישור לקרוא ולהבין שהאפליקציה היא לצורכי הדגמה בלבד, ללא אחריות,
+            וכפוף לזכויות היוצר של מפתח המערכת.
+          </p>
+          <button type="button" id="welcome-accept-btn" class="btn-primary auth-submit">הבנתי, המשך לאתר</button>
+        </div>
+
+        <form id="auth-form" class="auth-form hidden" novalidate aria-hidden="true">
+          <h1 id="auth-title">כניסת משתמש</h1>
+          <p class="auth-subtitle">התחברות למשתמש עסקי או למפתח המערכת.</p>
           <div class="form-group">
             <label for="auth-username">שם משתמש</label>
             <input id="auth-username" name="username" type="text" autocomplete="username" />
@@ -23,7 +36,7 @@
           <p id="auth-error" class="field-error"></p>
           <button type="submit" class="btn-primary auth-submit">כניסה</button>
           <div class="auth-hint">
-            <p><strong>משתמש עסקי</strong> — שם משתמש: <code>NM1234</code>, סיסמה: <code>321321</code></p>
+            <p><strong>משתמש עסקי</strong> — פנה למפתח לקבלת פרטי גישה.</p>
           </div>
         </form>
       </div>
@@ -40,6 +53,8 @@
           <a href="#fleet">הצי שלי</a>
           <a href="#gallery">השראה ושרטוטים</a>
           <button type="button" id="settings-toggle" class="nav-settings-btn" aria-label="הגדרות" aria-expanded="false">⚙️ הגדרות</button>
+          <button type="button" id="login-open-btn" class="nav-settings-btn" aria-label="כניסת משתמשים">כניסת משתמש</button>
+          <button type="button" id="logout-btn" class="nav-settings-btn hidden" aria-label="יציאה מהמשתמש">יציאה</button>
         </nav>
       </div>
       <div id="nav-drawer" class="nav-drawer" aria-hidden="true">

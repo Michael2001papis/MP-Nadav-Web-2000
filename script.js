@@ -91,6 +91,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const authOverlay = document.getElementById("auth-overlay");
   const authForm = document.getElementById("auth-form");
   const authError = document.getElementById("auth-error");
+  const logoutBtn = document.getElementById("logout-btn");
+  const loginOpenBtn = document.getElementById("login-open-btn");
 
   const SETTINGS_KEY_V2 = "spaceyard-settings-v2";
   const SETTINGS_KEY_V1 = "spaceyard-settings-v1";
@@ -194,6 +196,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
   loadSettings();
 
+  const WELCOME_KEY = "spaceyard-welcome-shown-v1";
+
+  const showWelcome = () => {
+    if (!authOverlay) return;
+    const welcomePanel = document.getElementById("welcome-panel");
+    if (!welcomePanel) return;
+    authOverlay.classList.remove("hidden");
+    authOverlay.setAttribute("aria-hidden", "false");
+    welcomePanel.classList.remove("hidden");
+    if (authForm) {
+      authForm.classList.add("hidden");
+      authForm.setAttribute("aria-hidden", "true");
+    }
+  };
+
+  const hideOverlay = () => {
+    if (!authOverlay) return;
+    authOverlay.classList.add("hidden");
+    authOverlay.setAttribute("aria-hidden", "true");
+  };
+
   const getCurrentUser = () => {
     try {
       const raw = localStorage.getItem(AUTH_KEY);
@@ -209,21 +232,16 @@ document.addEventListener("DOMContentLoaded", () => {
       try {
         localStorage.removeItem(AUTH_KEY);
       } catch {}
-      if (authOverlay) {
-        authOverlay.classList.remove("hidden");
-        authOverlay.setAttribute("aria-hidden", "false");
-      }
       document.body.removeAttribute("data-role");
+      if (logoutBtn) logoutBtn.classList.add("hidden");
       return;
     }
     try {
       localStorage.setItem(AUTH_KEY, JSON.stringify(user));
     } catch {}
-    if (authOverlay) {
-      authOverlay.classList.add("hidden");
-      authOverlay.setAttribute("aria-hidden", "true");
-    }
+    hideOverlay();
     document.body.dataset.role = user.role;
+    if (logoutBtn) logoutBtn.classList.remove("hidden");
     const adv = document.getElementById("advanced-part-colors");
     if (adv) {
       const isDev = user.role === "developer";
@@ -284,9 +302,45 @@ document.addEventListener("DOMContentLoaded", () => {
   const existingUser = getCurrentUser();
   if (existingUser) {
     setCurrentUser(existingUser);
-  } else if (authOverlay) {
-    authOverlay.classList.remove("hidden");
-    authOverlay.setAttribute("aria-hidden", "false");
+  } else {
+    try {
+      const seen = localStorage.getItem(WELCOME_KEY);
+      if (!seen) {
+        showWelcome();
+      }
+    } catch {
+      showWelcome();
+    }
+  }
+
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", () => {
+      setCurrentUser(null);
+      if (toastContainer) showToast("התנתקת מהמערכת.", "info");
+    });
+  }
+
+  const welcomeAcceptBtn = document.getElementById("welcome-accept-btn");
+  if (welcomeAcceptBtn) {
+    welcomeAcceptBtn.addEventListener("click", () => {
+      try {
+        localStorage.setItem(WELCOME_KEY, "1");
+      } catch {}
+      hideOverlay();
+    });
+  }
+
+  if (loginOpenBtn && authOverlay && authForm) {
+    loginOpenBtn.addEventListener("click", () => {
+      const welcomePanel = document.getElementById("welcome-panel");
+      if (welcomePanel) {
+        welcomePanel.classList.add("hidden");
+      }
+      authForm.classList.remove("hidden");
+      authForm.setAttribute("aria-hidden", "false");
+      authOverlay.classList.remove("hidden");
+      authOverlay.setAttribute("aria-hidden", "false");
+    });
   }
 
   if (settingsToggle && settingsModal) {
