@@ -579,7 +579,7 @@
       <section id="studio3d" class="section studio3d-section" aria-labelledby="studio3d-heading">
         <div class="container">
           <h2 id="studio3d-heading">סטודיו 3D</h2>
-          <p class="studio3d-intro">
+          <p id="studio3d-intro" class="studio3d-intro">
             תצוגה מלאה ועריכה ויזואלית של החללית – סובב, זום, בחר זווית. מתאים לשרטוט לפני הדפסה תלת־ממדית.
           </p>
           <div class="studio3d-toolbar" role="toolbar" aria-label="כלי תצוגת 3D">
@@ -862,6 +862,51 @@
               </div>
               <p id="business-profile-status" class="form-status" aria-live="polite"></p>
               <button type="submit" class="btn-primary btn-sm">שמור פרופיל</button>
+            </form>
+          </div>
+
+          <hr />
+
+          <div class="profile-grid">
+            <form id="business-text-form" class="profile-form" novalidate>
+              <h3>טקסטים לשינוי ע"י משתמש עסקי</h3>
+              <p class="field-note">
+                כאן אפשר לעדכן חלק מהטקסטים באתר לתצוגה בלבד. השינויים נשמרים רק בדפדפן שלך,
+                והמפתח יכול תמיד לעדכן הכל ממסך המפתח.
+              </p>
+
+              <div class="form-group">
+                <label for="biz-hero-title">כותרת ראשית (דף הבית)</label>
+                <input id="biz-hero-title" name="heroTitle" type="text" />
+              </div>
+
+              <div class="form-group">
+                <label for="biz-hero-subtitle">תיאור ראשי קצר</label>
+                <textarea id="biz-hero-subtitle" name="heroSubtitle" rows="2"></textarea>
+              </div>
+
+              <div class="form-group">
+                <label for="biz-builder-subtitle">תיאור מגדל ההרכבה</label>
+                <textarea id="biz-builder-subtitle" name="builderSubtitle" rows="2"></textarea>
+              </div>
+
+              <div class="form-group">
+                <label for="biz-studio-intro">טקסט סטודיו 3D</label>
+                <textarea id="biz-studio-intro" name="studioIntro" rows="2"></textarea>
+              </div>
+
+              <div class="form-group">
+                <label for="biz-fleet-subtitle">תיאור הצי</label>
+                <textarea id="biz-fleet-subtitle" name="fleetSubtitle" rows="2"></textarea>
+              </div>
+
+              <div class="form-group">
+                <label for="biz-gallery-intro">טקסט גלריית השראה</label>
+                <textarea id="biz-gallery-intro" name="galleryIntro" rows="3"></textarea>
+              </div>
+
+              <p id="business-text-status" class="form-status" aria-live="polite"></p>
+              <button type="submit" class="btn-primary btn-sm">שמור טקסטים</button>
             </form>
           </div>
         </div>
