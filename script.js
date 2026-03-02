@@ -3,8 +3,44 @@ import { createShip } from "./3d/shipFactory.js";
 import { updateShipFromConfig } from "./3d/shipEditor.js";
 import { defaultShipConfig3D, mergeConfig3D, buildConfig3DFromRaw } from "./3d/utils.js";
 
+const SESSION_KEY = "spaceyard-session-v1";
+const FLEET_STORAGE_KEY = "spaceyard-fleet-v1";
+
+const USERS = {
+  NM1234: { password: "321321", role: "business_admin", displayName: "NM1234" },
+  MP123456: { password: "321321", role: "developer", displayName: "MP123456" },
+};
+
+const readSession = () => {
+  try {
+    const raw = window.localStorage.getItem(SESSION_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed.username !== "string" || typeof parsed.role !== "string") return null;
+    return parsed;
+  } catch {
+    return null;
+  }
+};
+
+const writeSession = (session) => {
+  try {
+    window.localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+  } catch {
+    // ignore
+  }
+};
+
+const clearSession = () => {
+  try {
+    window.localStorage.removeItem(SESSION_KEY);
+  } catch {
+    // ignore
+  }
+};
+
 document.addEventListener("DOMContentLoaded", () => {
-  const STORAGE_KEY = "spaceyard-fleet-v1";
+  const STORAGE_KEY = FLEET_STORAGE_KEY;
 
   const TYPE_LABELS = {
     explorer: "ספינת מחקר",
@@ -86,6 +122,21 @@ document.addEventListener("DOMContentLoaded", () => {
   const confirmReset = document.getElementById("confirm-reset");
   const clearLocalData = document.getElementById("clear-local-data");
   const resetSettingsBtn = document.getElementById("reset-settings");
+
+  const authScreen = document.getElementById("auth-screen");
+  const loginForm = document.getElementById("login-form");
+  const loginError = document.getElementById("login-error");
+  const userLabel = document.getElementById("user-label");
+  const logoutBtn = document.getElementById("logout-btn");
+  const requestAccessHeader = document.getElementById("request-access-header");
+  const requestUserModal = document.getElementById("request-user-modal");
+  const requestUserForm = document.getElementById("request-user-form");
+  const requestModalClose = document.getElementById("request-modal-close");
+  const requestError = document.getElementById("request-error");
+  const requestSuccess = document.getElementById("request-success");
+  const openRequestModalBtn = document.getElementById("open-request-modal");
+  const navDrawerRequest = document.getElementById("nav-drawer-request");
+  const navDrawerLogout = document.getElementById("nav-drawer-logout");
 
   const SETTINGS_KEY_V2 = "spaceyard-settings-v2";
   const SETTINGS_KEY_V1 = "spaceyard-settings-v1";
@@ -188,6 +239,87 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   loadSettings();
+
+  const showToast = (message, type = "info") => {
+    if (!toastContainer) return;
+    const toast = document.createElement("div");
+    toast.className = `toast toast-${type}`;
+    toast.textContent = message;
+    toastContainer.appendChild(toast);
+    setTimeout(() => {
+      toast.classList.add("fade-out");
+      toast.addEventListener(
+        "transitionend",
+        () => {
+          toast.remove();
+        },
+        { once: true }
+      );
+    }, 2600);
+  };
+
+  const applyRoleUI = (session) => {
+    const role = session?.role || "guest";
+    document.body.dataset.role = role;
+    if (userLabel) {
+      if (session) {
+        userLabel.textContent = `שלום, ${session.displayName || session.username}`;
+      } else {
+        userLabel.textContent = "";
+      }
+    }
+    const authButtons = document.querySelectorAll(".auth-only-btn");
+    authButtons.forEach((btn) => {
+      if (!session) {
+        btn.hidden = true;
+      } else {
+        btn.hidden = false;
+      }
+    });
+    if (role !== "developer" && clearLocalData) {
+      clearLocalData.disabled = true;
+      clearLocalData.classList.add("settings-disabled");
+    } else if (clearLocalData) {
+      clearLocalData.disabled = false;
+      clearLocalData.classList.remove("settings-disabled");
+    }
+  };
+
+  const openRequestModal = () => {
+    if (!requestUserModal) return;
+    requestUserModal.classList.remove("hidden");
+    requestUserModal.setAttribute("aria-hidden", "false");
+  };
+
+  const closeRequestModal = () => {
+    if (!requestUserModal) return;
+    requestUserModal.classList.add("hidden");
+    requestUserModal.setAttribute("aria-hidden", "true");
+    if (requestError) requestError.textContent = "";
+    if (requestSuccess) requestSuccess.textContent = "";
+    requestUserForm?.reset();
+  };
+
+  if (openRequestModalBtn) {
+    openRequestModalBtn.addEventListener("click", openRequestModal);
+  }
+  if (requestAccessHeader) {
+    requestAccessHeader.addEventListener("click", openRequestModal);
+  }
+  if (navDrawerRequest) {
+    navDrawerRequest.addEventListener("click", () => {
+      closeDrawer();
+      openRequestModal();
+    });
+  }
+  if (requestModalClose) {
+    requestModalClose.addEventListener("click", closeRequestModal);
+  }
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && requestUserModal && !requestUserModal.classList.contains("hidden")) {
+      closeRequestModal();
+    }
+  });
 
   if (settingsToggle && settingsModal) {
     settingsToggle.addEventListener("click", () => {
@@ -375,24 +507,6 @@ document.addEventListener("DOMContentLoaded", () => {
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && galleryLightbox && !galleryLightbox.classList.contains("hidden")) closeGalleryLightbox();
   });
-
-  const showToast = (message, type = "info") => {
-    if (!toastContainer) return;
-    const toast = document.createElement("div");
-    toast.className = `toast toast-${type}`;
-    toast.textContent = message;
-    toastContainer.appendChild(toast);
-    setTimeout(() => {
-      toast.classList.add("fade-out");
-      toast.addEventListener(
-        "transitionend",
-        () => {
-          toast.remove();
-        },
-        { once: true }
-      );
-    }, 2600);
-  };
 
   const updateRangeLabels = () => {
     document.querySelectorAll(".range-group input[type='range']").forEach((input) => {
@@ -956,26 +1070,98 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("scroll", tryInitStudioOnView, { passive: true });
   if (window.location.hash === "#studio3d") setTimeout(tryInitStudioOnView, 100);
 
-  if (shipForm && shipSummary && fleetList) {
-    shipForm.addEventListener("input", () => {
-      clearFormErrors();
-      const raw = getRawFormData();
-      const normalized = normalizeShip(
-        raw,
-        selectedShipId,
-        null,
-        currentShip3D?.config3D || null
-      );
-      shipSummary.innerHTML = buildSummaryText(normalized);
-      applyShipColor(normalized.shipColor);
-      if (threeContext && currentShip3D) {
-        const cfg = buildConfig3DFromRaw(raw, currentShip3D.config3D);
-        const { group, parts } = createShip(cfg);
-        threeContext.setShipGroup(group);
-        currentShip3D = { group, parts, config3D: cfg };
+  const handleRequestSubmit = async (event) => {
+    if (!requestUserForm) return;
+    event.preventDefault();
+    if (requestError) requestError.textContent = "";
+    if (requestSuccess) requestSuccess.textContent = "";
+    const formData = new FormData(requestUserForm);
+    const hp = formData.get("hp")?.toString() || "";
+    if (hp.trim() !== "") {
+      return;
+    }
+    const lastTsRaw = window.localStorage.getItem("spaceyard-request-last-ts");
+    const now = Date.now();
+    if (lastTsRaw) {
+      const last = Number(lastTsRaw);
+      if (Number.isFinite(last) && now - last < 30000) {
+        if (requestError) requestError.textContent = "ניתן לשלוח בקשה אחת כל 30 שניות.";
+        showToast("ההודעה נשלחה כבר, המתן מעט לפני נסיון נוסף.", "info");
+        return;
       }
-      syncStudioShip();
-    });
+    }
+    const payload = {
+      firstName: formData.get("firstName")?.toString() || "",
+      lastName: formData.get("lastName")?.toString() || "",
+      phone: formData.get("phone")?.toString() || "",
+      reason: formData.get("reason")?.toString() || "",
+      message: formData.get("message")?.toString() || "",
+      sentAt: new Date().toISOString(),
+    };
+    if (!payload.firstName || !payload.lastName || !payload.phone || !payload.reason || !payload.message) {
+      if (requestError) requestError.textContent = "נא למלא את כל השדות החובה.";
+      return;
+    }
+    if (!/^[0-9+()\-\s]{6,20}$/.test(payload.phone)) {
+      if (requestError) requestError.textContent = "מספר הטלפון אינו תקין.";
+      return;
+    }
+    try {
+      const res = await fetch("https://formsubmit.co/ajax/dvnka2@gmail.com", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error("Request failed");
+      window.localStorage.setItem("spaceyard-request-last-ts", String(now));
+      if (requestSuccess) requestSuccess.textContent = "הבקשה נשלחה בהצלחה.";
+      showToast("הבקשה נשלחה בהצלחה.", "success");
+      requestUserForm.reset();
+    } catch {
+      if (requestError) requestError.textContent = "שליחת הבקשה נכשלה. נסה שוב מאוחר יותר.";
+      showToast("שליחת הבקשה נכשלה.", "error");
+    }
+  };
+
+  if (requestUserForm) {
+    requestUserForm.addEventListener("submit", handleRequestSubmit);
+  }
+
+  const initAppLogic = () => {
+    if (shipForm && shipSummary && fleetList) {
+      shipForm.addEventListener("input", () => {
+        clearFormErrors();
+        const raw = getRawFormData();
+        const normalized = normalizeShip(
+          raw,
+          selectedShipId,
+          null,
+          currentShip3D?.config3D || null
+        );
+        shipSummary.innerHTML = buildSummaryText(normalized);
+        applyShipColor(normalized.shipColor);
+        if (threeContext && currentShip3D) {
+          const cfg = buildConfig3DFromRaw(raw, currentShip3D.config3D);
+          const shapeChanged =
+            !currentShip3D.config3D ||
+            cfg.shipShape !== currentShip3D.config3D.shipShape;
+
+          if (!shapeChanged && currentShip3D.parts) {
+            // עדכון פרמטרי בלבד – לא בונים חללית חדשה
+            updateShipFromConfig(currentShip3D.parts, cfg);
+            currentShip3D.config3D = cfg;
+          } else {
+            // שינוי צורה או מצב התחלתי – בנייה מחודשת
+            const { group, parts } = createShip(cfg);
+            threeContext.setShipGroup(group);
+            currentShip3D = { group, parts, config3D: cfg };
+          }
+        }
+        syncStudioShip();
+      });
 
     shipForm.addEventListener("submit", (event) => {
       event.preventDefault();
@@ -1085,6 +1271,65 @@ document.addEventListener("DOMContentLoaded", () => {
     const initialNormalized = normalizeShip(initialRaw);
     shipSummary.innerHTML = buildSummaryText(initialNormalized);
     applyShipColor(initialNormalized.shipColor);
+  };
+
+  const applyAuthState = (session) => {
+    if (session) {
+      document.body.classList.remove("no-session");
+      document.body.classList.add("has-session");
+      if (authScreen) authScreen.hidden = true;
+    } else {
+      document.body.classList.add("no-session");
+      document.body.classList.remove("has-session");
+      if (authScreen) authScreen.hidden = false;
+    }
+    applyRoleUI(session);
+  };
+
+  const handleLogout = () => {
+    clearSession();
+    applyAuthState(null);
+    showToast("התנתקת מהמערכת.", "info");
+  };
+
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", handleLogout);
+  }
+  if (navDrawerLogout) {
+    navDrawerLogout.addEventListener("click", () => {
+      closeDrawer();
+      handleLogout();
+    });
+  }
+
+  const initialSession = readSession();
+  if (initialSession) {
+    applyAuthState(initialSession);
+    initAppLogic();
+  } else {
+    applyAuthState(null);
+  }
+
+  if (loginForm) {
+    loginForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      if (loginError) loginError.textContent = "";
+      const formData = new FormData(loginForm);
+      const username = formData.get("username")?.toString().trim() || "";
+      const password = formData.get("password")?.toString() || "";
+      const user = USERS[username];
+      if (!user || user.password !== password) {
+        if (loginError) loginError.textContent = "שם משתמש או סיסמה שגויים.";
+        return;
+      }
+      const session = { username, role: user.role, displayName: user.displayName };
+      writeSession(session);
+      applyAuthState(session);
+      if (!initialSession) {
+        initAppLogic();
+      }
+      showToast("התחברת בהצלחה.", "success");
+    });
   }
 });
 

@@ -1,0 +1,248 @@
+דוח מצב – פרויקט SpaceYard
+גרסה נוכחית בקוד: 0.6.0 (+ פיתוח Sprint 1)
+טווח יעד: 0.8.0 → 1.0.0
+תאריך עדכון: 2026-03-02
+מפתח: Michael Papismedov
+לקוח עסקי: נדב (NM)
+
+====================================
+1. תקציר כללי
+====================================
+SpaceYard הוא אתר אינטראקטיבי בעברית לבניית צי חלליות דמיוני:
+- בונה חלליות מפורט ("מגדל ההרכבה") עם מידע על משימה, צוות ויכולות.
+- תצוגת 3D חיה (Three.js) + סטודיו 3D נפרד לעריכה ויזואלית.
+- ניהול צי (הוספה / עריכה / שכפול / מחיקה / מיון / סינון / חיפוש).
+- גלריית השראה ושרטוטים (כולל lightbox).
+- הגדרות חוויית משתמש (theme, נגישות, ביצועי 3D, אחסון).
+- החל מ־Sprint 1: שכבת התחברות, Session וזרימת בקשות למפתח במייל.
+
+כל הנתונים נשמרים כרגע מקומית בלבד בדפדפן (localStorage), ללא שרת.
+
+====================================
+2. טכנולוגיות וגרסאות
+====================================
+- Frontend: HTML, CSS, JavaScript (ES Modules, ללא Framework כבד).
+- Build: Vite 5 (קובץ הגדרות vite.config.js).
+- 3D: Three.js (כולל OrbitControls).
+- אחסון בצד לקוח: localStorage (צי, הגדרות, Session, Cooldown לטופס בקשה).
+- שירות מייל צד-לקוח: FormSubmit (שליחה ב-AJAX לכתובת dvnka2@gmail.com).
+
+====================================
+3. מבנה קבצים מרכזי (בקצרה)
+====================================
+- index.html:
+  - מסך התחברות (auth-screen) לפני כל האפליקציה.
+  - Header + nav + nav drawer.
+  - settings-modal לכל ההגדרות.
+  - מקטעים: home, builder, studio3d, fleet, gallery, footer.
+  - מודאלים: gallery-lightbox, request-user-modal.
+  - טעינת script.js כמודול.
+
+- style.css
+  - מערכת Design System מלאה:
+    - משתני CSS (צבעי רקע, טקסט, גבולות, רדיוסים, צל).
+    - מצבי theme: ברירת מחדל, "simple", "alien".
+    - תמיכה בהפחתת תנועה ו-high-contrast.
+  - עיצוב רכיבים:
+    - Header דביק, ניווט עליון ותפריט צדדי לנייד.
+    - חלון הגדרות (modal + tabs).
+    - טופס "מגדל ההרכבה" (אקורדיונים, קבוצות שדות, slider + value).
+    - כפתורי פעולה (primary / ghost / sm).
+    - כרטיסי צי (fleet-card) עם מצב selected ותגי חייזר.
+    - תצוגת 3D: ship-canvas, studio-canvas, רקעים, fallback.
+    - גלריה ו-lightbox.
+  - רספונסיביות במספר breakpoints (עד מצב מובייל קטן).
+
+המשך פירוט הקבצים ויתר הסעיפים – ראה בגוף הדוח (סעיפים 3–9).
+
+- תיקיית 3d/
+  - scene.js
+    - הגדרת סצנת Three.js:
+      - WebGLRenderer עם תמיכה ב-anti-alias ו-quality modes.
+      - מצלמה פרספקטיבית, OrbitControls, תאורה (Ambient + Directional + Rim).
+      - פונקציות עזר:
+        - setShipGroup – החלפת אובייקט החללית בסצנה.
+        - set3DOptions – שינוי אוטורוטציה, מהירות סיבוב, איכות, צירים, Pan.
+        - setCameraPreset / resetView / zoomIn / zoomOut.
+      - לולאת animate עם סיבוב עדין ונידנוד (floating) של החללית.
+
+  - shipFactory.js
+    - יצירת מודל 3D של החללית לפי צורות שונות:
+      - classic / sleek / heavy / ring.
+    - שימוש ב-Meshes שונים (Cylinder, Box, Sphere, Torus) וחומרים מ-materials.js.
+    - החזרת group + parts לעדכון עתידי.
+
+  - shipEditor.js
+    - עדכון דינמי של מודל חללית קיים (body/wing/engine/cockpit) בהתאם לקונפיגורציה חדשה.
+
+  - materials.js
+    - בניית חומרים (MeshStandardMaterial) לפי:
+      - primary/secondary colors
+      - סוג חומר: metal / matte / glass / alien
+      - engine glow, cockpit tint, alienTechLevel.
+
+  - utils.js
+    - defaultShipConfig3D – קונפיגורציית ברירת מחדל לכל פרמטרי ה-3D.
+    - clamp, degToRad, mergeConfig3D.
+    - buildConfig3DFromRaw – בניית קונפיגורציית 3D מלאה מנתוני הטופס.
+
+- package.json
+  - name: spaceyard
+  - version: 0.6.0
+  - scripts:
+    - dev: vite
+    - build: vite build
+    - preview: vite preview
+  - תלות עיקרית: three
+  - devDependency: vite
+
+- vite.config.js
+  - root: "."
+  - build:
+    - outDir: "dist"
+    - assetsDir: "assets"
+    - emptyOutDir: true
+
+====================================
+4. לוגיקת אפליקציה – עיקרי הזרימה
+====================================
+- בעת DOMContentLoaded:
+  - מוגדרים מילוני תוויות לתרגום ערכי מפתח (סוג משימה, רמת סיכון, תוספים, חייזרים).
+  - מאותחלות הגדרות (loadSettings) כולל מעבר מגרסת settings ישנה לגרסה V2.
+  - נבנה מנגנון חלון ההגדרות: פתיחה/סגירה, לשוניות, שמירה ואיפוס.
+  - נבנה מנגנון תפריט מובייל (nav drawer).
+  - מנגנון גלריה ו-lightbox (קליק/Enter/Space, Escape לסגירה).
+  - מנגנון toast להודעות משתמש קצרות.
+  - עדכון טווחים (range) ותיוג הערכים שלהם (range-value).
+  - טעינת צי קיים מה-localStorage; אם אין צי – נוצרת חללית דמו ראשונית.
+  - אתחול תצוגת 3D ראשית (ship-canvas); אם יש כשל – מעבר ל-fallback טקסטואלי.
+  - סטודיו 3D נטען Lazy לפי גלילה/עוגן #studio3d.
+
+- טופס "מגדל ההרכבה":
+  - getRawFormData – קריאת כל שדות הטופס כולל שדות 3D.
+  - validateShip – בדיקות:
+    - שם חללית באורך ≥ 2.
+    - מספר צוות בין 1 ל-500.
+    - מפקד/ת חובה.
+  - normalizeShip – יצירת אובייקט חללית אחיד:
+    - id ייחודי (timestamp + random).
+    - createdAt.
+    - numeric normalization למהירות/גודל/צוות.
+    - בניית config3D דרך buildConfig3DFromRaw.
+  - בעת input על הטופס:
+    - חישוב תקציר טכני HTML (buildSummaryText) והצגתו ב-ship-summary.
+    - עדכון צבע דקורטיבי של הפאנל לפי shipColor.
+    - עדכון מודל 3D חיי (createShip + setShipGroup) + עדכון סטודיו (syncStudioShip).
+  - בעת submit:
+    - אם יש שגיאות – הצגה ב-form-errors ובשדות.
+    - אם במצב עריכה – עדכון האיבר המתאים בצי ושמירה.
+    - אם במצב יצירה – בדיקת מגבלה (fleetLimit), הוספה לצי ושמירה.
+
+- ניהול צי (Fleet):
+  - מערך fleet נשמר ב-localStorage תחת spaceyard-fleet-v1.
+  - renderFleet:
+    - מיון לפי created / speed / size / crew / risk.
+    - סינון לפי סוג משימה.
+    - סינון לפי חיפוש שם.
+    - בניית כרטיסים דינמית עם תגי Alien (אם יש חייזר מלווה).
+    - כפתור מחיקה לכל חללית, כולל אישור.
+  - כפתור איפוס צי:
+    - מאפס את fleet (בהתאם להגדרת confirmReset).
+    - מעדכן UI ומציג toast.
+
+====================================
+5. אחסון מקומי (localStorage)
+====================================
+- מפתחות בשימוש:
+  - spaceyard-settings-v2
+    - אובייקט הגדרות מלא:
+      - theme: "normal" | "alien" | "simple"
+      - fontSize: "normal" | "large"
+      - reducedMotion: boolean
+      - highContrast: boolean
+      - autoRotate: boolean
+      - rotationSpeed: מספר בין 0–1
+      - qualityMode: "auto" | "high" | "low"
+      - showAxis: boolean
+      - autoSave: boolean
+      - fleetLimit: מספר (5–500)
+      - confirmReset: boolean
+  - spaceyard-settings-v1
+    - פורמט ישן; נטען פעם אחת ומומר ל-V2 אם קיים.
+  - spaceyard-fleet-v1
+    - מערך החלליות המלא (האובייקטים הנורמליים מ-normalizeShip).
+
+- השלכות:
+  - כל נתוני המשתמש (צי והגדרות) נשמרים מקומית בלבד, ללא שרת.
+  - כפתור "מחק את כל הנתונים המקומיים" מוחק את כל שלושת המפתחות ומרענן את העמוד.
+
+====================================
+6. תצוגת 3D
+====================================
+- תצוגה חיה:
+  - canvas ראשי (ship-canvas) מוצמד לנתוני הטופס בזמן אמת.
+  - תומך:
+    - autoRotate (ניתן לביטול)
+    - רמת zoom וקירוב/הרחקה דרך OrbitControls.
+    - הופעת axesHelper לפי בחירת המשתמש.
+  - במקרה של כשל ב-WebGL:
+    - הסתרת הקנבס והצגת panel טקסטואלי עם הודעה ידידותית.
+
+- סטודיו 3D:
+  - canvas נוסף (studio-canvas) ל"תצוגת עבודה":
+    - לחצני Preset לזוויות מצלמה (חזית/צד/מלמעלה/איזומטרי).
+    - זום פנימה/החוצה (כפתורים + גלגלת).
+    - סיבוב אוטומטי ניתן להפעלה/כיבוי.
+    - צירי XYZ ניתנים להפעלה/כיבוי.
+    - מעבר למסך מלא.
+    - אפשרות צילום (ייצוא תמונת PNG מקומית).
+
+====================================
+7. נגישות וחוויית משתמש
+====================================
+- שפה וכיוון:
+  - html lang="he", dir="rtl".
+- מקלדת:
+  - כרטיסי גלריה ניתנים לפוקוס (tabindex=0) ופתיחה ב-Enter/Space.
+  - Escape לסגירת lightbox ולסגירת חלון הגדרות.
+- ARIA:
+  - תיאורי role="dialog", aria-modal, aria-label/labelledby בחלונות מודאליים.
+  - aria-live לאזורי שגיאות ול-toastים.
+- התאמות:
+  - הפחתת תנועה (class reduced-motion) המשפיעה על אנימציות.
+  - ניגודיות גבוהה (high-contrast) עם outline מודגש לרכיבים אינטראקטיביים.
+  - הגדלת אותיות (font-size-large) ברמת html.
+
+====================================
+8. הפעלה, בנייה ופריסה
+====================================
+- דרישות:
+  - Node.js גרסה 18 ומעלה.
+
+- התקנה ופיתוח:
+  - npm install
+  - npm run dev
+  - כתובת פיתוח: http://localhost:5173
+
+- בניית גרסת Production:
+  - npm run build
+  - תוצרי build בתיקיית dist/ (HTML/CSS/JS מכווצים).
+
+- תצוגת Production מקומית:
+  - npm run preview
+  - כתובת: http://localhost:4173
+
+- פריסה:
+  - העלאת תוכן dist לכל שרת סטטי (Vercel / Netlify / GitHub Pages וכו').
+
+====================================
+9. מצב Git (נכון לפתיחת הסשן)
+====================================
+לפי git status שסופק בתחילת העבודה:
+- ענף: main (מול origin/main).
+- קבצים:
+  - README.md – מסומן כ-modified (שינויים בתיעוד).
+  - דוח-מצב.txt – מסומן כ-deleted (נמחק מעקיבה ב-Git לפני יצירת הדוח הנוכחי).
+
+הקובץ דוח-מצב.txt הנוכחי נוצר מחדש במסגרת דוח מצב זה, וניתן כעת לעקוב אחריו ב-Git לפי הצורך.
+

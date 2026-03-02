@@ -137,7 +137,7 @@ export const createShip = (configInput) => {
   const group = new THREE.Group();
   const mats = buildMaterials(config);
   const shape = config.shipShape || "classic";
-  const parts =
+  const coreParts =
     shape === "sleek"
       ? buildSleek(group, config, mats)
       : shape === "heavy"
@@ -146,6 +146,18 @@ export const createShip = (configInput) => {
           ? buildRing(group, config, mats)
           : buildClassic(group, config, mats);
   group.position.set(0, 0, 0);
+  // מפה לוגית של חלקים – לשימוש עתידי במודולים מתקדמים
+  const parts = {
+    ...coreParts,
+    map: {
+      body: coreParts.body || null,
+      cockpit: coreParts.cockpit || null,
+      wings: [coreParts.wingL, coreParts.wingR].filter(Boolean),
+      engines: coreParts.engine ? [coreParts.engine] : [],
+      nose: null,
+      tail: null,
+    },
+  };
   return { group, parts };
 };
 
