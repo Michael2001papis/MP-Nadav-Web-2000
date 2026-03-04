@@ -1346,10 +1346,76 @@ body[data-theme="simple"] .ship-form textarea {
   min-height: 70vh;
 }
 
+.editor3d-shell {
+  border-radius: 18px;
+  border: 1px solid var(--border-subtle);
+  background:
+    radial-gradient(circle at 0 0, rgba(72, 245, 255, 0.16), transparent 55%),
+    radial-gradient(circle at 100% 0, rgba(248, 180, 75, 0.28), transparent 60%),
+    rgba(7, 10, 18, 0.96);
+  box-shadow: 0 22px 55px rgba(3, 7, 18, 0.95);
+  padding: 16px 18px 14px;
+}
+
+.editor3d-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.45);
+  margin-bottom: 14px;
+}
+
+.editor3d-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.editor3d-title-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #f97316;
+  box-shadow: 0 0 14px rgba(248, 180, 75, 0.9);
+}
+
+.editor3d-title-text h2 {
+  margin: 0;
+}
+
 .editor3d-intro {
-  margin-top: -8px;
-  margin-bottom: 20px;
+  margin: 2px 0 0;
   color: var(--text-muted);
+  font-size: 0.92rem;
+}
+
+.editor3d-mode-tabs {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(148, 163, 184, 0.6);
+}
+
+.editor3d-mode-tab {
+  min-width: 64px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.editor3d-mode-tab.active {
+  background: rgba(248, 180, 75, 0.18);
+  color: #fed7aa;
 }
 
 .editor3d-layout {
@@ -1517,6 +1583,38 @@ body[data-theme="simple"] .ship-form textarea {
   color: var(--text-0);
 }
 
+.editor3d-status-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(148, 163, 184, 0.45);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.editor3d-status-label {
+  font-weight: 500;
+}
+
+.editor3d-status-pill {
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(248, 180, 75, 0.8);
+  background: rgba(30, 64, 175, 0.7);
+  color: #fed7aa;
+}
+
+.editor3d-status-separator {
+  opacity: 0.6;
+}
+
+.editor3d-status-metric {
+  opacity: 0.9;
+}
+
 .editor3d-blueprint-views {
   display: flex;
   gap: 16px;
@@ -1558,6 +1656,10 @@ body[data-theme="simple"] .ship-form textarea {
   .editor3d-section {
     min-height: auto;
     padding-bottom: 24px;
+  }
+
+  .editor3d-shell {
+    padding: 12px 12px 10px;
   }
 
   .editor3d-section .container-full {
