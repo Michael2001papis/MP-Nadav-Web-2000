@@ -329,9 +329,10 @@ a {
   right: 0;
   width: min(280px, 85vw);
   height: 100%;
-  background: var(--bg-alt);
+  background: linear-gradient(180deg, #0f172a 0%, #0b1020 50%, #070a12 100%);
+  background-color: #0b1020;
   border-left: 1px solid var(--border-subtle);
-  box-shadow: -8px 0 32px rgba(0, 0, 0, 0.4);
+  box-shadow: -8px 0 32px rgba(0, 0, 0, 0.5);
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -345,8 +346,13 @@ a {
   left: 0;
   border-left: none;
   border-right: 1px solid var(--border-subtle);
-  box-shadow: 8px 0 32px rgba(0, 0, 0, 0.4);
+  box-shadow: 8px 0 32px rgba(0, 0, 0, 0.5);
   transform: translateX(-100%);
+}
+
+body[data-theme="simple"] .nav-drawer-panel {
+  background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 50%, #e2e8f0 100%);
+  background-color: #f1f5f9;
 }
 
 .nav-drawer.open .nav-drawer-panel {
