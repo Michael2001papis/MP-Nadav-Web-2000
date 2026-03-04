@@ -361,11 +361,10 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const seen = localStorage.getItem(WELCOME_KEY);
       if (!seen) {
-        showWelcome();
+        localStorage.setItem(WELCOME_KEY, "1");
+        if (toastContainer) showToast("ברוך הבא ל-SpaceYard! לחיצה על 'כניסת משתמש' לחשבון עסקי.", "info");
       }
-    } catch {
-      showWelcome();
-    }
+    } catch {}
   }
 
   if (logoutBtn) {
