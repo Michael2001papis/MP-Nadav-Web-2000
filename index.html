@@ -7,8 +7,12 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
+    <div class="site-watermark" aria-hidden="true" title="SpaceYard">
+      <img src="assets/images/ship-logo.png" alt="SpaceYard" width="56" height="56" />
+    </div>
     <div id="auth-overlay" class="auth-overlay hidden" aria-hidden="true">
       <div class="auth-box" role="dialog" aria-modal="true" aria-labelledby="welcome-title">
+        <button type="button" id="auth-close-btn" class="auth-close-btn" aria-label="סגור">×</button>
         <div id="welcome-panel">
           <h1 id="welcome-title">ברוך הבא למעבדת SpaceYard</h1>
           <p class="auth-subtitle">
@@ -42,10 +46,13 @@
 
     <header class="site-header">
       <div class="container header-content">
-        <div class="logo">
-          SpaceYard
-          <span class="logo-subtitle">Quantum Lab</span>
-        </div>
+        <a href="#home" class="logo logo-with-img">
+          <img src="assets/images/ship-logo.png" alt="" class="logo-img" width="32" height="32" />
+          <span class="logo-text">
+            <span>SpaceYard</span>
+            <span class="logo-subtitle">Quantum Lab</span>
+          </span>
+        </a>
         <button
           type="button"
           id="nav-menu-btn"
@@ -63,6 +70,7 @@
           <a href="#editor3d" id="nav-editor3d" class="editor-access-only hidden">עורך 3D</a>
           <a href="#fleet">הצי שלי</a>
           <a href="#gallery">השראה ושרטוטים</a>
+          <a href="#about">אודות</a>
           <button type="button" id="settings-toggle" class="nav-settings-btn" aria-label="הגדרות" aria-expanded="false">⚙️ הגדרות</button>
           <button type="button" id="login-open-btn" class="nav-settings-btn" aria-label="כניסת משתמשים">כניסת משתמש</button>
           <button type="button" id="logout-btn" class="nav-settings-btn hidden" aria-label="יציאה מהמשתמש">יציאה</button>
@@ -77,6 +85,7 @@
           <a href="#editor3d" class="nav-drawer-link editor-access-only hidden">עורך 3D</a>
           <a href="#fleet" class="nav-drawer-link">הצי שלי</a>
           <a href="#gallery" class="nav-drawer-link">השראה ושרטוטים</a>
+          <a href="#about" class="nav-drawer-link">אודות</a>
           <button type="button" id="nav-drawer-settings" class="nav-settings-btn nav-drawer-settings">⚙️ הגדרות</button>
         </div>
       </div>
@@ -191,7 +200,7 @@
             </p>
             <div class="hero-actions">
               <button id="cta-button" class="btn-primary cta-with-logo">
-                <img src="/assets/images/ship-logo.png" alt="" class="cta-btn-logo" width="24" height="24" decoding="async" />
+                <img src="assets/images/ship-logo.png" alt="" class="cta-btn-logo" width="24" height="24" decoding="async" />
                 <span>בונה החלליות שלך</span>
               </button>
               <button type="button" id="open-studio-btn" class="btn-ghost">
@@ -1138,11 +1147,66 @@
           </form>
         </div>
       </section>
+
+      <section id="about" class="section section-alt" aria-labelledby="about-heading">
+        <div class="container">
+          <h2 id="about-heading">אודות SpaceYard</h2>
+          <p class="about-intro">SpaceYard היא מעבדה לבניית צי חלליות דמיוני – עם תצוגת 3D, סטודיו ועורך חלליות. כל הנתונים נשמרים בדפדפן שלך.</p>
+
+          <div class="about-block">
+            <h3>עורך חלליות 3D – מדריך שימוש</h3>
+            <p>העורך זמין למשתמשים <strong>עסקיים</strong> ו־<strong>מפתחים</strong> בלבד. התחבר עם NM1234 או MP123456 (סיסמה: 321321) כדי לראות את הקישור בתפריט.</p>
+          </div>
+
+          <div class="about-block">
+            <h4>מבנה הממשק</h4>
+            <ul>
+              <li><strong>סרגל כלים</strong> (למעלה) – כלים, הוספת חלקים ואופציות</li>
+              <li><strong>תצוגה מרכזית</strong> – החללית בתלת־ממד</li>
+              <li><strong>מאפייני חלק</strong> (מימין) – צבע, גודל, מיקום, סיבוב</li>
+              <li><strong>Blueprint</strong> (למטה) – מבט על, צד, קדמי</li>
+            </ul>
+          </div>
+
+          <div class="about-block">
+            <h4>שלבי עבודה</h4>
+            <ol>
+              <li><strong>הוספת חלקים</strong> – לחץ על "גוף", "כנפיים", "מנוע" או "קוקפיט" (עד 24 חלקים)</li>
+              <li><strong>בחירה</strong> – בחר כלי "בחירה" ולחץ על החלק. המאפיינים יופיעו בצד</li>
+              <li><strong>הזזה</strong> – בחר "הזזה", בחר חלק, ושנה את ערכי X,Y,Z במאפיינים</li>
+              <li><strong>סיבוב</strong> – בחר "סיבוב", בחר חלק, ושנה את זוויות הסיבוב (מעלות)</li>
+              <li><strong>גודל</strong> – בחר חלק והזז את סליידר "גודל" (0.5 עד 3)</li>
+              <li><strong>שכפול</strong> – בחר "שכפול" ולחץ על החלק לשכפול</li>
+              <li><strong>מחיקה</strong> – בחר "מחיקה" ולחץ על החלק למחיקה</li>
+            </ol>
+          </div>
+
+          <div class="about-block">
+            <h4>ניווט בתצוגה 3D</h4>
+            <p>גרור כדי לסובב • גלגלת עכבר לזום • גרירה עם כפתור ימני להזזת המצלמה</p>
+          </div>
+
+          <div class="about-block">
+            <h4>שמירה וטעינה</h4>
+            <p><strong>שמור</strong> – שומר את העיצוב לדפדפן. <strong>טען</strong> – בוחר עיצוב מהרשימה ומטעין אותו.</p>
+          </div>
+
+          <div class="about-block">
+            <h4>אופציות</h4>
+            <p><strong>רשת</strong> – מציג/מסתיר רשת תלת־ממדית. <strong>תאורה</strong> – עם/בלי תאורה (בלי = מראה חלל).</p>
+          </div>
+        </div>
+      </section>
     </main>
 
     <footer class="site-footer">
-      <div class="container">
-        <p>© <span id="year"></span> SpaceYard – מספנת החלל שלך</p>
+      <div class="container footer-content">
+        <div class="footer-copy">
+          <p>© <span id="year"></span> SpaceYard – מספנת החלל שלך</p>
+        </div>
+        <div class="footer-stamp">
+          <img src="assets/images/ship-logo.png" alt="SpaceYard" class="footer-stamp-img" width="40" height="40" />
+        </div>
       </div>
     </footer>
 

@@ -398,6 +398,16 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  const authCloseBtn = document.getElementById("auth-close-btn");
+  if (authCloseBtn && authOverlay) {
+    authCloseBtn.addEventListener("click", hideOverlay);
+  }
+  if (authOverlay) {
+    authOverlay.addEventListener("click", (e) => {
+      if (e.target === authOverlay) hideOverlay();
+    });
+  }
+
   if (settingsToggle && settingsModal) {
     settingsToggle.addEventListener("click", () => {
       const wasOpen = !settingsModal.classList.contains("hidden");
