@@ -485,6 +485,10 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.removeItem(SETTINGS_KEY_V2);
         localStorage.removeItem(SETTINGS_KEY_V1);
         localStorage.removeItem(FLEET_KEY);
+        localStorage.removeItem(AUTH_KEY);
+        localStorage.removeItem(BUSINESS_PROFILE_KEY);
+        localStorage.removeItem(DEV_TEXT_KEY);
+        localStorage.removeItem(WELCOME_KEY);
       } catch (_) {}
       window.location.reload();
     });
@@ -695,6 +699,13 @@ document.addEventListener("DOMContentLoaded", () => {
     };
   };
 
+  const escapeHtml = (str) => {
+    if (str == null || typeof str !== "string") return "";
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+  };
+
   const normalizeShip = (raw, existingId = null, existingCreatedAt = null, existingConfig3D = null) => {
     const speed = Number(raw.shipSpeed);
     const size = Number(raw.shipSize);
@@ -741,8 +752,12 @@ document.addEventListener("DOMContentLoaded", () => {
         ? ` · חייזר מלווה: ${ALIEN_LABELS[ship.alienType]}`
         : "";
 
+    const safeName = escapeHtml(ship.shipName || "חללית ללא שם");
+    const safeCommander = escapeHtml(commander);
+    const safeMission = mission ? escapeHtml(mission) : null;
+
     return `
-      <strong>${ship.shipName || "חללית ללא שם"}</strong> היא ${typeLabel}
+      <strong>${safeName}</strong> היא ${typeLabel}
       בצבע מותאם, למהירות עיוות של <strong>${ship.shipSpeed}</strong>,
       בגודל יחסי <strong>${ship.shipSize}</strong> וצוות של
       <strong>${ship.shipCrew}</strong> אסטרונאוטים.
@@ -751,8 +766,8 @@ document.addEventListener("DOMContentLoaded", () => {
       <br />
       מערכות מתקדמות: <strong>${advancedText}</strong>.
       <br />
-      מפקד/ת המשימה: <strong>${commander}</strong>, רמת סיכון: <strong>${riskText}</strong>${alien}.
-      ${mission ? `<br />תיאור המשימה: ${mission}` : ""}
+      מפקד/ת המשימה: <strong>${safeCommander}</strong>, רמת סיכון: <strong>${riskText}</strong>${alien}.
+      ${safeMission ? `<br />תיאור המשימה: ${safeMission}` : ""}
     `;
   };
 
@@ -963,7 +978,8 @@ document.addEventListener("DOMContentLoaded", () => {
         );
       }
     } catch {
-      // ignore parse errors
+      fleet = [];
+      if (toastContainer) showToast("נתוני הצי לא נטענו. מתחיל עם צי ריק.", "info");
     }
   };
 

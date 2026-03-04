@@ -66,9 +66,26 @@ export const initScene = (canvas, initialOptions = {}) => {
   let autoRotate = options.autoRotate;
   let rotationSpeed = options.rotationSpeed;
 
+  const disposeGroup = (group) => {
+    if (!group) return;
+    group.traverse((obj) => {
+      if (obj.geometry) {
+        obj.geometry.dispose();
+      }
+      if (obj.material) {
+        if (Array.isArray(obj.material)) {
+          obj.material.forEach((m) => m.dispose());
+        } else {
+          obj.material.dispose();
+        }
+      }
+    });
+  };
+
   const setShipGroup = (group) => {
     if (shipGroup) {
       scene.remove(shipGroup);
+      disposeGroup(shipGroup);
     }
     shipGroup = group;
     if (shipGroup) {
