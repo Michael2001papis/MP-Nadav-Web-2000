@@ -203,7 +203,7 @@ document.addEventListener("DOMContentLoaded", () => {
   loadSettings();
 
   const updateSystemStatus = (threeOk = null) => {
-    const threeState = threeOk === null ? "INIT" : threeOk ? "ON" : "OFF";
+    const threeState = threeOk === null ? "אתחול" : threeOk ? "פעיל" : "כבוי";
     if (heroMetric3D) heroMetric3D.textContent = threeState;
   };
 
@@ -433,17 +433,25 @@ document.addEventListener("DOMContentLoaded", () => {
   const navDrawerOverlay = navDrawer?.querySelector(".nav-drawer-overlay");
   const navDrawerSettings = document.getElementById("nav-drawer-settings");
   const openDrawer = () => {
-    if (navDrawer) navDrawer.classList.add("open");
+    if (navDrawer) {
+      navDrawer.classList.add("open");
+      navDrawer.setAttribute("aria-hidden", "false");
+    }
     if (navMenuBtn) navMenuBtn.setAttribute("aria-expanded", "true");
     document.body.style.overflow = "hidden";
   };
   const closeDrawer = () => {
-    if (navDrawer) navDrawer.classList.remove("open");
+    if (navDrawer) {
+      navDrawer.classList.remove("open");
+      navDrawer.setAttribute("aria-hidden", "true");
+    }
     if (navMenuBtn) navMenuBtn.setAttribute("aria-expanded", "false");
     document.body.style.overflow = "";
   };
   if (navMenuBtn && navDrawer) {
-    navMenuBtn.addEventListener("click", () => {
+    navMenuBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       if (navDrawer.classList.contains("open")) closeDrawer();
       else openDrawer();
     });
@@ -1542,7 +1550,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const color = data.color || "#38bdf8";
       if (colorChip) colorChip.style.background = color;
       if (avatar) avatar.style.boxShadow = `0 0 18px ${color}80`;
-      const nameForInitials = (data.displayName || "NM1234").trim();
+      const nameForInitials = (data.displayName || "משתמש").trim();
       const initials =
         nameForInitials
           .split(" ")

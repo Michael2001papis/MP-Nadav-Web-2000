@@ -283,6 +283,8 @@ a {
   font-size: 1.35rem;
   cursor: pointer;
   transition: background var(--transition-fast), color var(--transition-fast);
+  position: relative;
+  z-index: 30;
 }
 
 .nav-menu-btn:hover {
@@ -314,9 +316,11 @@ a {
 .nav-drawer-overlay {
   position: absolute;
   inset: 0;
+  z-index: 1;
   background: rgba(0, 0, 0, 0.5);
   opacity: 0;
   transition: opacity var(--transition-smooth);
+  cursor: pointer;
 }
 
 .nav-drawer.open .nav-drawer-overlay {
@@ -327,6 +331,7 @@ a {
   position: absolute;
   top: 0;
   right: 0;
+  z-index: 2;
   width: min(280px, 85vw);
   height: 100%;
   background: linear-gradient(180deg, #0f172a 0%, #0b1020 50%, #070a12 100%);
@@ -3026,7 +3031,7 @@ body[data-theme="simple"] .ship-form textarea {
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 992px) {
   .nav-menu-btn {
     display: flex;
   }
@@ -3034,6 +3039,9 @@ body[data-theme="simple"] .ship-form textarea {
   .nav {
     display: none;
   }
+}
+
+@media (max-width: 768px) {
 
   .ship-canvas-layer {
     min-height: min(380px, 42vh);
