@@ -2,6 +2,7 @@ import { initScene } from "./3d/scene.js";
 import { createShip } from "./3d/shipFactory.js";
 import { updateShipFromConfig } from "./3d/shipEditor.js";
 import { defaultShipConfig3D, mergeConfig3D, buildConfig3DFromRaw } from "./3d/utils.js";
+import { initEditor3D } from "./3d/editor3d.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   const STORAGE_KEY = "spaceyard-fleet-v1";
@@ -268,6 +269,9 @@ document.addEventListener("DOMContentLoaded", () => {
       document
         .querySelectorAll(".developer-only-section")
         .forEach((el) => el.classList.add("hidden"));
+      document
+        .querySelectorAll(".editor-access-only")
+        .forEach((el) => el.classList.add("hidden"));
       return;
     }
     try {
@@ -294,6 +298,13 @@ document.addEventListener("DOMContentLoaded", () => {
         const isDev = user.role === "developer";
         el.classList.toggle("hidden", !isDev);
       });
+    const hasEditorAccess = user.role === "business" || user.role === "developer";
+    document
+      .querySelectorAll(".editor-access-only")
+      .forEach((el) => el.classList.toggle("hidden", !hasEditorAccess));
+    if (hasEditorAccess && typeof initEditor3DOnView === "function") {
+      setTimeout(initEditor3DOnView, 100);
+    }
     if (user.role === "business") {
       initBusinessProfile();
       initBusinessTextPanel();
@@ -1259,9 +1270,32 @@ document.addEventListener("DOMContentLoaded", () => {
     if (inView) initStudio3D();
   };
 
-  window.addEventListener("hashchange", tryInitStudioOnView);
+  let editor3dContext = null;
+  const initEditor3DOnView = () => {
+    const editorSection = document.getElementById("editor3d");
+    const editorCanvas = document.getElementById("editor3d-canvas");
+    if (!editorSection || !editorCanvas || editor3dContext) return;
+    if (editorSection.classList.contains("hidden")) return;
+    const role = document.body.dataset.role;
+    if (role !== "business" && role !== "developer") return;
+    const atEditorHash = window.location.hash === "#editor3d";
+    const inView = editorSection.getBoundingClientRect().top < window.innerHeight * 0.9;
+    if (atEditorHash || inView) {
+      editor3dContext = initEditor3D(editorCanvas, {
+        onSave: () => showToast && showToast("העיצוב נשמר", "success"),
+        onLoadError: (msg) => showToast && showToast(msg || "אין עיצובים שמורים", "info"),
+      });
+    }
+  };
+
+  window.addEventListener("hashchange", () => {
+    tryInitStudioOnView();
+    initEditor3DOnView();
+  });
   window.addEventListener("scroll", tryInitStudioOnView, { passive: true });
+  window.addEventListener("scroll", initEditor3DOnView, { passive: true });
   if (window.location.hash === "#studio3d") setTimeout(tryInitStudioOnView, 100);
+  if (window.location.hash === "#editor3d") setTimeout(initEditor3DOnView, 100);
 
   if (shipForm && shipSummary && fleetList) {
     shipForm.addEventListener("input", () => {

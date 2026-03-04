@@ -60,6 +60,7 @@
           <a href="#home">ראשי</a>
           <a href="#builder">בונה חלליות</a>
           <a href="#studio3d">סטודיו 3D</a>
+          <a href="#editor3d" id="nav-editor3d" class="editor-access-only hidden">עורך 3D</a>
           <a href="#fleet">הצי שלי</a>
           <a href="#gallery">השראה ושרטוטים</a>
           <button type="button" id="settings-toggle" class="nav-settings-btn" aria-label="הגדרות" aria-expanded="false">⚙️ הגדרות</button>
@@ -73,6 +74,7 @@
           <a href="#home" class="nav-drawer-link">ראשי</a>
           <a href="#builder" class="nav-drawer-link">בונה חלליות</a>
           <a href="#studio3d" class="nav-drawer-link">סטודיו 3D</a>
+          <a href="#editor3d" class="nav-drawer-link editor-access-only hidden">עורך 3D</a>
           <a href="#fleet" class="nav-drawer-link">הצי שלי</a>
           <a href="#gallery" class="nav-drawer-link">השראה ושרטוטים</a>
           <button type="button" id="nav-drawer-settings" class="nav-settings-btn nav-drawer-settings">⚙️ הגדרות</button>
@@ -188,8 +190,9 @@
               Design spacecraft prototypes with live telemetry, 3D preview, and a personal hangar – directly in your browser.
             </p>
             <div class="hero-actions">
-              <button id="cta-button" class="btn-primary">
-                התחל לבנות חללית
+              <button id="cta-button" class="btn-primary cta-with-logo">
+                <img src="/assets/images/ship-logo.png" alt="" class="cta-btn-logo" width="24" height="24" decoding="async" />
+                <span>בונה החלליות שלך</span>
               </button>
               <button type="button" id="open-studio-btn" class="btn-ghost">
                 פתח סטודיו 3D
@@ -641,6 +644,107 @@
               <p>תצוגת 3D לא זמינה בסטודיו. עבר לבונה חלליות לתצוגה חיה.</p>
             </div>
             <p class="studio3d-hint" aria-hidden="true">גרור לסיבוב • גלילה לזום • גרור עם Shift להזזה</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="editor3d" class="section editor3d-section editor-access-only hidden" aria-labelledby="editor3d-heading">
+        <div class="container container-full">
+          <h2 id="editor3d-heading">עורך חלליות 3D</h2>
+          <p class="editor3d-intro">בנה חללית מחלקים – הוסף, הזז, סובב, שנה גודל. גישה למשתמשים עסקיים ומפתחים.</p>
+          <div class="editor3d-layout">
+            <div class="editor3d-toolbar" role="toolbar" aria-label="כלי עריכה">
+              <div class="editor3d-toolbar-group">
+                <span class="editor3d-toolbar-label">כלים:</span>
+                <button type="button" class="editor3d-btn active" data-tool="select" title="בחירה">בחירה</button>
+                <button type="button" class="editor3d-btn" data-tool="move" title="הזזה">הזזה</button>
+                <button type="button" class="editor3d-btn" data-tool="rotate" title="סיבוב">סיבוב</button>
+                <button type="button" class="editor3d-btn" data-tool="scale" title="שינוי גודל">גודל</button>
+                <button type="button" class="editor3d-btn" data-tool="duplicate" title="שכפול">שכפול</button>
+                <button type="button" class="editor3d-btn" data-tool="delete" title="מחיקה">מחיקה</button>
+              </div>
+              <div class="editor3d-toolbar-group">
+                <span class="editor3d-toolbar-label">הוסף חלק:</span>
+                <button type="button" class="editor3d-btn" data-add="body" title="גוף ראשי">גוף</button>
+                <button type="button" class="editor3d-btn" data-add="wing" title="כנפיים">כנפיים</button>
+                <button type="button" class="editor3d-btn" data-add="engine" title="מנועים">מנוע</button>
+                <button type="button" class="editor3d-btn" data-add="cockpit" title="תא טייס">קוקפיט</button>
+              </div>
+              <div class="editor3d-toolbar-group">
+                <label class="editor3d-check">
+                  <input type="checkbox" id="editor3d-grid" checked />
+                  <span>רשת</span>
+                </label>
+                <label class="editor3d-check">
+                  <input type="checkbox" id="editor3d-lighting" checked />
+                  <span>תאורה</span>
+                </label>
+              </div>
+              <div class="editor3d-toolbar-group">
+                <button type="button" class="editor3d-btn btn-primary" id="editor3d-save" title="שמור עיצוב">שמור</button>
+                <select id="editor3d-design-list" class="editor3d-select" title="עיצובים שמורים">
+                  <option value="">-- טען עיצוב --</option>
+                </select>
+                <button type="button" class="editor3d-btn" id="editor3d-load" title="טען עיצוב">טען</button>
+              </div>
+            </div>
+            <div class="editor3d-main">
+              <div class="editor3d-viewport-wrap">
+                <canvas id="editor3d-canvas" tabindex="0"></canvas>
+                <div id="editor3d-fallback" class="editor3d-fallback hidden">
+                  <p>עורך 3D לא זמין. יש להתחבר כמשתמש עסקי או מפתח.</p>
+                </div>
+              </div>
+              <aside class="editor3d-properties" aria-label="מאפייני חלק">
+                <h3>מאפייני חלק</h3>
+                <div id="editor3d-props-empty" class="editor3d-props-empty">בחר חלק לעריכה</div>
+                <div id="editor3d-props-panel" class="editor3d-props-panel hidden">
+                  <div class="form-group">
+                    <label for="editor-part-color">צבע</label>
+                    <input type="color" id="editor-part-color" />
+                  </div>
+                  <div class="form-group range-group">
+                    <label for="editor-part-scale">גודל</label>
+                    <input type="range" id="editor-part-scale" min="0.5" max="3" step="0.1" value="1" />
+                    <span class="range-value" data-for="editor-part-scale">1</span>
+                  </div>
+                  <div class="form-group editor3d-position">
+                    <label>מיקום</label>
+                    <div class="editor3d-vec3">
+                      <input type="number" id="editor-part-pos-x" step="0.1" placeholder="X" />
+                      <input type="number" id="editor-part-pos-y" step="0.1" placeholder="Y" />
+                      <input type="number" id="editor-part-pos-z" step="0.1" placeholder="Z" />
+                    </div>
+                  </div>
+                  <div class="form-group editor3d-rotation">
+                    <label>סיבוב (°)</label>
+                    <div class="editor3d-vec3">
+                      <input type="number" id="editor-part-rot-x" step="15" placeholder="X" />
+                      <input type="number" id="editor-part-rot-y" step="15" placeholder="Y" />
+                      <input type="number" id="editor-part-rot-z" step="15" placeholder="Z" />
+                    </div>
+                  </div>
+                  <p id="editor-part-id" class="editor-part-id"></p>
+                </div>
+              </aside>
+            </div>
+            <div class="editor3d-blueprint" aria-label="תצוגת Blueprint">
+              <h3>Blueprint</h3>
+              <div class="editor3d-blueprint-views">
+                <div class="editor3d-bp-view">
+                  <span class="editor3d-bp-label">מבט על</span>
+                  <canvas id="editor3d-bp-top"></canvas>
+                </div>
+                <div class="editor3d-bp-view">
+                  <span class="editor3d-bp-label">מבט צד</span>
+                  <canvas id="editor3d-bp-side"></canvas>
+                </div>
+                <div class="editor3d-bp-view">
+                  <span class="editor3d-bp-label">מבט קדמי</span>
+                  <canvas id="editor3d-bp-front"></canvas>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
