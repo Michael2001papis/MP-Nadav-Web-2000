@@ -1164,27 +1164,30 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   if (shipCanvas) {
-    try {
-      const s3d = getSettings();
-      threeContext = initScene(shipCanvas, {
-        autoRotate: s3d.reducedMotion ? false : s3d.autoRotate,
-        rotationSpeed: s3d.rotationSpeed,
-        qualityMode: s3d.qualityMode,
-        showAxis: s3d.showAxis,
-      });
-      if (!threeContext) throw new Error("initScene returned null");
-      const initialConfig3D = defaultShipConfig3D;
-      const { group, parts } = createShip(initialConfig3D);
-      threeContext.setShipGroup(group);
-      currentShip3D = { group, parts, config3D: initialConfig3D };
-      updateSystemStatus(true);
-    } catch (err) {
-      console.warn("SpaceYard: 3D not available", err);
-      threeContext = null;
-      currentShip3D = null;
-      show3DFallback();
-      updateSystemStatus(false);
-    }
+    const init3D = () => {
+      try {
+        const s3d = getSettings();
+        threeContext = initScene(shipCanvas, {
+          autoRotate: s3d.reducedMotion ? false : s3d.autoRotate,
+          rotationSpeed: s3d.rotationSpeed,
+          qualityMode: s3d.qualityMode,
+          showAxis: s3d.showAxis,
+        });
+        if (!threeContext) throw new Error("initScene returned null");
+        const initialConfig3D = defaultShipConfig3D;
+        const { group, parts } = createShip(initialConfig3D);
+        threeContext.setShipGroup(group);
+        currentShip3D = { group, parts, config3D: initialConfig3D };
+        updateSystemStatus(true);
+      } catch (err) {
+        console.warn("SpaceYard: 3D not available", err);
+        threeContext = null;
+        currentShip3D = null;
+        show3DFallback();
+        updateSystemStatus(false);
+      }
+    };
+    setTimeout(init3D, 0);
   }
 
   const syncStudioShip = () => {
