@@ -252,6 +252,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const setCurrentUser = (user) => {
+    try {
     if (!user) {
       try {
         localStorage.removeItem(AUTH_KEY);
@@ -274,10 +275,10 @@ document.addEventListener("DOMContentLoaded", () => {
         .forEach((el) => el.classList.add("hidden"));
       return;
     }
+    hideOverlay();
     try {
       localStorage.setItem(AUTH_KEY, JSON.stringify(user));
     } catch {}
-    hideOverlay();
     document.body.dataset.role = user.role;
     if (logoutBtn) logoutBtn.classList.remove("hidden");
     const adv = document.getElementById("advanced-part-colors");
@@ -312,6 +313,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (user.role === "developer") {
       initDeveloperTextPanel();
     }
+    } catch (_) {}
   };
 
   const AUTH_USERS = [
@@ -355,16 +357,17 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const existingUser = getCurrentUser();
-  if (existingUser) {
+  if (existingUser && typeof existingUser.username === "string" && existingUser.role) {
     setCurrentUser(existingUser);
   } else {
+    if (existingUser) try { localStorage.removeItem(AUTH_KEY); } catch (_) {}
     try {
       const seen = localStorage.getItem(WELCOME_KEY);
       if (!seen) {
         localStorage.setItem(WELCOME_KEY, "1");
         if (toastContainer) showToast("ברוך הבא ל-SpaceYard! לחיצה על 'כניסת משתמש' לחשבון עסקי.", "info");
       }
-    } catch {}
+    } catch (_) {}
   }
 
   if (logoutBtn) {
@@ -1187,7 +1190,7 @@ document.addEventListener("DOMContentLoaded", () => {
         updateSystemStatus(false);
       }
     };
-    setTimeout(init3D, 0);
+    setTimeout(init3D, 50);
   }
 
   const syncStudioShip = () => {
@@ -1420,34 +1423,35 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
-    loadFleetFromStorage();
-    if (fleet.length === 0) {
-      const demo = normalizeShip({
-        shipName: "אוריון פרו",
-        shipType: "explorer",
-        shipColor: "#38bdf8",
-        shipSpeed: "8",
-        shipSize: "6",
-        shipCrew: "24",
-        commanderName: "סרן עדי אוריון",
-        missionDescription:
-          "משימת חקר ארוכה אל ערפילית אוריון, מיפוי מסלולי אסטרואידים והקמת תחנת תדלוק חללית.",
-        riskLevel: "high",
-        alienType: "engineer",
-        features: ["shield", "cloak", "drones"],
-        advanced: ["autopilot", "ai", "quantumCore"],
-      });
-      fleet.push(demo);
-      saveFleetToStorage();
-    }
-
-    renderFleet();
-
-    const initialRaw = getRawFormData();
-    const initialNormalized = normalizeShip(initialRaw);
-    shipSummary.innerHTML = buildSummaryText(initialNormalized);
-    applyShipColor(initialNormalized.shipColor);
-    updateShipPreviewMeta(initialNormalized);
+    const initFleetAndForm = () => {
+      loadFleetFromStorage();
+      if (fleet.length === 0) {
+        const demo = normalizeShip({
+          shipName: "אוריון פרו",
+          shipType: "explorer",
+          shipColor: "#38bdf8",
+          shipSpeed: "8",
+          shipSize: "6",
+          shipCrew: "24",
+          commanderName: "סרן עדי אוריון",
+          missionDescription:
+            "משימת חקר ארוכה אל ערפילית אוריון, מיפוי מסלולי אסטרואידים והקמת תחנת תדלוק חללית.",
+          riskLevel: "high",
+          alienType: "engineer",
+          features: ["shield", "cloak", "drones"],
+          advanced: ["autopilot", "ai", "quantumCore"],
+        });
+        fleet.push(demo);
+        saveFleetToStorage();
+      }
+      renderFleet();
+      const initialRaw = getRawFormData();
+      const initialNormalized = normalizeShip(initialRaw);
+      shipSummary.innerHTML = buildSummaryText(initialNormalized);
+      applyShipColor(initialNormalized.shipColor);
+      updateShipPreviewMeta(initialNormalized);
+    };
+    setTimeout(initFleetAndForm, 0);
   }
 
   const userRequestForm = document.getElementById("user-request-form");
