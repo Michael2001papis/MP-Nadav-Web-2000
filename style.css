@@ -50,10 +50,8 @@ body {
   position: relative;
   --bg-gradient: radial-gradient(circle at top, #111827 0, #020617 40%, #000 100%);
   --bg-overlay: rgba(3, 7, 18, 0.72);
-  background:
-    var(--bg-gradient),
-    url("/assets/images/Website background image/Gemini_Generated_Image_eavh8eavh8eavh8e.png") center / cover
-      no-repeat fixed;
+  background: url("/assets/images/Website background image/Gemini_Generated_Image_eavh8eavh8eavh8e.png") center /
+    cover no-repeat fixed;
   color: var(--text);
   transition: background var(--transition-smooth), color var(--transition-smooth);
 }
@@ -62,9 +60,9 @@ body::before {
   content: "";
   position: fixed;
   inset: 0;
-  background: radial-gradient(circle at top, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.98), #020617);
+  background: var(--bg-gradient);
   background-color: var(--bg-0);
-  opacity: 0.9;
+  opacity: 0.78;
   mix-blend-mode: multiply;
   pointer-events: none;
   z-index: -1;
