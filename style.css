@@ -187,7 +187,7 @@ a {
   top: 0;
   z-index: 20;
   backdrop-filter: blur(18px);
-  background: linear-gradient(to bottom, rgba(7, 10, 18, 0.96), rgba(7, 10, 18, 0.8), transparent);
+  background: linear-gradient(to bottom, rgba(7, 10, 18, 0.98), rgba(7, 10, 18, 0.96), rgba(7, 10, 18, 0.9));
   border-bottom: 1px solid rgba(120, 170, 255, 0.22);
   transition: background var(--transition-smooth), border-color var(--transition-smooth);
 }
@@ -3113,6 +3113,18 @@ body[data-theme="simple"] .ship-form textarea {
 }
 
 @media (max-width: 640px) {
+  .site-header {
+    padding-inline: 0;
+  }
+
+  .header-content {
+    padding: 10px 8px;
+  }
+
+  .nav-drawer-panel {
+    top: 60px;
+    height: calc(100% - 60px);
+  }
   .nav {
     gap: 8px;
     font-size: 0.85rem;
