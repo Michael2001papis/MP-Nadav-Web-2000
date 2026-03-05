@@ -300,19 +300,23 @@ a {
   min-height: 44px;
   padding: 0;
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
-  background: transparent;
-  color: var(--text);
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.95);
+  color: #e5f0ff;
   font-size: 1.35rem;
   cursor: pointer;
-  transition: background var(--transition-fast), color var(--transition-fast);
+  box-shadow: 0 10px 24px rgba(3, 7, 18, 0.85);
+  transition: background var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast),
+    transform var(--transition-fast);
   position: relative;
   z-index: 30;
 }
 
 .nav-menu-btn:hover {
-  background: var(--accent-soft);
-  color: var(--text);
+  background: var(--accent);
+  color: #020617;
+  box-shadow: 0 14px 32px rgba(3, 7, 18, 0.95);
+  transform: translateY(-1px);
 }
 
 .nav-drawer {
