@@ -3,6 +3,7 @@ import { createShip } from "./3d/shipFactory.js";
 import { updateShipFromConfig } from "./3d/shipEditor.js";
 import { defaultShipConfig3D, mergeConfig3D, buildConfig3DFromRaw } from "./3d/utils.js";
 import { initEditor3D } from "./3d/editor3d.js";
+import { applyLanguage, getLang, t } from "./i18n.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   const STORAGE_KEY = "spaceyard-fleet-v1";
@@ -10,40 +11,40 @@ document.addEventListener("DOMContentLoaded", () => {
   const BUSINESS_PROFILE_KEY = "spaceyard-business-profile-v1";
   const DEV_TEXT_KEY = "spaceyard-dev-text-v1";
 
-  const TYPE_LABELS = {
-    explorer: "ספינת מחקר",
-    fighter: "חללית קרב",
-    cargo: "משא בין־כוכבי",
-    luxury: "יאכטת חלל",
-  };
+  const TYPE_LABELS = () => ({
+    explorer: t("typeExplorer"),
+    fighter: t("typeFighter"),
+    cargo: t("typeCargo"),
+    luxury: t("typeLuxury"),
+  });
 
-  const RISK_LABELS = {
-    low: "נמוכה",
-    medium: "בינונית",
-    high: "גבוהה",
-    extreme: "קצה גבול היכולת",
-  };
+  const RISK_LABELS = () => ({
+    low: t("riskLow"),
+    medium: t("riskMedium"),
+    high: t("riskHigh"),
+    extreme: t("riskExtreme"),
+  });
 
-  const FEATURE_LABELS = {
-    shield: "מגן אנרגיה",
-    lasers: "תותחי לייזר",
-    cloak: "מערכת הסתרה",
-    drones: "רחפני שירות",
-  };
+  const FEATURE_LABELS = () => ({
+    shield: t("featShield"),
+    lasers: t("featLasers"),
+    cloak: t("featCloak"),
+    drones: t("featDrones"),
+  });
 
-  const ADVANCED_LABELS = {
-    autopilot: "טייס אוטומטי מלא",
-    ai: "בינה מלאכותית טקטית",
-    quantumCore: "ליבת עיבוד קוואנטית",
-    escapeSystem: "מערכת מילוט חכמה",
-  };
+  const ADVANCED_LABELS = () => ({
+    autopilot: t("sysAutopilot"),
+    ai: t("sysAi"),
+    quantumCore: t("sysQuantum"),
+    escapeSystem: t("sysEscape"),
+  });
 
-  const ALIEN_LABELS = {
-    scout: "חייזר סייר",
-    engineer: "חייזר מהנדס",
-    warrior: "חייזר לוחם",
-    diplomat: "חייזר דיפלומט",
-  };
+  const ALIEN_LABELS = () => ({
+    scout: t("alienScout"),
+    engineer: t("alienEngineer"),
+    warrior: t("alienWarrior"),
+    diplomat: t("alienDiplomat"),
+  });
 
   let fleet = [];
   let selectedShipId = null;
@@ -77,6 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const settingsModalClose = document.getElementById("settings-modal-close");
   const settingsModalOverlay = document.querySelector(".settings-modal-overlay");
   const settingsDone = document.getElementById("settings-done");
+  const languageSelect = document.getElementById("language-select");
   const themeSelect = document.getElementById("theme-select");
   const fontSizeLarge = document.getElementById("font-size-large");
   const reducedMotion = document.getElementById("reduced-motion");
@@ -105,6 +107,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const FLEET_KEY = "spaceyard-fleet-v1";
 
   const DEFAULT_SETTINGS = {
+    language: "en",
     theme: "normal",
     fontSize: "normal",
     reducedMotion: false,
@@ -120,6 +123,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const getSettingsFromDOM = () => ({
+    language: languageSelect ? languageSelect.value : DEFAULT_SETTINGS.language,
     theme: themeSelect ? themeSelect.value : DEFAULT_SETTINGS.theme,
     fontSize: fontSizeLarge && fontSizeLarge.checked ? "large" : "normal",
     reducedMotion: !!(reducedMotion && reducedMotion.checked),
@@ -136,6 +140,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const applySettingsToDOM = (s) => {
     const o = { ...DEFAULT_SETTINGS, ...s };
+    if (languageSelect) languageSelect.value = o.language || "en";
     if (themeSelect) themeSelect.value = o.theme;
     if (fontSizeLarge) fontSizeLarge.checked = o.fontSize === "large";
     if (reducedMotion) reducedMotion.checked = o.reducedMotion;
@@ -151,6 +156,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const applySettingsToSystem = (s) => {
     const o = { ...DEFAULT_SETTINGS, ...s };
+    applyLanguage(o.language || "en");
     document.body.setAttribute("data-theme", o.theme === "normal" ? "" : o.theme);
     document.documentElement.classList.toggle("font-size-large", o.fontSize === "large");
     document.body.classList.toggle("reduced-motion", o.reducedMotion);
@@ -203,7 +209,7 @@ document.addEventListener("DOMContentLoaded", () => {
   loadSettings();
 
   const updateSystemStatus = (threeOk = null) => {
-    const threeState = threeOk === null ? "אתחול" : threeOk ? "פעיל" : "כבוי";
+    const threeState = threeOk === null ? t("statusInit") : threeOk ? t("statusActive") : t("statusOff");
     if (heroMetric3D) heroMetric3D.textContent = threeState;
   };
 
@@ -352,13 +358,13 @@ document.addEventListener("DOMContentLoaded", () => {
       );
       if (!user) {
         if (authError) {
-          authError.textContent = "שם משתמש או סיסמה שגויים.";
+          authError.textContent = t("authErrorInvalid");
         }
         return;
       }
       setCurrentUser({ username: user.username, role: user.role });
       if (toastContainer) {
-        showToast(`התחברת כ-${user.displayName}.`, "success");
+        showToast(t("toastLoggedInAs") + " " + (user.displayName || user.username) + ".", "success");
       }
     });
   }
@@ -372,7 +378,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const seen = localStorage.getItem(WELCOME_KEY);
       if (!seen) {
         localStorage.setItem(WELCOME_KEY, "1");
-        if (toastContainer) showToast("ברוך הבא ל-SpaceYard! לחיצה על 'כניסת משתמש' לחשבון עסקי.", "info");
+        if (toastContainer) showToast(t("toastWelcome"), "info");
       }
     } catch (_) {}
   }
@@ -380,7 +386,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (logoutBtn) {
     logoutBtn.addEventListener("click", () => {
       setCurrentUser(null);
-      if (toastContainer) showToast("התנתקת מהמערכת.", "info");
+      if (toastContainer) showToast(t("toastSignedOut"), "info");
     });
   }
 
@@ -482,7 +488,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (settingsDone) {
     settingsDone.addEventListener("click", () => {
       saveSettings();
-      if (toastContainer) showToast("ההגדרות נשמרו", "success");
+      if (toastContainer) showToast(t("toastSettingsSaved"), "success");
       closeModal();
     });
   }
@@ -499,26 +505,30 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  document.querySelectorAll("#theme-select, #font-size-large, #reduced-motion, #high-contrast, #auto-rotate, #rotation-speed, #quality-mode, #show-axis, #auto-save, #fleet-limit, #confirm-reset").forEach((el) => {
-    if (el) el.addEventListener("change", saveSettings);
+  document.querySelectorAll("#language-select, #theme-select, #font-size-large, #reduced-motion, #high-contrast, #auto-rotate, #rotation-speed, #quality-mode, #show-axis, #auto-save, #fleet-limit, #confirm-reset").forEach((el) => {
+    if (el) el.addEventListener("change", () => { saveSettings(); if (el.id === "language-select") applyLanguage(languageSelect ? languageSelect.value : "en"); });
+  });
+  document.addEventListener("i18n:applied", () => {
+    if (typeof renderFleet === "function") renderFleet();
+    if (shipForm && shipSummary) shipForm.dispatchEvent(new Event("input", { bubbles: true }));
   });
   if (rotationSpeed) rotationSpeed.addEventListener("input", () => { updateRangeLabels(); saveSettings(); });
 
   if (resetSettingsBtn) {
     resetSettingsBtn.addEventListener("click", () => {
-      if (!window.confirm("לאפס את כל ההגדרות לברירת מחדל?")) return;
+      if (!window.confirm(t("confirmResetSettings"))) return;
       try { localStorage.removeItem(SETTINGS_KEY_V2); } catch (_) {}
       loadSettings();
       applySettingsToDOM(DEFAULT_SETTINGS);
       applySettingsToSystem(DEFAULT_SETTINGS);
-      if (toastContainer) showToast("ההגדרות אופסו", "success");
+      if (toastContainer) showToast(t("toastSettingsReset"), "success");
     });
   }
 
   if (clearLocalData) {
     clearLocalData.addEventListener("click", () => {
-      if (!window.confirm("למחוק את כל הנתונים המקומיים? זה כולל את הצי וההגדרות.")) return;
-      if (!window.confirm("בטוח? פעולה זו לא ניתנת לביטול.")) return;
+      if (!window.confirm(t("confirmClearData"))) return;
+      if (!window.confirm(t("confirmClearData2"))) return;
       try {
         localStorage.removeItem(SETTINGS_KEY_V2);
         localStorage.removeItem(SETTINGS_KEY_V1);
@@ -770,24 +780,24 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const buildSummaryText = (ship) => {
-    const typeLabel = TYPE_LABELS[ship.shipType] || "חללית מותאמת אישית";
+    const typeLabel = TYPE_LABELS()[ship.shipType] || t("typeCustom");
     const featuresText =
       ship.features.length > 0
-        ? ship.features.map((f) => FEATURE_LABELS[f] || f).join(" · ")
+        ? ship.features.map((f) => FEATURE_LABELS()[f] || f).join(" · ")
         : "ללא יכולות מיוחדות";
     const advancedText =
       ship.advanced.length > 0
-        ? ship.advanced.map((a) => ADVANCED_LABELS[a] || a).join(" · ")
+        ? ship.advanced.map((a) => ADVANCED_LABELS()[a] || a).join(" · ")
         : "ללא מערכות נוספות";
-    const riskText = RISK_LABELS[ship.riskLevel] || "לא סווגה";
+    const riskText = RISK_LABELS()[ship.riskLevel] || t("riskUnset");
     const commander = ship.commanderName || "לא הוגדר";
     const mission =
       ship.missionDescription && ship.missionDescription.trim().length > 0
         ? ship.missionDescription.trim()
         : null;
     const alien =
-      ship.alienType && ALIEN_LABELS[ship.alienType]
-        ? ` · חייזר מלווה: ${ALIEN_LABELS[ship.alienType]}`
+      ship.alienType && ALIEN_LABELS()[ship.alienType]
+        ? ` · ${t("alienCompanion")} ${ALIEN_LABELS()[ship.alienType]}`
         : "";
 
     const safeName = escapeHtml(ship.shipName || "חללית ללא שם");
@@ -821,15 +831,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const featuresChips = document.getElementById("ship-features-chips");
     const advancedChips = document.getElementById("ship-advanced-chips");
 
-    const typeLabel = TYPE_LABELS[ship.shipType] || "חללית מותאמת אישית";
-    const riskLabel = RISK_LABELS[ship.riskLevel] || "לא סווגה";
+    const typeLabel = TYPE_LABELS()[ship.shipType] || t("typeCustom");
+    const riskLabel = RISK_LABELS()[ship.riskLevel] || t("riskUnset");
 
     if (typePill) typePill.textContent = typeLabel;
     if (riskPill) riskPill.textContent = `רמת סיכון: ${riskLabel}`;
 
     if (alienPill) {
-      if (ship.alienType && ALIEN_LABELS[ship.alienType]) {
-        alienPill.textContent = `חייזר מלווה: ${ALIEN_LABELS[ship.alienType]}`;
+      if (ship.alienType && ALIEN_LABELS()[ship.alienType]) {
+        alienPill.textContent = `${t("alienCompanion")} ${ALIEN_LABELS()[ship.alienType]}`;
         alienPill.classList.remove("hidden");
       } else {
         alienPill.textContent = "";
@@ -866,7 +876,7 @@ document.addEventListener("DOMContentLoaded", () => {
         list.forEach((f) => {
           const chip = document.createElement("span");
           chip.className = "ship-chip";
-          chip.textContent = FEATURE_LABELS[f] || f;
+          chip.textContent = FEATURE_LABELS()[f] || f;
           featuresChips.appendChild(chip);
         });
       }
@@ -886,7 +896,7 @@ document.addEventListener("DOMContentLoaded", () => {
         list.forEach((a) => {
           const chip = document.createElement("span");
           chip.className = "ship-chip";
-          chip.textContent = ADVANCED_LABELS[a] || a;
+          chip.textContent = ADVANCED_LABELS()[a] || a;
           advancedChips.appendChild(chip);
         });
       }
@@ -1017,7 +1027,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     } catch {
       fleet = [];
-      if (toastContainer) showToast("נתוני הצי לא נטענו. מתחיל עם צי ריק.", "info");
+      if (toastContainer) showToast(t("toastFleetNotLoaded"), "info");
     }
   };
 
@@ -1030,7 +1040,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     saveFleetToStorage();
     renderFleet();
-    showToast("החללית נמחקה מהצי.", "success");
+    showToast(t("toastShipDeleted"), "success");
   };
 
   const renderFleet = () => {
@@ -1081,9 +1091,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const total = fleet.length;
       const shown = ships.length;
       if (shown === total) {
-        fleetSummaryLine.textContent = `סה"כ חלליות: ${total}`;
+        fleetSummaryLine.textContent = `${t("fleetSummary")} ${total}`;
       } else {
-        fleetSummaryLine.textContent = `סה"כ חלליות: ${total} · מוצגות כעת: ${shown}`;
+        fleetSummaryLine.textContent = `${t("fleetSummary")} ${total} · ${t("fleetShown")}: ${shown}`;
       }
       if (heroMetricFleet) {
         heroMetricFleet.textContent = String(total);
@@ -1092,7 +1102,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (ships.length === 0) {
       fleetList.classList.add("empty");
-      fleetList.textContent = "עדיין לא נוספו חלליות. בנה את הראשונה שלך למעלה.";
+      fleetList.textContent = t("fleetEmpty");
       return;
     }
 
@@ -1112,7 +1122,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const meta = document.createElement("div");
       meta.className = "fleet-card-meta";
-      const riskLabel = RISK_LABELS[ship.riskLevel] || ship.riskLevel || "";
+      const riskLabel = RISK_LABELS()[ship.riskLevel] || ship.riskLevel || "";
       meta.textContent = `צוות: ${ship.shipCrew} · מהירות: ${ship.shipSpeed} · גודל: ${ship.shipSize}${
         riskLabel ? ` · סיכון: ${riskLabel}` : ""
       }`;
@@ -1120,11 +1130,11 @@ document.addEventListener("DOMContentLoaded", () => {
       main.appendChild(title);
       main.appendChild(meta);
 
-      if (ship.alienType && ALIEN_LABELS[ship.alienType]) {
+      if (ship.alienType && ALIEN_LABELS()[ship.alienType]) {
         const alienBadge = document.createElement("div");
         alienBadge.className = "alien-badge";
         alienBadge.dataset.alienType = ship.alienType;
-        alienBadge.textContent = ALIEN_LABELS[ship.alienType];
+        alienBadge.textContent = ALIEN_LABELS()[ship.alienType];
         main.appendChild(alienBadge);
       }
 
@@ -1147,7 +1157,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       deleteBtn.addEventListener("click", (event) => {
         event.stopPropagation();
-        const confirmed = window.confirm("למחוק את החללית הזו מהצי?");
+        const confirmed = window.confirm(t("confirmDeleteShip"));
         if (!confirmed) return;
         deleteShipById(ship.id);
       });
@@ -1170,7 +1180,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const show3DFallback = () => {
     if (shipCanvas && shipCanvas.style) shipCanvas.style.setProperty("display", "none");
     if (shipCanvasFallback) shipCanvasFallback.classList.remove("hidden");
-    showToast("תצוגת 3D לא זמינה – המשך שימוש בטופס וברשימת הצי.", "info");
+    showToast(t("toast3dUnavailable"), "info");
   };
 
   if (shipCanvas) {
@@ -1273,9 +1283,9 @@ document.addEventListener("DOMContentLoaded", () => {
             a.href = dataUrl;
             a.download = `spaceyard-${Date.now()}.png`;
             a.click();
-            if (toastContainer) showToast("התמונה נשמרה", "success");
+            if (toastContainer) showToast(t("toastImageSaved"), "success");
           } catch (_) {
-            if (toastContainer) showToast("שמירת תמונה נכשלה", "error");
+            if (toastContainer) showToast(t("toastImageFailed"), "error");
           }
         });
       }
@@ -1312,8 +1322,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const inView = editorSection.getBoundingClientRect().top < window.innerHeight * 0.9;
     if (atEditorHash || inView) {
       editor3dContext = initEditor3D(editorCanvas, {
-        onSave: () => showToast && showToast("העיצוב נשמר", "success"),
-        onLoadError: (msg) => showToast && showToast(msg || "אין עיצובים שמורים", "info"),
+        onSave: () => showToast && showToast(t("toastDesignSaved"), "success"),
+        onLoadError: (msg) => showToast && showToast(msg || t("toastNoDesigns"), "info"),
       });
     }
   };
@@ -1358,7 +1368,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (!isValid) {
         showFormErrors(errors);
-        showToast("יש שגיאות בטופס. תקן ונסה שוב.", "error");
+        showToast(t("toastFormErrors"), "error");
         return;
       }
 
@@ -1370,11 +1380,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         saveFleetToStorage();
         renderFleet();
-        showToast("החללית עודכנה בהצלחה.", "success");
+        showToast(t("toastShipUpdated"), "success");
       } else {
         const limit = getSettings().fleetLimit;
         if (fleet.length >= limit) {
-          showToast(`הגעת למספר החלליות המקסימלי (${limit}).`, "error");
+          showToast(t("toastFleetLimit") + " (" + limit + ").", "error");
           return;
         }
         const normalized = normalizeShip(raw);
@@ -1384,7 +1394,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         saveFleetToStorage();
         renderFleet();
-        showToast("חללית נוספה לצי.", "success");
+        showToast(t("toastShipAdded"), "success");
       }
     });
 
@@ -1394,19 +1404,19 @@ document.addEventListener("DOMContentLoaded", () => {
         const { isValid, errors } = validateShip(raw);
         if (!isValid) {
           showFormErrors(errors);
-          showToast("לא ניתן לשכפל – יש שגיאות בטופס.", "error");
+          showToast(t("toastCannotDuplicate"), "error");
           return;
         }
         const limit = getSettings().fleetLimit;
         if (fleet.length >= limit) {
-          showToast(`הגעת למספר החלליות המקסימלי (${limit}).`, "error");
+          showToast(t("toastFleetLimit") + " (" + limit + ").", "error");
           return;
         }
         const duplicated = normalizeShip(raw);
         fleet.push(duplicated);
         saveFleetToStorage();
         renderFleet();
-        showToast("חללית שוכפלה לצי.", "success");
+        showToast(t("toastShipDuplicated"), "success");
       });
     }
 
@@ -1421,12 +1431,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     if (fleetResetBtn) {
       fleetResetBtn.addEventListener("click", () => {
-        if (getSettings().confirmReset && !window.confirm("לאפס את כל צי החלליות?")) return;
+        if (getSettings().confirmReset && !window.confirm(t("confirmResetFleet"))) return;
         fleet = [];
         exitEditMode();
         saveFleetToStorage();
         renderFleet();
-        showToast("הצי אופס בהצלחה.", "success");
+        showToast(t("toastFleetReset"), "success");
       });
     }
 
@@ -1594,7 +1604,7 @@ document.addEventListener("DOMContentLoaded", () => {
         statusEl.classList.remove("error");
         statusEl.classList.add("success");
         loadProfile();
-        if (toastContainer) showToast("פרופיל משתמש עודכן.", "success");
+        if (toastContainer) showToast(t("toastProfileUpdated"), "success");
       } catch {
         statusEl.textContent = "שמירת הפרופיל נכשלה.";
         statusEl.classList.remove("success");
@@ -1675,7 +1685,7 @@ document.addEventListener("DOMContentLoaded", () => {
         statusEl.classList.remove("error");
         statusEl.classList.add("success");
         applyDeveloperTextConfig(updated);
-        if (toastContainer) showToast("טקסטים עודכנו.", "success");
+        if (toastContainer) showToast(t("toastTextsUpdated"), "success");
       } catch {
         statusEl.textContent = "שמירת הטקסטים נכשלה.";
         statusEl.classList.remove("success");
@@ -1726,7 +1736,7 @@ document.addEventListener("DOMContentLoaded", () => {
         statusEl.classList.remove("error");
         statusEl.classList.add("success");
         applyDeveloperTextConfig(updated);
-        if (toastContainer) showToast("טקסטים עודכנו.", "success");
+        if (toastContainer) showToast(t("toastTextsUpdated"), "success");
       } catch {
         statusEl.textContent = "שמירת הטקסטים נכשלה.";
         statusEl.classList.remove("success");

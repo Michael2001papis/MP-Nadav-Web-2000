@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="he" dir="rtl">
+<html lang="en" dir="ltr">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="SpaceYard – מעבדה לבניית צי חלליות עם תצוגת 3D, טלו־מטריה חיה ומעגן אישי. עיצוב אבות־טיפוס ישירות בדפדפן." />
+    <meta name="description" content="SpaceYard – Lab for building a spaceship fleet with 3D view, live telemetry, and personal dock. Design prototypes in your browser." />
     <link rel="icon" type="image/png" href="/assets/images/ship-logo.png" />
-    <title>בונה החלליות שלך</title>
+    <title>Build Your Spaceships</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
@@ -14,33 +14,33 @@
     </div>
     <div id="auth-overlay" class="auth-overlay hidden" aria-hidden="true">
       <div class="auth-box" role="dialog" aria-modal="true" aria-labelledby="welcome-title">
-        <button type="button" id="auth-close-btn" class="auth-close-btn" aria-label="סגור">×</button>
+        <button type="button" id="auth-close-btn" class="auth-close-btn" data-i18n-aria="close">×</button>
         <div id="welcome-panel">
-          <h1 id="welcome-title">ברוך הבא למעבדת SpaceYard</h1>
-          <p class="auth-subtitle">
-            SpaceYard היא מעבדה קוונטית ניסיונית לבניית צי חלליות – עם תצוגת 3D, טלו־מטריה חיה וניהול מעגן אישי.
+          <h1 id="welcome-title" data-i18n="authWelcomeTitle">Welcome to SpaceYard Lab</h1>
+          <p class="auth-subtitle" data-i18n="authWelcomeP1">
+            SpaceYard is an experimental quantum lab for building a spaceship fleet – with 3D view, live telemetry, and personal dock management.
           </p>
-          <p class="auth-subtitle">
-            השימוש באתר מיועד להדגמה בלבד, ללא אחריות, וכל הנתונים נשמרים מקומית בדפדפן שלך ואינם נשלחים לשרת.
+          <p class="auth-subtitle" data-i18n="authWelcomeP2">
+            This site is for demonstration only. All data is stored locally in your browser and is not sent to any server.
           </p>
-          <button type="button" id="welcome-accept-btn" class="btn-primary auth-submit">התחל כאורח</button>
+          <button type="button" id="welcome-accept-btn" class="btn-primary auth-submit" data-i18n="authStartGuest">Continue as guest</button>
         </div>
 
         <form id="auth-form" class="auth-form hidden" novalidate aria-hidden="true">
-          <h1 id="auth-title">כניסת משתמש</h1>
-          <p class="auth-subtitle">התחברות למשתמש עסקי או למפתח המערכת.</p>
+          <h1 id="auth-title" data-i18n="authTitle">User login</h1>
+          <p class="auth-subtitle" data-i18n="authSubtitle">Sign in as business user or system developer.</p>
           <div class="form-group">
-            <label for="auth-username">שם משתמש</label>
+            <label for="auth-username" data-i18n="authUsername">Username</label>
             <input id="auth-username" name="username" type="text" autocomplete="username" />
           </div>
           <div class="form-group">
-            <label for="auth-password">סיסמה</label>
+            <label for="auth-password" data-i18n="authPassword">Password</label>
             <input id="auth-password" name="password" type="password" autocomplete="current-password" />
           </div>
           <p id="auth-error" class="field-error"></p>
-          <button type="submit" class="btn-primary auth-submit">כניסה</button>
+          <button type="submit" class="btn-primary auth-submit" data-i18n="authSubmit">Sign in</button>
           <div class="auth-hint">
-            <p><strong>משתמש עסקי</strong> — פנה למפתח לקבלת פרטי גישה.</p>
+            <p data-i18n="authHint"><strong>Business user</strong> — contact the developer for access.</p>
           </div>
         </form>
       </div>
@@ -52,45 +52,45 @@
           <img src="/assets/images/ship-logo.png" alt="" class="logo-img" width="32" height="32" />
           <span class="logo-text">
             <span>SpaceYard</span>
-            <span class="logo-subtitle">מעבדה קוונטית</span>
+            <span class="logo-subtitle" data-i18n="logoSubtitle">Quantum lab</span>
           </span>
         </a>
         <button
           type="button"
           id="nav-menu-btn"
           class="nav-menu-btn"
-          aria-label="תפריט"
+          data-i18n-aria="menu"
           aria-expanded="false"
           aria-controls="nav-drawer"
         >
           ☰
         </button>
-        <nav class="nav" aria-label="ניווט ראשי">
-          <a href="#home">ראשי</a>
-          <a href="#builder">בונה חלליות</a>
-          <a href="#studio3d">סטודיו 3D</a>
-          <a href="#editor3d" id="nav-editor3d" class="editor-access-only hidden">עורך 3D</a>
-          <a href="#fleet">הצי שלי</a>
-          <a href="#gallery">השראה ושרטוטים</a>
-          <a href="#tools">כלי תכנון</a>
-          <a href="#about">אודות</a>
-          <button type="button" id="settings-toggle" class="nav-settings-btn" aria-label="הגדרות" aria-expanded="false">⚙️ הגדרות</button>
-          <button type="button" id="login-open-btn" class="nav-settings-btn" aria-label="כניסת משתמשים">כניסת משתמש</button>
-          <button type="button" id="logout-btn" class="nav-settings-btn hidden" aria-label="יציאה מהמשתמש">יציאה</button>
+        <nav class="nav" aria-label="Main navigation">
+          <a href="#home" data-i18n="navHome">Home</a>
+          <a href="#builder" data-i18n="navBuilder">Ship builder</a>
+          <a href="#studio3d" data-i18n="navStudio">Studio 3D</a>
+          <a href="#editor3d" id="nav-editor3d" class="editor-access-only hidden" data-i18n="navEditor3d">Editor 3D</a>
+          <a href="#fleet" data-i18n="navFleet">My fleet</a>
+          <a href="#gallery" data-i18n="navGallery">Inspiration & blueprints</a>
+          <a href="#tools" data-i18n="navTools">Planning tools</a>
+          <a href="#about" data-i18n="navAbout">About</a>
+          <button type="button" id="settings-toggle" class="nav-settings-btn" data-i18n-aria="navSettings" aria-expanded="false">⚙️ <span data-i18n="navSettings">Settings</span></button>
+          <button type="button" id="login-open-btn" class="nav-settings-btn" data-i18n-aria="navLogin" data-i18n="navLogin">Sign in</button>
+          <button type="button" id="logout-btn" class="nav-settings-btn hidden" data-i18n-aria="navLogoutAria" data-i18n="navLogout">Sign out</button>
         </nav>
       </div>
       <div id="nav-drawer" class="nav-drawer" aria-hidden="true">
         <div class="nav-drawer-overlay" aria-hidden="true"></div>
         <div class="nav-drawer-panel">
-          <a href="#home" class="nav-drawer-link">ראשי</a>
-          <a href="#builder" class="nav-drawer-link">בונה חלליות</a>
-          <a href="#studio3d" class="nav-drawer-link">סטודיו 3D</a>
-          <a href="#editor3d" class="nav-drawer-link editor-access-only hidden">עורך 3D</a>
-          <a href="#fleet" class="nav-drawer-link">הצי שלי</a>
-          <a href="#gallery" class="nav-drawer-link">השראה ושרטוטים</a>
-          <a href="#tools" class="nav-drawer-link">כלי תכנון</a>
-          <a href="#about" class="nav-drawer-link">אודות</a>
-          <button type="button" id="nav-drawer-settings" class="nav-settings-btn nav-drawer-settings">⚙️ הגדרות</button>
+          <a href="#home" class="nav-drawer-link" data-i18n="navHome">Home</a>
+          <a href="#builder" class="nav-drawer-link" data-i18n="navBuilder">Ship builder</a>
+          <a href="#studio3d" class="nav-drawer-link" data-i18n="navStudio">Studio 3D</a>
+          <a href="#editor3d" class="nav-drawer-link editor-access-only hidden" data-i18n="navEditor3d">Editor 3D</a>
+          <a href="#fleet" class="nav-drawer-link" data-i18n="navFleet">My fleet</a>
+          <a href="#gallery" class="nav-drawer-link" data-i18n="navGallery">Inspiration & blueprints</a>
+          <a href="#tools" class="nav-drawer-link" data-i18n="navTools">Planning tools</a>
+          <a href="#about" class="nav-drawer-link" data-i18n="navAbout">About</a>
+          <button type="button" id="nav-drawer-settings" class="nav-settings-btn nav-drawer-settings">⚙️ <span data-i18n="navSettings">Settings</span></button>
         </div>
       </div>
     </header>
@@ -99,42 +99,49 @@
       <div class="settings-modal-overlay"></div>
       <div class="settings-modal-box">
         <div class="settings-modal-header">
-          <h2 id="settings-modal-title">הגדרות</h2>
-          <button type="button" id="settings-modal-close" class="settings-modal-close" aria-label="סגור">×</button>
+          <h2 id="settings-modal-title" data-i18n="settingsTitle">Settings</h2>
+          <button type="button" id="settings-modal-close" class="settings-modal-close" data-i18n-aria="close">×</button>
         </div>
         <div class="settings-tabs" role="tablist">
-          <button type="button" class="settings-tab active" role="tab" aria-selected="true" data-tab="display">תצוגה</button>
-          <button type="button" class="settings-tab" role="tab" aria-selected="false" data-tab="3d">3D</button>
-          <button type="button" class="settings-tab" role="tab" aria-selected="false" data-tab="storage">צי ואחסון</button>
-          <button type="button" class="settings-tab" role="tab" aria-selected="false" data-tab="privacy">פרטיות</button>
-          <button type="button" class="settings-tab biz-only-tab hidden" role="tab" aria-selected="false" data-tab="biz-texts">טקסטים (עסקי)</button>
+          <button type="button" class="settings-tab active" role="tab" aria-selected="true" data-tab="display" data-i18n="tabDisplay">Display</button>
+          <button type="button" class="settings-tab" role="tab" aria-selected="false" data-tab="3d" data-i18n="tab3d">3D</button>
+          <button type="button" class="settings-tab" role="tab" aria-selected="false" data-tab="storage" data-i18n="tabStorage">Fleet & storage</button>
+          <button type="button" class="settings-tab" role="tab" aria-selected="false" data-tab="privacy" data-i18n="tabPrivacy">Privacy</button>
+          <button type="button" class="settings-tab biz-only-tab hidden" role="tab" aria-selected="false" data-tab="biz-texts" data-i18n="tabBizTexts">Texts (business)</button>
         </div>
         <div class="settings-tab-panels">
           <div id="tab-display" class="settings-tab-panel active" role="tabpanel">
             <div class="settings-group">
-              <label for="theme-select">מצב צבעים</label>
+              <label for="language-select">Language / שפה</label>
+              <select id="language-select" class="settings-select">
+                <option value="en">English</option>
+                <option value="he">עברית</option>
+              </select>
+            </div>
+            <div class="settings-group">
+              <label for="theme-select" data-i18n="themeLabel">Color mode</label>
               <select id="theme-select" class="settings-select">
-                <option value="normal">נורמל</option>
-                <option value="alien">חייזרי ממש</option>
-                <option value="simple">פשוט (לבן / שחור)</option>
+                <option value="normal" data-i18n="themeNormal">Normal</option>
+                <option value="alien" data-i18n="themeAlien">Alien</option>
+                <option value="simple" data-i18n="themeSimple">Simple (white / black)</option>
               </select>
             </div>
             <div class="settings-group">
               <label class="settings-check-label">
                 <input type="checkbox" id="font-size-large" class="settings-checkbox" />
-                <span>הגדלת אותיות</span>
+                <span data-i18n="fontSize">Larger text</span>
               </label>
             </div>
             <div class="settings-group">
               <label class="settings-check-label">
                 <input type="checkbox" id="reduced-motion" class="settings-checkbox" />
-                <span>הפחתת תנועה</span>
+                <span data-i18n="reducedMotion">Reduce motion</span>
               </label>
             </div>
             <div class="settings-group">
               <label class="settings-check-label">
                 <input type="checkbox" id="high-contrast" class="settings-checkbox" />
-                <span>ניגודיות גבוהה</span>
+                <span data-i18n="highContrast">High contrast</span>
               </label>
             </div>
           </div>
@@ -142,26 +149,26 @@
             <div class="settings-group">
               <label class="settings-check-label">
                 <input type="checkbox" id="auto-rotate" class="settings-checkbox" />
-                <span>סיבוב אוטומטי</span>
+                <span data-i18n="autoRotate">Auto rotate</span>
               </label>
             </div>
             <div class="settings-group range-group">
-              <label for="rotation-speed">מהירות סיבוב</label>
+              <label for="rotation-speed" data-i18n="rotationSpeed">Rotation speed</label>
               <input type="range" id="rotation-speed" min="0" max="1" step="0.1" value="0.5" />
               <span class="range-value" data-for="rotation-speed">0.5</span>
             </div>
             <div class="settings-group">
-              <label for="quality-mode">איכות 3D</label>
+              <label for="quality-mode" data-i18n="qualityMode">3D quality</label>
               <select id="quality-mode" class="settings-select">
-                <option value="auto">אוטומטי</option>
-                <option value="high">גבוהה</option>
-                <option value="low">נמוכה (מובייל)</option>
+                <option value="auto" data-i18n="qualityAuto">Auto</option>
+                <option value="high" data-i18n="qualityHigh">High</option>
+                <option value="low" data-i18n="qualityLow">Low (mobile)</option>
               </select>
             </div>
             <div class="settings-group">
               <label class="settings-check-label">
                 <input type="checkbox" id="show-axis" class="settings-checkbox" />
-                <span>הצג צירי XYZ</span>
+                <span data-i18n="showAxis">Show XYZ axes</span>
               </label>
             </div>
           </div>
@@ -169,63 +176,63 @@
             <div class="settings-group">
               <label class="settings-check-label">
                 <input type="checkbox" id="auto-save" class="settings-checkbox" checked />
-                <span>שמירה אוטומטית</span>
+                <span data-i18n="autoSave">Auto save</span>
               </label>
             </div>
             <div class="settings-group">
-              <label for="fleet-limit">מגבלת חלליות בצי</label>
+              <label for="fleet-limit" data-i18n="fleetLimit">Max ships in fleet</label>
               <input type="number" id="fleet-limit" min="5" max="500" value="50" class="settings-input" />
             </div>
             <div class="settings-group">
               <label class="settings-check-label">
                 <input type="checkbox" id="confirm-reset" class="settings-checkbox" checked />
-                <span>אישור לפני איפוס צי</span>
+                <span data-i18n="confirmReset">Confirm before fleet reset</span>
               </label>
             </div>
           </div>
           <div id="tab-privacy" class="settings-tab-panel" role="tabpanel" hidden>
-            <button type="button" id="clear-local-data" class="btn-ghost settings-danger-btn">מחק את כל הנתונים המקומיים</button>
+            <button type="button" id="clear-local-data" class="btn-ghost settings-danger-btn" data-i18n="clearLocalData">Delete all local data</button>
           </div>
           <div id="tab-biz-texts" class="settings-tab-panel" role="tabpanel" hidden aria-labelledby="biz-texts-panel-title">
             <div class="settings-biz-texts-panel">
-              <h3 id="biz-texts-panel-title" class="settings-panel-title">עריכת טקסטים באתר (משתמש עסקי)</h3>
-              <p class="field-note settings-panel-note">
-                עדכון כותרות ותיאורים בתצוגה. השינויים נשמרים רק בדפדפן שלך; המפתח יכול לעדכן הכל ממסך המפתח.
+              <h3 id="biz-texts-panel-title" class="settings-panel-title" data-i18n="bizTextsPanelTitle">Edit site texts (business user)</h3>
+              <p class="field-note settings-panel-note" data-i18n="bizTextsPanelNote">
+                Update headings and descriptions. Changes are saved only in your browser; the developer can override from the developer panel.
               </p>
               <form id="business-text-form" class="profile-form settings-biz-form" novalidate>
                 <div class="settings-biz-group">
-                  <label for="biz-hero-title">כותרת ראשית (דף הבית)</label>
+                  <label for="biz-hero-title" data-i18n="bizHeroTitle">Main heading (home)</label>
                   <input id="biz-hero-title" name="heroTitle" type="text" class="settings-input" />
                 </div>
                 <div class="settings-biz-group">
-                  <label for="biz-hero-subtitle">תיאור ראשי קצר</label>
+                  <label for="biz-hero-subtitle" data-i18n="bizHeroSubtitle">Short main description</label>
                   <textarea id="biz-hero-subtitle" name="heroSubtitle" rows="2" class="settings-textarea"></textarea>
                 </div>
                 <div class="settings-biz-group">
-                  <label for="biz-builder-subtitle">תיאור מגדל ההרכבה</label>
+                  <label for="biz-builder-subtitle" data-i18n="bizBuilderSubtitle">Builder section description</label>
                   <textarea id="biz-builder-subtitle" name="builderSubtitle" rows="2" class="settings-textarea"></textarea>
                 </div>
                 <div class="settings-biz-group">
-                  <label for="biz-studio-intro">טקסט סטודיו 3D</label>
+                  <label for="biz-studio-intro" data-i18n="bizStudioIntro">Studio 3D text</label>
                   <textarea id="biz-studio-intro" name="studioIntro" rows="2" class="settings-textarea"></textarea>
                 </div>
                 <div class="settings-biz-group">
-                  <label for="biz-fleet-subtitle">תיאור הצי</label>
+                  <label for="biz-fleet-subtitle" data-i18n="bizFleetSubtitle">Fleet description</label>
                   <textarea id="biz-fleet-subtitle" name="fleetSubtitle" rows="2" class="settings-textarea"></textarea>
                 </div>
                 <div class="settings-biz-group">
-                  <label for="biz-gallery-intro">טקסט גלריית השראה</label>
+                  <label for="biz-gallery-intro" data-i18n="bizGalleryIntro">Gallery intro text</label>
                   <textarea id="biz-gallery-intro" name="galleryIntro" rows="3" class="settings-textarea"></textarea>
                 </div>
                 <p id="business-text-status" class="form-status" aria-live="polite"></p>
-                <button type="submit" class="btn-primary btn-sm">שמור טקסטים</button>
+                <button type="submit" class="btn-primary btn-sm" data-i18n="saveTexts">Save texts</button>
               </form>
             </div>
           </div>
         </div>
         <div class="settings-modal-footer">
-          <button type="button" id="reset-settings" class="btn-ghost btn-sm">איפוס להגדרות ברירת מחדל</button>
-          <button type="button" id="settings-done" class="btn-primary btn-sm">סיום</button>
+          <button type="button" id="reset-settings" class="btn-ghost btn-sm" data-i18n="resetSettings">Reset to defaults</button>
+          <button type="button" id="settings-done" class="btn-primary btn-sm" data-i18n="settingsDone">Done</button>
         </div>
       </div>
     </div>
@@ -234,35 +241,35 @@
       <section id="home" class="hero">
         <div class="container hero-content">
           <div class="hero-copy">
-            <p class="hero-kicker">בנה • סימולט • פיתח</p>
-            <h1 id="hero-title">מעבדת החלליות SpaceYard</h1>
-            <p id="hero-subtitle">
-              עיצוב אבות-טיפוס לחלליות עם טלו־מטריה חיה, תצוגת 3D ומעגן אישי – ישירות בדפדפן שלך.
+            <p class="hero-kicker" data-i18n="heroKicker">Build • Simulate • Develop</p>
+            <h1 id="hero-title" data-i18n="heroTitle">SpaceYard Ship Lab</h1>
+            <p id="hero-subtitle" data-i18n="heroSubtitle">
+              Design spaceship prototypes with live telemetry, 3D view, and a personal dock – right in your browser.
             </p>
             <div class="hero-actions">
               <button id="cta-button" class="btn-primary cta-with-logo">
                 <img src="/assets/images/ship-logo.png" alt="" class="cta-btn-logo" width="24" height="24" decoding="async" />
-                <span>בונה החלליות שלך</span>
+                <span data-i18n="ctaButton">Build your spaceships</span>
               </button>
-              <button type="button" id="open-studio-btn" class="btn-ghost">
-                פתח סטודיו 3D
+              <button type="button" id="open-studio-btn" class="btn-ghost" data-i18n="openStudio">
+                Open Studio 3D
               </button>
             </div>
           </div>
-          <aside class="hero-panel" aria-label="סיכום מהיר של המערכת">
-            <h3 class="hero-panel-title">טלו־מטריה חיה</h3>
+          <aside class="hero-panel" data-i18n-aria="heroPanelAria">
+            <h3 class="hero-panel-title" data-i18n="heroPanelTitle">Live telemetry</h3>
             <dl class="hero-metrics">
               <div>
-                <dt>חלליות בצי</dt>
+                <dt data-i18n="heroMetricFleet">Ships in fleet</dt>
                 <dd id="hero-metric-fleet">0</dd>
               </div>
               <div>
-                <dt>סטטוס 3D</dt>
-                <dd id="hero-metric-3d">אתחול</dd>
+                <dt data-i18n="heroMetric3d">3D status</dt>
+                <dd id="hero-metric-3d">Initializing</dd>
               </div>
               <div>
-                <dt>ערכת צבעים</dt>
-                <dd id="hero-metric-theme">נורמל</dd>
+                <dt data-i18n="heroMetricTheme">Color set</dt>
+                <dd id="hero-metric-theme" data-i18n="themeNormalVal">Normal</dd>
               </div>
             </dl>
           </aside>
@@ -271,9 +278,9 @@
 
       <section id="builder" class="section builder-section">
         <div class="container">
-          <h2 id="builder-title">מגדל הרכבה</h2>
-          <p id="builder-subtitle">
-            מלא את הפרטים, שחק עם האפשרויות, וצפה בחללית שלך נבנית בתצוגה החיה ובטלו־מטריה בזמן אמת.
+          <h2 id="builder-title" data-i18n="builderTitle">Assembly tower</h2>
+          <p id="builder-subtitle" data-i18n="builderSubtitle">
+            Fill in the details, try the options, and watch your ship build in the live view and real-time telemetry.
           </p>
 
           <div class="builder-grid">
@@ -282,55 +289,55 @@
               <div id="form-errors" class="form-errors" aria-live="polite"></div>
 
               <details class="builder-accordion" open>
-                <summary class="builder-accordion-summary">בסיס</summary>
+                <summary class="builder-accordion-summary" data-i18n="accordionBase">Base</summary>
               <div class="form-group">
-                <label for="ship-name">שם החללית</label>
-                <input type="text" id="ship-name" name="shipName" placeholder="לדוגמה: נשר גלקטי" />
+                <label for="ship-name" data-i18n="shipName">Ship name</label>
+                <input type="text" id="ship-name" name="shipName" data-i18n-placeholder="shipNamePlaceholder" placeholder="e.g. Galactic Eagle" />
                 <p class="field-error" data-error-for="shipName"></p>
               </div>
 
               <div class="form-group">
-                <label for="ship-type">סוג המשימה</label>
+                <label for="ship-type" data-i18n="missionType">Mission type</label>
                 <select id="ship-type" name="shipType">
-                  <option value="explorer">חקר וגילוי</option>
-                  <option value="fighter">חללית קרב</option>
-                  <option value="cargo">הובלה ומשא</option>
-                  <option value="luxury">יאכטת חלל יוקרתית</option>
+                  <option value="explorer" data-i18n="typeExplorer">Research & discovery</option>
+                  <option value="fighter" data-i18n="typeFighter">Combat ship</option>
+                  <option value="cargo" data-i18n="typeCargo">Cargo</option>
+                  <option value="luxury" data-i18n="typeLuxury">Space yacht</option>
                 </select>
               </div>
 
               <div class="form-group">
-                <label for="ship-color">צבע החללית</label>
+                <label for="ship-color" data-i18n="shipColor">Ship color</label>
                 <input type="color" id="ship-color" name="shipColor" value="#7c3aed" />
               </div>
 
               <div class="form-group range-group">
-                <label for="ship-speed">מהירות (עיוות חלל)</label>
+                <label for="ship-speed" data-i18n="speedLabel">Speed (warp)</label>
                 <input type="range" id="ship-speed" name="shipSpeed" min="1" max="10" value="6" />
                 <span class="range-value" data-for="ship-speed">6</span>
                 <div class="range-legend">
-                  <span>איטי – שיגור כוכבי</span>
-                  <span>טיסה טקטית</span>
-                  <span>עיוות חלל אגרסיבי</span>
+                  <span data-i18n="speedSlow">Slow – stellar launch</span>
+                  <span data-i18n="speedMid">Tactical flight</span>
+                  <span data-i18n="speedFast">Aggressive warp</span>
                 </div>
               </div>
 
               <div class="form-group range-group">
-                <label for="ship-size">גודל</label>
+                <label for="ship-size" data-i18n="sizeLabel">Size</label>
                 <input type="range" id="ship-size" name="shipSize" min="1" max="10" value="5" />
                 <span class="range-value" data-for="ship-size">5</span>
                 <div class="range-legend">
-                  <span>חללית סיור קטנה</span>
-                  <span>פריגטה / משא בינוני</span>
-                  <span>ספינת אם / נושאת צי</span>
+                  <span data-i18n="sizeSmall">Small scout</span>
+                  <span data-i18n="sizeMid">Frigate / cargo</span>
+                  <span data-i18n="sizeLarge">Mothership / carrier</span>
                 </div>
               </div>
               </details>
 
               <details class="builder-accordion">
-                <summary class="builder-accordion-summary">צוות ומשימה</summary>
+                <summary class="builder-accordion-summary" data-i18n="accordionCrew">Crew & mission</summary>
               <div class="form-group">
-                <label for="ship-crew">מספר אנשי צוות</label>
+                <label for="ship-crew" data-i18n="crewCount">Crew size</label>
                 <input
                   type="number"
                   id="ship-crew"
@@ -344,120 +351,122 @@
               </div>
 
               <div class="form-group">
-                <label for="commander-name">שם מפקד/ת המשימה</label>
+                <label for="commander-name" data-i18n="commanderName">Mission commander</label>
                 <input
                   type="text"
                   id="commander-name"
                   name="commanderName"
-                  placeholder="לדוגמה: סרן עדי אוריון"
+                  data-i18n-placeholder="commanderPlaceholder"
+                  placeholder="e.g. Capt. Adi Orion"
                 />
                 <p class="field-error" data-error-for="commanderName"></p>
               </div>
 
               <div class="form-group">
-                <label for="mission-description">תיאור קצר של המשימה</label>
+                <label for="mission-description" data-i18n="missionDesc">Short mission description</label>
                 <textarea
                   id="mission-description"
                   name="missionDescription"
                   rows="3"
-                  placeholder="חקר טבעות שבתאי, בדיקת חיים מיקרוסקופיים, צילום תלת־ממדי של הסביבה..."
+                  data-i18n-placeholder="missionPlaceholder"
+                  placeholder="Explore Saturn rings, look for microscopic life, 3D scan..."
                 ></textarea>
               </div>
 
               <div class="form-group">
-                <label for="risk-level">רמת סיכון משוערת</label>
+                <label for="risk-level" data-i18n="riskLevel">Risk level</label>
                 <select id="risk-level" name="riskLevel">
-                  <option value="low">נמוכה</option>
-                  <option value="medium">בינונית</option>
-                  <option value="high">גבוהה</option>
-                  <option value="extreme">קצה גבול היכולת</option>
+                  <option value="low" data-i18n="riskLow">Low</option>
+                  <option value="medium" data-i18n="riskMedium">Medium</option>
+                  <option value="high" data-i18n="riskHigh">High</option>
+                  <option value="extreme" data-i18n="riskExtreme">Extreme</option>
                 </select>
               </div>
 
               <div class="form-group">
-                <label for="alien-type">סוג חייזר מלווה</label>
+                <label for="alien-type" data-i18n="alienType">Alien companion</label>
                 <select id="alien-type" name="alienType">
-                  <option value="">ללא חייזר מלווה</option>
-                  <option value="scout">סייר חלל</option>
-                  <option value="engineer">מהנדס מערכות</option>
-                  <option value="warrior">לוחם הגנה</option>
-                  <option value="diplomat">דיפלומט בין-גלקטי</option>
+                  <option value="" data-i18n="alienNone">No alien companion</option>
+                  <option value="scout" data-i18n="alienScout">Space scout</option>
+                  <option value="engineer" data-i18n="alienEngineer">Systems engineer</option>
+                  <option value="warrior" data-i18n="alienWarrior">Defense warrior</option>
+                  <option value="diplomat" data-i18n="alienDiplomat">Intergalactic diplomat</option>
                 </select>
               </div>
               </details>
 
               <details class="builder-accordion">
-                <summary class="builder-accordion-summary">יכולות</summary>
+                <summary class="builder-accordion-summary" data-i18n="accordionFeatures">Features</summary>
               <fieldset class="form-group features-group">
-                <legend>יכולות מיוחדות</legend>
+                <legend data-i18n="featuresLegend">Special features</legend>
                 <label class="checkbox-row">
                   <input type="checkbox" name="features" value="shield" checked />
-                  <span>מגן אנרגיה</span>
-                  <small>מקטין נזק ישיר מפגיעות וחימום יתר.</small>
+                  <span data-i18n="featShield">Energy shield</span>
+                  <small data-i18n="featShieldDesc">Reduces direct damage and overheating.</small>
                 </label>
                 <label class="checkbox-row">
                   <input type="checkbox" name="features" value="lasers" />
-                  <span>תותחי לייזר</span>
-                  <small>חימוש קו ראשון – קרבות טווח בינוני.</small>
+                  <span data-i18n="featLasers">Laser cannons</span>
+                  <small data-i18n="featLasersDesc">First-line weapons – medium range.</small>
                 </label>
                 <label class="checkbox-row">
                   <input type="checkbox" name="features" value="cloak" />
-                  <span>מערכת הסתרה</span>
-                  <small>חתימה נמוכה לחמקנות, מתאים למשימות ריגול.</small>
+                  <span data-i18n="featCloak">Cloaking system</span>
+                  <small data-i18n="featCloakDesc">Low signature for stealth.</small>
                 </label>
                 <label class="checkbox-row">
                   <input type="checkbox" name="features" value="drones" />
-                  <span>רחפני שירות</span>
-                  <small>רחפנים לתיקונים חיצוניים, סריקה והגנה היקפית.</small>
+                  <span data-i18n="featDrones">Service drones</span>
+                  <small data-i18n="featDronesDesc">External repair, scan, defense.</small>
                 </label>
               </fieldset>
               </details>
 
               <details class="builder-accordion">
-                <summary class="builder-accordion-summary">מערכות</summary>
+                <summary class="builder-accordion-summary" data-i18n="accordionSystems">Systems</summary>
               <fieldset class="form-group features-group">
-                <legend>מערכות מתקדמות</legend>
+                <legend data-i18n="systemsLegend">Advanced systems</legend>
                 <label class="checkbox-row">
                   <input type="checkbox" name="advanced" value="autopilot" />
-                  <span>טייס אוטומטי מלא</span>
-                  <small>מסלולים מתוכננים מראש, נחיתה/המראה אוטומטית.</small>
+                  <span data-i18n="sysAutopilot">Full autopilot</span>
+                  <small data-i18n="sysAutopilotDesc">Pre-planned routes, auto land/takeoff.</small>
                 </label>
                 <label class="checkbox-row">
                   <input type="checkbox" name="advanced" value="ai" />
-                  <span>בינה מלאכותית טקטית</span>
-                  <small>קבלת החלטות בזמן אמת בקרב ובניווט.</small>
+                  <span data-i18n="sysAi">Tactical AI</span>
+                  <small data-i18n="sysAiDesc">Real-time decisions in combat and navigation.</small>
                 </label>
                 <label class="checkbox-row">
                   <input type="checkbox" name="advanced" value="quantumCore" />
-                  <span>ליבת עיבוד קוואנטית</span>
-                  <small>חישובי מסלולי קפיצה וניתוח נתונים כבד.</small>
+                  <span data-i18n="sysQuantum">Quantum processing core</span>
+                  <small data-i18n="sysQuantumDesc">Jump calculations and heavy data.</small>
                 </label>
                 <label class="checkbox-row">
                   <input type="checkbox" name="advanced" value="escapeSystem" />
-                  <span>מערכת מילוט חכמה לכל הצוות</span>
-                  <small>קפסולות מילוט מתוזמנות לפי מצב חירום.</small>
+                  <span data-i18n="sysEscape">Smart crew escape system</span>
+                  <small data-i18n="sysEscapeDesc">Timed escape pods.</small>
                 </label>
               </fieldset>
               </details>
 
               <details class="builder-accordion">
-                <summary class="builder-accordion-summary">הגדרות 3D</summary>
+                <summary class="builder-accordion-summary" data-i18n="accordion3d">3D settings</summary>
               <fieldset class="form-group features-group">
-                <legend>עריכת 3D</legend>
-                <p class="field-note">
-                  משתמש מפתח יכול לשלוט בצבעים וגדלים נפרדים לכל רכיב (גוף, כנפיים, מנוע, קוקפיט).
+                <legend data-i18n="legend3d">3D editing</legend>
+                <p class="field-note" data-i18n="note3d">
+                  Developer can control colors and sizes per part (body, wings, engine, cockpit).
                 </p>
                 <div class="form-group">
-                  <label for="ship-shape-3d">צורת חללית</label>
+                  <label for="ship-shape-3d" data-i18n="shape3d">Ship shape</label>
                   <select id="ship-shape-3d" name="shipShape3D">
-                    <option value="classic">קלאסית – גליל, כנפיים, מנוע אחורי</option>
-                    <option value="sleek">חנית – צרה ומחודדת</option>
-                    <option value="heavy">כבדה – גוף רחב ומוצק</option>
-                    <option value="ring">טבעת – חללית טבעתית</option>
+                    <option value="classic" data-i18n="shapeClassic">Classic – cylinder, wings, rear engine</option>
+                    <option value="sleek" data-i18n="shapeSleek">Sleek – narrow and pointed</option>
+                    <option value="heavy" data-i18n="shapeHeavy">Heavy – wide solid body</option>
+                    <option value="ring" data-i18n="shapeRing">Ring – ring ship</option>
                   </select>
                 </div>
                 <div class="form-group">
-                  <label for="primary-color-3d">צבע ראשי (גוף)</label>
+                  <label for="primary-color-3d" data-i18n="primaryColor">Primary (body)</label>
                   <input
                     type="color"
                     id="primary-color-3d"
@@ -466,7 +475,7 @@
                   />
                 </div>
                 <div class="form-group">
-                  <label for="secondary-color-3d">צבע משני (כנפיים/מנוע)</label>
+                  <label for="secondary-color-3d" data-i18n="secondaryColor">Secondary (wings/engine)</label>
                   <input
                     type="color"
                     id="secondary-color-3d"
@@ -476,33 +485,33 @@
                 </div>
                 <div id="advanced-part-colors" class="advanced-part-colors hidden" aria-hidden="true">
                   <div class="form-group">
-                    <label for="body-color-3d">צבע גוף</label>
+                    <label for="body-color-3d" data-i18n="bodyColor">Body color</label>
                     <input type="color" id="body-color-3d" name="bodyColor3D" value="#38bdf8" />
                   </div>
                   <div class="form-group">
-                    <label for="wings-color-3d">צבע כנפיים</label>
+                    <label for="wings-color-3d" data-i18n="wingsColor">Wings color</label>
                     <input type="color" id="wings-color-3d" name="wingsColor3D" value="#a855f7" />
                   </div>
                   <div class="form-group">
-                    <label for="engine-color-3d">צבע מנועים</label>
+                    <label for="engine-color-3d" data-i18n="engineColor">Engine color</label>
                     <input type="color" id="engine-color-3d" name="engineColor3D" value="#a855f7" />
                   </div>
                   <div class="form-group">
-                    <label for="cockpit-color-3d">צבע קוקפיט</label>
+                    <label for="cockpit-color-3d" data-i18n="cockpitColor">Cockpit color</label>
                     <input type="color" id="cockpit-color-3d" name="cockpitColor3D" value="#e0f2fe" />
                   </div>
                 </div>
                 <div class="form-group">
-                  <label for="material-type-3d">סוג חומר</label>
+                  <label for="material-type-3d" data-i18n="materialType">Material type</label>
                   <select id="material-type-3d" name="materialType3D">
-                    <option value="metal">מתכתי</option>
-                    <option value="matte">מט</option>
-                    <option value="glass">זכוכית</option>
-                    <option value="alien">טכנולוגיה חייזרית</option>
+                    <option value="metal" data-i18n="matMetal">Metallic</option>
+                    <option value="matte" data-i18n="matMatte">Matte</option>
+                    <option value="glass" data-i18n="matGlass">Glass</option>
+                    <option value="alien" data-i18n="matAlien">Alien tech</option>
                   </select>
                 </div>
                 <div class="form-group range-group">
-                  <label for="body-length-3d">אורך גוף</label>
+                  <label for="body-length-3d" data-i18n="bodyLength">Body length</label>
                   <input
                     type="range"
                     id="body-length-3d"
@@ -514,7 +523,7 @@
                   <span class="range-value" data-for="body-length-3d">6</span>
                 </div>
                 <div class="form-group range-group">
-                  <label for="wing-span-3d">רוחב כנפיים</label>
+                  <label for="wing-span-3d" data-i18n="wingSpan">Wing span</label>
                   <input
                     type="range"
                     id="wing-span-3d"
@@ -526,7 +535,7 @@
                   <span class="range-value" data-for="wing-span-3d">5</span>
                 </div>
                 <div class="form-group range-group">
-                  <label for="wing-angle-3d">זווית כנפיים</label>
+                  <label for="wing-angle-3d" data-i18n="wingAngle">Wing angle</label>
                   <input
                     type="range"
                     id="wing-angle-3d"
@@ -538,7 +547,7 @@
                   <span class="range-value" data-for="wing-angle-3d">0</span>
                 </div>
                 <div class="form-group range-group">
-                  <label for="engine-size-3d">גודל מנוע</label>
+                  <label for="engine-size-3d" data-i18n="engineSize">Engine size</label>
                   <input
                     type="range"
                     id="engine-size-3d"
@@ -550,7 +559,7 @@
                   <span class="range-value" data-for="engine-size-3d">5</span>
                 </div>
                 <div class="form-group range-group">
-                  <label for="engine-glow-3d">זוהר מנוע</label>
+                  <label for="engine-glow-3d" data-i18n="engineGlow">Engine glow</label>
                   <input
                     type="range"
                     id="engine-glow-3d"
@@ -563,7 +572,7 @@
                   <span class="range-value" data-for="engine-glow-3d">0.6</span>
                 </div>
                 <div class="form-group range-group">
-                  <label for="cockpit-tint-3d">שקיפות קוקפיט</label>
+                  <label for="cockpit-tint-3d" data-i18n="cockpitTint">Cockpit tint</label>
                   <input
                     type="range"
                     id="cockpit-tint-3d"
@@ -576,124 +585,173 @@
                   <span class="range-value" data-for="cockpit-tint-3d">0.4</span>
                 </div>
                 <div class="form-group">
-                  <label for="decals-3d">סימונים/דקלים</label>
+                  <label for="decals-3d" data-i18n="decals">Decals</label>
                   <select id="decals-3d" name="decals3D">
-                    <option value="none">ללא</option>
-                    <option value="stripes">פסי מרוץ</option>
-                    <option value="runes">סימני רונות</option>
+                    <option value="none" data-i18n="decalsNone">None</option>
+                    <option value="stripes" data-i18n="decalsStripes">Racing stripes</option>
+                    <option value="runes" data-i18n="decalsRunes">Rune marks</option>
                   </select>
                 </div>
                 <div class="form-group">
-                  <label for="alien-tech-level-3d">רמת טכנולוגיה חייזרית</label>
+                  <label for="alien-tech-level-3d" data-i18n="alienTechLevel">Alien tech level</label>
                   <select id="alien-tech-level-3d" name="alienTechLevel3D">
-                    <option value="0">0 – ללא</option>
-                    <option value="1">1 – קלה</option>
-                    <option value="2">2 – בינונית</option>
-                    <option value="3">3 – מתקדמת</option>
+                    <option value="0" data-i18n="alienTech0">0 – None</option>
+                    <option value="1" data-i18n="alienTech1">1 – Light</option>
+                    <option value="2" data-i18n="alienTech2">2 – Medium</option>
+                    <option value="3" data-i18n="alienTech3">3 – Advanced</option>
                   </select>
                 </div>
               </fieldset>
               </details>
 
               <div class="form-actions">
-                <button type="submit" id="primary-ship-btn" class="btn-primary">
-                  הוסף חללית לצי
+                <button type="submit" id="primary-ship-btn" class="btn-primary" data-i18n="addShip">
+                  Add ship to fleet
                 </button>
-                <button type="button" id="duplicate-ship-btn" class="btn-ghost hidden">
-                  שכפל חללית
+                <button type="button" id="duplicate-ship-btn" class="btn-ghost hidden" data-i18n="duplicateShip">
+                  Duplicate ship
                 </button>
               </div>
             </form>
 
             <div id="ship-preview" class="ship-preview-panel">
-              <h3>תצוגה חיה</h3>
+              <h3 data-i18n="livePreview">Live preview</h3>
               <div class="ship-preview-wrapper">
                 <div class="ship-canvas-layer">
                   <canvas id="ship-canvas"></canvas>
                   <div id="ship-canvas-fallback" class="ship-canvas-fallback hidden" aria-live="polite">
-                    <p class="ship-canvas-fallback-title">תצוגת 3D לא זמינה</p>
-                    <p class="ship-canvas-fallback-text">הדפדפן או המכשיר לא תומכים בתצוגה תלת־ממדית. ניתן להמשיך לבנות חלליות ולצפות בהן ברשימת הצי.</p>
+                    <p class="ship-canvas-fallback-title" data-i18n="view3dUnavailable">3D view unavailable</p>
+                    <p class="ship-canvas-fallback-text" data-i18n="view3dFallback">Your browser or device does not support 3D. You can still build ships and view them in the fleet list.</p>
                   </div>
                 </div>
               </div>
 
               <div class="ship-preview-meta">
                 <div class="ship-preview-tags">
-                  <span id="ship-type-pill" class="ship-pill ship-pill-type">ספינת מחקר</span>
-                  <span id="ship-risk-pill" class="ship-pill ship-pill-risk">רמת סיכון: נמוכה</span>
+                  <span id="ship-type-pill" class="ship-pill ship-pill-type" data-i18n="typeExplorer">Research ship</span>
+                  <span id="ship-risk-pill" class="ship-pill ship-pill-risk" data-i18n="riskLabel">Risk level: Low</span>
                   <span id="ship-alien-pill" class="ship-pill ship-pill-alien hidden"></span>
                 </div>
                 <div class="ship-preview-stats">
                   <div class="ship-stat">
-                    <span class="ship-stat-label">מהירות</span>
+                    <span class="ship-stat-label" data-i18n="speedStat">Speed</span>
                     <div class="ship-stat-bar">
                       <div id="ship-stat-speed-bar" class="ship-stat-bar-fill"></div>
                     </div>
                     <span id="ship-stat-speed" class="ship-stat-value">6 / 10</span>
                   </div>
                   <div class="ship-stat">
-                    <span class="ship-stat-label">גודל</span>
+                    <span class="ship-stat-label" data-i18n="sizeStat">Size</span>
                     <div class="ship-stat-bar">
                       <div id="ship-stat-size-bar" class="ship-stat-bar-fill"></div>
                     </div>
                     <span id="ship-stat-size" class="ship-stat-value">5 / 10</span>
                   </div>
                   <div class="ship-stat">
-                    <span class="ship-stat-label">צוות</span>
+                    <span class="ship-stat-label" data-i18n="crewStat">Crew</span>
                     <span id="ship-stat-crew" class="ship-stat-value">12</span>
                   </div>
                 </div>
                 <div class="ship-preview-chips">
                   <div class="ship-chip-group">
-                    <span class="ship-chip-title">יכולות:</span>
+                    <span class="ship-chip-title" data-i18n="capabilities">Features:</span>
                     <div id="ship-features-chips" class="ship-chips"></div>
                   </div>
                   <div class="ship-chip-group">
-                    <span class="ship-chip-title">מערכות:</span>
+                    <span class="ship-chip-title" data-i18n="systemsLabel">Systems:</span>
                     <div id="ship-advanced-chips" class="ship-chips"></div>
                   </div>
                 </div>
               </div>
 
-              <div class="ship-summary" id="ship-summary">
-                בחר שם, סוג ויכולות כדי לראות פירוט טכני של החללית.
+              <div class="ship-summary" id="ship-summary" data-i18n="shipSummaryDefault">
+                Choose name, type and features to see the ship's technical summary.
               </div>
             </div>
           </div>
         </div>
       </section>
 
+      <section id="fleet" class="section section-alt">
+        <div class="container">
+          <h2 id="fleet-title" data-i18n="fleetTitle">Ship dock</h2>
+          <p id="fleet-subtitle" data-i18n="fleetSubtitle">
+            Every ship you add appears here. Save, compare, and decide who leads the next mission from your quantum dock.
+          </p>
+          <div class="fleet-controls">
+            <div class="fleet-filters">
+              <div class="fleet-filter-item">
+                <label for="fleet-sort" data-i18n="sortBy">Sort by</label>
+                <select id="fleet-sort">
+                  <option value="created" data-i18n="sortCreated">Creation order</option>
+                  <option value="speed" data-i18n="sortSpeed">Speed</option>
+                  <option value="size" data-i18n="sortSize">Size</option>
+                  <option value="crew" data-i18n="sortCrew">Crew</option>
+                  <option value="risk" data-i18n="sortRisk">Risk level</option>
+                </select>
+              </div>
+              <div class="fleet-filter-item">
+                <label for="fleet-filter-type" data-i18n="filterType">Mission type</label>
+                <select id="fleet-filter-type">
+                  <option value="" data-i18n="filterAll">All</option>
+                  <option value="explorer" data-i18n="typeExplorer">Research & discovery</option>
+                  <option value="fighter" data-i18n="typeFighter">Combat ship</option>
+                  <option value="cargo" data-i18n="typeCargo">Cargo</option>
+                  <option value="luxury" data-i18n="typeLuxury">Space yacht</option>
+                </select>
+              </div>
+              <div class="fleet-filter-item">
+                <label for="fleet-search" data-i18n="searchByLabel">Search by name</label>
+                <input
+                  type="search"
+                  id="fleet-search"
+                  data-i18n-placeholder="searchPlaceholder"
+                  placeholder="Search ship by name..."
+                />
+              </div>
+            </div>
+            <button type="button" id="fleet-reset-btn" class="btn-ghost" data-i18n="resetFleet">
+              Reset fleet
+            </button>
+          </div>
+          <p id="fleet-summary" class="fleet-summary-line" data-i18n="fleetSummary">Total ships: 0</p>
+          <div id="fleet-list" class="fleet-list empty" data-i18n="fleetEmpty">
+            No ships yet. Build your first one above.
+          </div>
+        </div>
+      </section>
+
       <section id="studio3d" class="section studio3d-section" aria-labelledby="studio3d-heading">
         <div class="container">
-          <h2 id="studio3d-heading">אולם תצוגת 3D</h2>
-          <p id="studio3d-intro" class="studio3d-intro">
-            תצוגה מלאה ועריכה ויזואלית של החללית – סובב, זום, בחר זווית. מתאים לשרטוט לפני הדפסה תלת־ממדית ולבדיקות קוונטיות.
+          <h2 id="studio3d-heading" data-i18n="studioHeading">3D display hall</h2>
+          <p id="studio3d-intro" class="studio3d-intro" data-i18n="studioIntro">
+            Full view and visual editing of your ship – rotate, zoom, pick angle. Great for pre-3D-print checks.
           </p>
-          <div class="studio3d-toolbar" role="toolbar" aria-label="כלי תצוגת 3D">
-            <div class="studio3d-toolbar-group" aria-label="זווית מצלמה">
-              <button type="button" class="studio3d-btn" data-preset="front" title="חזית">חזית</button>
-              <button type="button" class="studio3d-btn" data-preset="side" title="צד">צד</button>
-              <button type="button" class="studio3d-btn" data-preset="top" title="מלמעלה">מלמעלה</button>
-              <button type="button" class="studio3d-btn" data-preset="iso" title="איזומטרי">איזו</button>
+          <div class="studio3d-toolbar" role="toolbar" aria-label="3D view tools">
+            <div class="studio3d-toolbar-group" aria-label="Camera angle">
+              <button type="button" class="studio3d-btn" data-preset="front" data-i18n="studioFront">Front</button>
+              <button type="button" class="studio3d-btn" data-preset="side" data-i18n="studioSide">Side</button>
+              <button type="button" class="studio3d-btn" data-preset="top" data-i18n="studioTop">Top</button>
+              <button type="button" class="studio3d-btn" data-preset="iso" data-i18n="studioIso">Iso</button>
             </div>
-            <div class="studio3d-toolbar-group" aria-label="זום ותצוגה">
-              <button type="button" class="studio3d-btn" id="studio-reset-view" title="איפוס תצוגה">איפוס</button>
-              <button type="button" class="studio3d-btn" id="studio-zoom-out" title="הקטן">−</button>
-              <button type="button" class="studio3d-btn" id="studio-zoom-in" title="הגדל">+</button>
+            <div class="studio3d-toolbar-group" aria-label="Zoom and view">
+              <button type="button" class="studio3d-btn" id="studio-reset-view" data-i18n="studioReset">Reset</button>
+              <button type="button" class="studio3d-btn" id="studio-zoom-out" title="Zoom out">−</button>
+              <button type="button" class="studio3d-btn" id="studio-zoom-in" title="Zoom in">+</button>
             </div>
-            <div class="studio3d-toolbar-group" aria-label="אפשרויות">
-              <button type="button" class="studio3d-btn" id="studio-auto-rotate" title="סיבוב אוטומטי">סיבוב</button>
-              <button type="button" class="studio3d-btn" id="studio-show-axis" title="צירי XYZ">צירים</button>
-              <button type="button" class="studio3d-btn" id="studio-fullscreen" title="מסך מלא">מסך מלא</button>
-              <button type="button" class="studio3d-btn" id="studio-screenshot" title="שמירת תמונה">צילום</button>
+            <div class="studio3d-toolbar-group" aria-label="Options">
+              <button type="button" class="studio3d-btn" id="studio-auto-rotate" data-i18n="studioRotate">Rotate</button>
+              <button type="button" class="studio3d-btn" id="studio-show-axis" data-i18n="studioAxis">Axes</button>
+              <button type="button" class="studio3d-btn" id="studio-fullscreen" data-i18n="studioFullscreen">Fullscreen</button>
+              <button type="button" class="studio3d-btn" id="studio-screenshot" data-i18n="studioScreenshot">Screenshot</button>
             </div>
           </div>
           <div class="studio3d-canvas-wrap">
             <canvas id="studio-canvas" tabindex="0"></canvas>
             <div id="studio-canvas-fallback" class="studio3d-fallback hidden" aria-live="polite">
-              <p>תצוגת 3D לא זמינה בסטודיו. עבר לבונה חלליות לתצוגה חיה.</p>
+              <p data-i18n="studioFallback">3D not available in studio. Use the ship builder for live view.</p>
             </div>
-            <p class="studio3d-hint" aria-hidden="true">גרור לסיבוב • גלילה לזום • גרור עם Shift להזזה</p>
+            <p class="studio3d-hint" aria-hidden="true" data-i18n="studioHint">Drag to rotate • Scroll to zoom • Shift+drag to pan</p>
           </div>
         </div>
       </section>
@@ -705,9 +763,9 @@
               <div class="editor3d-title-group">
                 <span class="editor3d-title-dot" aria-hidden="true"></span>
                 <div class="editor3d-title-text">
-                  <h2 id="editor3d-heading">עורך חלליות 3D</h2>
-                  <p class="editor3d-intro">
-                    בנה חללית מחלקים – הוסף, הזז, סובב, שנה גודל. בהשראת סביבת עבודה מקצועית לתלת־ממד.
+                  <h2 id="editor3d-heading" data-i18n="editorHeading">3D ship editor</h2>
+                  <p class="editor3d-intro" data-i18n="editorIntro">
+                    Build a ship from parts – add, move, rotate, scale. Professional 3D workspace style.
                   </p>
                 </div>
               </div>
@@ -837,60 +895,11 @@
         </div>
       </section>
 
-      <section id="fleet" class="section section-alt">
-        <div class="container">
-          <h2 id="fleet-title">מעגן חלליות</h2>
-          <p id="fleet-subtitle">
-            כל חללית שתוסיף תופיע כאן. שמור, השווה, ותחליט מי תוביל את המשימה הבאה מתוך המעגן הקוונטי שלך.
-          </p>
-          <div class="fleet-controls">
-            <div class="fleet-filters">
-              <div class="fleet-filter-item">
-                <label for="fleet-sort">מיון לפי</label>
-                <select id="fleet-sort">
-                  <option value="created">סדר יצירה</option>
-                  <option value="speed">מהירות</option>
-                  <option value="size">גודל</option>
-                  <option value="crew">צוות</option>
-                  <option value="risk">רמת סיכון</option>
-                </select>
-              </div>
-              <div class="fleet-filter-item">
-                <label for="fleet-filter-type">סוג משימה</label>
-                <select id="fleet-filter-type">
-                  <option value="">הכל</option>
-                  <option value="explorer">חקר וגילוי</option>
-                  <option value="fighter">חללית קרב</option>
-                  <option value="cargo">הובלה ומשא</option>
-                  <option value="luxury">יאכטת חלל יוקרתית</option>
-                </select>
-              </div>
-              <div class="fleet-filter-item">
-                <label for="fleet-search">חיפוש לפי שם</label>
-                <input
-                  type="search"
-                  id="fleet-search"
-                  placeholder="חפש חללית לפי שם..."
-                />
-              </div>
-            </div>
-            <button type="button" id="fleet-reset-btn" class="btn-ghost">
-              איפוס צי
-            </button>
-          </div>
-          <p id="fleet-summary" class="fleet-summary-line">סה"כ חלליות: 0</p>
-          <div id="fleet-list" class="fleet-list empty">
-            עדיין לא נוספו חלליות. בנה את הראשונה שלך למעלה.
-          </div>
-        </div>
-      </section>
-
       <section id="gallery" class="section gallery-section" aria-labelledby="gallery-heading" role="region">
         <div class="container">
-          <h2 id="gallery-heading">ארכיון השראה</h2>
-          <p id="gallery-intro" class="gallery-intro">
-            תמונות אווירה ושרטוטים טכניים – עוזרים להבין איך חללית נראית ולחדד מחשבה לפני בנייה.
-            <strong>לחץ על כרטיס להגדלה.</strong>
+          <h2 id="gallery-heading" data-i18n="galleryHeading">Inspiration archive</h2>
+          <p id="gallery-intro" class="gallery-intro" data-i18n="galleryIntro">
+            Atmosphere images and technical blueprints – help visualize your ship. Click a card to enlarge.
           </p>
 
           <div class="gallery-grid" role="list">
@@ -1037,9 +1046,9 @@
 
       <section id="business-profile" class="section section-alt business-only-section hidden" aria-labelledby="business-profile-heading">
         <div class="container">
-          <h2 id="business-profile-heading">פרופיל משתמש עסקי</h2>
-          <p>
-            כאן תוכל להתאים את פרטי הפרופיל שלך כפי שהם יוצגו במסך – שם מוצג, צבע זיהוי והעדפות משימה. השינויים נשמרים רק במכשיר שלך.
+          <h2 id="business-profile-heading" data-i18n="profileHeading">Business user profile</h2>
+          <p data-i18n="profileP">
+            Set your profile as shown on screen – display name, color, mission preference. Saved on this device only.
           </p>
           <div class="profile-grid">
             <aside class="profile-card">
@@ -1065,41 +1074,41 @@
 
             <form id="business-profile-form" class="profile-form" novalidate>
               <div class="form-group">
-                <label for="profile-display-name">שם מוצג</label>
-                <input id="profile-display-name" name="displayName" type="text" placeholder="לדוגמה: מיקי חלל בע״מ" />
+                <label for="profile-display-name" data-i18n="profileDisplayName">Display name</label>
+                <input id="profile-display-name" name="displayName" type="text" data-i18n-placeholder="profileDisplayNamePh" placeholder="e.g. Space Mike Ltd" />
               </div>
               <div class="form-group">
-                <label for="profile-tagline">שורת תיאור קצרה</label>
-                <input id="profile-tagline" name="tagline" type="text" placeholder="לדוגמה: מתכננים צי חלליות לימי צילום והדגמות." />
+                <label for="profile-tagline" data-i18n="profileTagline">Short tagline</label>
+                <input id="profile-tagline" name="tagline" type="text" data-i18n-placeholder="profileTaglinePh" placeholder="e.g. We plan ship fleets for film and demos." />
               </div>
               <div class="form-group">
-                <label for="profile-color">צבע זיהוי</label>
+                <label for="profile-color" data-i18n="profileColor">Profile color</label>
                 <input id="profile-color" name="color" type="color" value="#38bdf8" />
               </div>
               <div class="form-group">
-                <label for="profile-favorite-mission">משימה מועדפת</label>
+                <label for="profile-favorite-mission" data-i18n="profileMission">Favorite mission</label>
                 <select id="profile-favorite-mission" name="favoriteMission">
-                  <option value="explorer">חקר וגילוי</option>
-                  <option value="fighter">ליווי ואבטחה</option>
-                  <option value="cargo">לוגיסטיקה ומשא</option>
-                  <option value="luxury">אירועים ויחסי ציבור בחלל</option>
+                  <option value="explorer" data-i18n="profileMissionExplorer">Research & discovery</option>
+                  <option value="fighter" data-i18n="profileMissionFighter">Escort & security</option>
+                  <option value="cargo" data-i18n="profileMissionCargo">Logistics & cargo</option>
+                  <option value="luxury" data-i18n="profileMissionLuxury">Events & PR in space</option>
                 </select>
               </div>
               <p id="business-profile-status" class="form-status" aria-live="polite"></p>
-              <button type="submit" class="btn-primary btn-sm">שמור פרופיל</button>
+              <button type="submit" class="btn-primary btn-sm" data-i18n="saveProfile">Save profile</button>
             </form>
           </div>
-          <p class="profile-hint">
-            לעריכת טקסטי האתר (כותרות ותיאורים) פתח <strong>הגדרות</strong> מהתפריט ובחר בטאב <strong>טקסטים (עסקי)</strong>.
+          <p class="profile-hint" data-i18n="profileHint">
+            To edit site texts (headings and descriptions), open Settings and choose the Texts (business) tab.
           </p>
         </div>
       </section>
 
       <section id="developer-text-panel" class="section section-alt developer-only-section hidden" aria-labelledby="developer-text-panel-heading">
         <div class="container">
-          <h2 id="developer-text-panel-heading">עריכת טקסטים – מפתח המערכת</h2>
-          <p>
-            כאן ניתן לעדכן טקסטים מרכזיים באתר (כותרות ופסקאות הסבר). השינויים נשמרים באופן מקומי בדפדפן הנוכחי בלבד.
+          <h2 id="developer-text-panel-heading" data-i18n="devHeading">Edit texts – system developer</h2>
+          <p data-i18n="devP">
+            Update main site texts (headings and paragraphs). Saved locally in this browser only.
           </p>
           <form id="dev-text-form" class="contact-form" novalidate>
             <div class="form-group">
@@ -1146,9 +1155,9 @@
 
       <section id="user-requests" class="section section-alt" aria-labelledby="user-requests-heading">
         <div class="container">
-          <h2 id="user-requests-heading">ניהול משתמשים – פנייה למפתח</h2>
-          <p>
-            יצירת, מחיקת או שינוי משתמשים מתבצעת רק באישור המפתח. מלא את הטופס ונכין עבורך מייל מוכן לשליחה אל מפתח המערכת.
+          <h2 id="user-requests-heading" data-i18n="userRequestsHeading">User management – contact developer</h2>
+          <p data-i18n="userRequestsP">
+            Creating, deleting or changing users is done only with developer approval. Fill the form and we'll prepare an email to the developer.
           </p>
           <form id="user-request-form" class="contact-form" novalidate>
             <div class="form-group">
@@ -1187,11 +1196,9 @@
 
       <section id="tools" class="section section-alt" aria-labelledby="tools-heading">
         <div class="container">
-          <h2 id="tools-heading">כלי תכנון וחלליות</h2>
-          <p>
-            כאן מרוכזים כלי התוכנה החזקים ביותר לבניית חלליות – מהשרטוט הראשון על "מפית" ועד לתכנון
-            הנדסי אמיתי שיכול לצאת להדפסה תלת־ממדית או לייצור. אם SpaceYard הוא המעבדה שלך בדפדפן,
-            אלו הכלים שמחוברים אליה בעולם האמיתי.
+          <h2 id="tools-heading" data-i18n="toolsHeading">Planning & ship tools</h2>
+          <p data-i18n="toolsP">
+            Powerful software for building ships – from first sketch to real engineering and 3D print. SpaceYard in the browser, these tools in the real world.
           </p>
 
           <div class="cards">
@@ -1302,8 +1309,8 @@
 
       <section id="about" class="section section-alt" aria-labelledby="about-heading">
         <div class="container">
-          <h2 id="about-heading">אודות SpaceYard</h2>
-          <p class="about-intro">SpaceYard היא מעבדה לבניית צי חלליות דמיוני – עם תצוגת 3D, סטודיו ועורך חלליות. כל הנתונים נשמרים בדפדפן שלך.</p>
+          <h2 id="about-heading" data-i18n="aboutHeading">About SpaceYard</h2>
+          <p class="about-intro" data-i18n="aboutIntro">SpaceYard is a lab for building an imaginary ship fleet – with 3D view, studio and ship editor. All data is stored in your browser.</p>
 
           <div class="about-block">
             <h3>עורך חלליות 3D – מדריך שימוש</h3>
@@ -1354,7 +1361,7 @@
     <footer class="site-footer">
       <div class="container footer-content">
         <div class="footer-copy">
-          <p>© <span id="year"></span> SpaceYard – מספנת החלל שלך</p>
+          <p>© <span id="year"></span> SpaceYard – <span data-i18n="footerCopy">Your space shipyard</span></p>
         </div>
         <div class="footer-stamp">
           <img src="/assets/images/ship-logo.png" alt="SpaceYard" class="footer-stamp-img" width="40" height="40" />
@@ -1364,10 +1371,10 @@
 
     <div id="toast-container" class="toast-container" aria-live="polite"></div>
 
-    <div id="gallery-lightbox" class="gallery-lightbox hidden" aria-hidden="true" role="dialog" aria-modal="true" aria-label="תצוגה מוגדלת">
+    <div id="gallery-lightbox" class="gallery-lightbox hidden" aria-hidden="true" role="dialog" aria-modal="true" data-i18n-aria="lightboxAria">
       <div class="gallery-lightbox-overlay"></div>
       <div class="gallery-lightbox-box">
-        <button type="button" class="gallery-lightbox-close" aria-label="סגור">×</button>
+        <button type="button" class="gallery-lightbox-close" data-i18n-aria="close">×</button>
         <div class="gallery-lightbox-content"></div>
         <div class="gallery-lightbox-caption"></div>
       </div>
