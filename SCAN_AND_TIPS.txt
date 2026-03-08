@@ -1,0 +1,250 @@
+================================================================================
+  SpaceYard – סריקה מלאה + עצות + טיפים
+  קובץ ייחוס לפני עבודה על אתר הלקוח | גרסה 0.6.0
+  נוצר: 2025
+================================================================================
+
+═══════════════════════════════════════════════════════════════════════════════
+  חלק 1: סריקה מלאה – מבנה הפרויקט
+═══════════════════════════════════════════════════════════════════════════════
+
+עץ קבצים:
+----------
+MP-Nadav-Web-2000/
+├── .gitignore
+├── index.html          (~1,385 שורות)  – דף HTML ראשי, כל הסקשנים
+├── package.json
+├── README.md           – תיעוד הפרויקט (עברית)
+├── script.js           (~1,730 שורות)  – לוגיקה ראשית (מודול ES אחד)
+├── style.css           (~3,212 שורות)  – עיצוב מלא, משתנים, מדיה
+├── vite.config.js      – קונפיגורציית Vite (root, outDir, assetsDir)
+├── PROJECT_REVIEW_AND_TREE.txt  – סקירה מפורטת קיימת
+├── SCAN_AND_TIPS.txt   – הקובץ הנוכחי
+│
+├── 3d/
+│   ├── scene.js        – סצנה, מצלמה, OrbitControls, אנימציה
+│   ├── shipFactory.js  – בניית גאומטריות חללית (classic/sleek/heavy/ring)
+│   ├── shipEditor.js   – עדכון חללית קיימת (צבעים, גדלים, זוהר)
+│   ├── materials.js    – חומרי Three.js (metal/matte/glass/alien)
+│   ├── utils.js        – קלמפ, מעלות↔רדיאנים, mergeConfig3D, buildConfig3DFromRaw
+│   └── editor3d.js     – עורך 3D (חלקים, כלים, blueprint, שמירה/טעינה)
+│
+└── public/
+    └── assets/
+        ├── images/
+        │   ├── ship-logo.png
+        │   └── Website background image/
+        │       └── Gemini_Generated_Image_eavh8eavh8eavh8e.png
+        ├── images/.gitkeep
+        ├── models/.gitkeep
+        └── hdr/.gitkeep
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  חלק 2: סריקה מלאה – טכנולוגיות ותלויות
+═══════════════════════════════════════════════════════════════════════════════
+
+טכנולוגיות:
+  • Vite 5.4        – בנייה ופיתוח (dev / build / preview)
+  • JavaScript      – ES Modules, ללא React/Vue
+  • Three.js ^0.161 – סצנות 3D, OrbitControls, חומרים
+  • HTML5 / CSS3    – RTL, עברית (lang="he", dir="rtl"), רספונסיבי
+
+תלויות (package.json):
+  dependencies:    three ^0.161.0
+  devDependencies: vite ^5.4.0
+
+סקריפטים:
+  npm run dev     → שרת פיתוח (ברירת מחדל http://localhost:5173)
+  npm run build   → בניית dist/
+  npm run preview → תצוגת dist/ מקומית
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  חלק 3: סריקה מלאה – מפתחות localStorage
+═══════════════════════════════════════════════════════════════════════════════
+
+כל הנתונים נשמרים בדפדפן בלבד (אין שרת):
+
+  STORAGE_KEY / FLEET_KEY     – spaceyard-fleet-v1           (רשימת צי חלליות)
+  SETTINGS_KEY_V2             – spaceyard-settings-v2        (הגדרות תצוגה ו־3D)
+  SETTINGS_KEY_V1             – spaceyard-settings-v1        (מיגרציה מ־v1)
+  AUTH_KEY                    – spaceyard-auth-user-v1       (משתמש מחובר – דמו)
+  WELCOME_KEY                 – spaceyard-welcome-shown-v1   (ברוכים הבאים הוצג)
+  BUSINESS_PROFILE_KEY        – spaceyard-business-profile-v1 (פרופיל עסקי)
+  DEV_TEXT_KEY                – spaceyard-dev-text-v1        (טקסטים למפתח)
+  EDITOR_STORAGE_KEY (3d/)    – spaceyard-editor-designs-v1   (עיצובי עורך 3D)
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  חלק 4: סריקה מלאה – אימות דמו (AUTH)
+═══════════════════════════════════════════════════════════════════════════════
+
+  • אובייקט AUTH_USERS ב־script.js – משתמשים וסיסמאות מוגדרים בצד לקוח.
+  • תפקידים: אורח / עסקי / מפתח.
+  • אזורים מותנים:
+    – .editor-access-only   – גישה לעורך 3D (עסקי/מפתח)
+    – .business-only-section – פרופיל עסקי וטקסטים
+    – .developer-only-section – פאנל טקסטים למפתח ופנייה למפתח
+  • אין שרת – לא מתאים לייצור; רק להדגמת UX/UI.
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  חלק 5: סריקה מלאה – סקשנים ב־index.html (מזהים מרכזיים)
+═══════════════════════════════════════════════════════════════════════════════
+
+  #auth-overlay, #welcome-panel, #auth-form, #auth-username, #auth-password
+  #home (Hero)     – #hero-title, #cta-button, #open-studio-btn, #hero-metric-*
+  #builder         – #ship-form, #ship-canvas, #ship-preview, #primary-ship-btn
+  #studio3d        – #studio-canvas, כפתורי preset/zoom/fullscreen/screenshot
+  #editor3d        – #editor3d-canvas, כלים, שמירה/טעינה עיצובים
+  #fleet           – #fleet-list, #fleet-sort, #fleet-filter-type, #fleet-search
+  #gallery         – .gallery-grid, .gallery-card, #gallery-lightbox
+  #business-profile, #developer-text-panel, #user-requests
+  #tools, #about
+  #settings-modal  – טאבים: תצוגה, 3D, צי ואחסון, פרטיות
+  #toast-container, footer (#year)
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  חלק 6: סריקה מלאה – תלויות בין קבצים (ייבוא)
+═══════════════════════════════════════════════════════════════════════════════
+
+  index.html  → style.css, script.js (module), /assets/images/ship-logo.png
+
+  script.js  →
+    ./3d/scene.js       (initScene)
+    ./3d/shipFactory.js (createShip)
+    ./3d/shipEditor.js  (updateShipFromConfig)
+    ./3d/utils.js       (defaultShipConfig3D, mergeConfig3D, buildConfig3DFromRaw)
+    ./3d/editor3d.js    (initEditor3D)
+
+  3d/scene.js        → three, OrbitControls
+  3d/shipFactory.js  → three, materials.js, utils.js
+  3d/shipEditor.js   → materials.js, utils.js
+  3d/materials.js    → three, utils.js
+  3d/utils.js        → (ללא ייבוא)
+  3d/editor3d.js     → three, OrbitControls
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  חלק 7: עצות – פיתוח ותחזוקה
+═══════════════════════════════════════════════════════════════════════════════
+
+  1. פירוק script.js למודולים
+     • script.js כ־~1,730 שורות – קשה לתחזוקה.
+     • מומלץ: לפצל ל־modules/ (למשל settings.js, auth.js, fleet.js, builder.js,
+       ui.js, business.js) ו־script.js רק ייבא ויאתחל.
+     • יתרון: בדיקות ממוקדות, שינויים מבודדים, עבודה במקביל.
+
+  2. קבועים ומפתחות
+     • מפתחות localStorage ו־DEFAULT_SETTINGS מפוזרים בתוך DOMContentLoaded.
+     • מומלץ: להעביר לקובץ config.js או constants.js אחד, לייצא ולייבוא ב־script.js.
+
+  3. שליפת אלמנטים (getElementById)
+     • עשרות אלמנטים נשמרים במשתנים בראש ה־DOMContentLoaded.
+     • מומלץ: אובייקט אחד dom = { year: getElementById("year"), ... } או
+       פונקציה getDOMElements() שמחזירה אובייקט – יקל על חיפוש ועדכון.
+
+  4. טיפול בשגיאות
+     • יש try/catch סביב localStorage; מומלץ לשמור לוג (console.warn/error)
+       כשנכשל, כדי לאבחן בעיות במכשירים עם אחסון מלא או פרטיות מחמירה.
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  חלק 8: עצות – ביצועים
+═══════════════════════════════════════════════════════════════════════════════
+
+  1. תמונת רקע
+     • תמונת הרקע ב־public/assets/images/.../Gemini_Generated_Image_....png
+       עלולה להיות כבדה.
+     • טיפ: המרה ל־WebP, רוחב מקסימלי ~1920px, דחיסה (למשל 80% איכות).
+     • אפשר להוסיף גרסה קטנה ל־mobile ב־media query (רקע שונה או ללא תמונה).
+
+  2. Three.js
+     • qualityMode כבר תומך ב־auto/low – לנצל במכשירים חלשים.
+     • טיפ: להקטין pixelRatio ב־low (כבר ב־scene.js – setPixelRatioFromQuality).
+     • בסטודיו/עורך: לשקול LOD או הפחתת פוליגונים כשהמצלמה רחוקה.
+
+  3. גלריה
+     • תמונות מגיעות מ־Unsplash (חיצוני). טיפ: loading="lazy" על img כבר
+       עוזר; אפשר להוסיף placeholder או skeleton עד טעינה.
+
+  4. אנימציות
+     • body.reduced-motion מדכא אנימציות – לוודא שכל אנימציה כפופה ל־prefers-reduced-motion
+       או ל־class זה.
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  חלק 9: עצות – אבטחה ופרטיות
+═══════════════════════════════════════════════════════════════════════════════
+
+  1. אימות
+     • AUTH_USERS ב־script.js גלוי למשתמש – לא אבטחה אמיתית.
+     • אם הלקוח ירצה "כניסה אמיתית": חובה שרת (למשל Node/Express) + DB,
+       sessions או JWT, סיסמאות מוצפנות (hash), ולא לאחסן סיסמאות ב־front.
+
+  2. localStorage
+     • כל הנתונים מקומיים – מתאים לדמו. ב־production עם משתמשים אמיתיים:
+       צי, פרופיל, טקסטים – להעביר ל־API + DB.
+     • מומלץ: לא לשמור ב־localStorage מידע רגיש (סיסמאות, תעודות).
+
+  3. .env
+     • .env ו־.env.local כבר ב־.gitignore – אם בעתיד ייכנסו API keys,
+       להשאיר רק שם ולקרוא דרך import.meta.env ב־Vite.
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  חלק 10: טיפים – נגישות (a11y)
+═══════════════════════════════════════════════════════════════════════════════
+
+  • יש aria-label, aria-expanded, aria-controls על כפתורים ומודלים – להמשיך.
+  • body.high-contrast כבר קיים – לוודא שכל טקסט קריא במצב הזה.
+  • כפתורי הגדרות/ניווט: לוודא ניווט מקלדת (Tab, Enter) וסגירה ב־Escape.
+  • תצוגת 3D: אין תוכן טקסטואלי ל־screen readers – אם נדרש, להוסיף
+    טקסט חלופי או region עם aria-label שמתאר "תצוגת חללית תלת־ממדית".
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  חלק 11: טיפים – פריסה (Deploy)
+═══════════════════════════════════════════════════════════════════════════════
+
+  1. בנייה
+     • npm run build → תיקיית dist/. לבדוק ש־index.html טוען נכון את
+       /assets/... (Vite מכניס hashes – בדרך כלל אין צורך לשנות).
+
+  2. בסיס (base)
+     • אם האתר יושב בתת־תיקייה (למשל example.com/spaceyard/), להגדיר ב־vite.config.js:
+       base: "/spaceyard/" כדי שהקישורים והמשאבים יעבדו.
+
+  3. שרת סטטי
+     • dist/ מתאים לשרת סטטי (Netlify, Vercel, GitHub Pages, וכו').
+     • אין צורך ב־Node ב־runtime – רק הגשת קבצים.
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  חלק 12: טיפים – Git וקוד
+═══════════════════════════════════════════════════════════════════════════════
+
+  • .gitignore כבר מכסה node_modules/, dist/, .env, *.log – טוב.
+  • לפני commit: להריץ npm run build ולוודא שאין שגיאות.
+  • אם מפצלים קבצים: לעדכן את index.html אם מוסיפים script נפרד, או
+    להשאיר entry אחד (script.js) שייבא את כל המודולים (מומלץ עם Vite).
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  חלק 13: סיכום – צ'קליסט לפני עבודה
+═══════════════════════════════════════════════════════════════════════════════
+
+  [ ] npm install הושלם
+  [ ] npm run dev רץ והאתר נטען ב־localhost
+  [ ] npm run build עובר ללא שגיאות
+  [ ] קראת את README.md ו־PROJECT_REVIEW_AND_TREE.txt
+  [ ] יודע איפה נשמרים צי, הגדרות, פרופיל (localStorage keys למעלה)
+  [ ] יודע שאימות הוא דמו בלבד (AUTH_USERS ב־script.js)
+  [ ] תמונת רקע ונתיבים ב־style.css תואמים ל־public/assets/
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  סוף הקובץ – סריקה מלאה + עצות + טיפים
+═══════════════════════════════════════════════════════════════════════════════

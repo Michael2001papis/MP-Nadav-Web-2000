@@ -107,6 +107,7 @@
           <button type="button" class="settings-tab" role="tab" aria-selected="false" data-tab="3d">3D</button>
           <button type="button" class="settings-tab" role="tab" aria-selected="false" data-tab="storage">צי ואחסון</button>
           <button type="button" class="settings-tab" role="tab" aria-selected="false" data-tab="privacy">פרטיות</button>
+          <button type="button" class="settings-tab biz-only-tab hidden" role="tab" aria-selected="false" data-tab="biz-texts">טקסטים (עסקי)</button>
         </div>
         <div class="settings-tab-panels">
           <div id="tab-display" class="settings-tab-panel active" role="tabpanel">
@@ -184,6 +185,42 @@
           </div>
           <div id="tab-privacy" class="settings-tab-panel" role="tabpanel" hidden>
             <button type="button" id="clear-local-data" class="btn-ghost settings-danger-btn">מחק את כל הנתונים המקומיים</button>
+          </div>
+          <div id="tab-biz-texts" class="settings-tab-panel" role="tabpanel" hidden aria-labelledby="biz-texts-panel-title">
+            <div class="settings-biz-texts-panel">
+              <h3 id="biz-texts-panel-title" class="settings-panel-title">עריכת טקסטים באתר (משתמש עסקי)</h3>
+              <p class="field-note settings-panel-note">
+                עדכון כותרות ותיאורים בתצוגה. השינויים נשמרים רק בדפדפן שלך; המפתח יכול לעדכן הכל ממסך המפתח.
+              </p>
+              <form id="business-text-form" class="profile-form settings-biz-form" novalidate>
+                <div class="settings-biz-group">
+                  <label for="biz-hero-title">כותרת ראשית (דף הבית)</label>
+                  <input id="biz-hero-title" name="heroTitle" type="text" class="settings-input" />
+                </div>
+                <div class="settings-biz-group">
+                  <label for="biz-hero-subtitle">תיאור ראשי קצר</label>
+                  <textarea id="biz-hero-subtitle" name="heroSubtitle" rows="2" class="settings-textarea"></textarea>
+                </div>
+                <div class="settings-biz-group">
+                  <label for="biz-builder-subtitle">תיאור מגדל ההרכבה</label>
+                  <textarea id="biz-builder-subtitle" name="builderSubtitle" rows="2" class="settings-textarea"></textarea>
+                </div>
+                <div class="settings-biz-group">
+                  <label for="biz-studio-intro">טקסט סטודיו 3D</label>
+                  <textarea id="biz-studio-intro" name="studioIntro" rows="2" class="settings-textarea"></textarea>
+                </div>
+                <div class="settings-biz-group">
+                  <label for="biz-fleet-subtitle">תיאור הצי</label>
+                  <textarea id="biz-fleet-subtitle" name="fleetSubtitle" rows="2" class="settings-textarea"></textarea>
+                </div>
+                <div class="settings-biz-group">
+                  <label for="biz-gallery-intro">טקסט גלריית השראה</label>
+                  <textarea id="biz-gallery-intro" name="galleryIntro" rows="3" class="settings-textarea"></textarea>
+                </div>
+                <p id="business-text-status" class="form-status" aria-live="polite"></p>
+                <button type="submit" class="btn-primary btn-sm">שמור טקסטים</button>
+              </form>
+            </div>
           </div>
         </div>
         <div class="settings-modal-footer">
@@ -1052,51 +1089,9 @@
               <button type="submit" class="btn-primary btn-sm">שמור פרופיל</button>
             </form>
           </div>
-
-          <hr />
-
-          <div class="profile-grid">
-            <form id="business-text-form" class="profile-form" novalidate>
-              <h3>טקסטים לשינוי ע"י משתמש עסקי</h3>
-              <p class="field-note">
-                כאן אפשר לעדכן חלק מהטקסטים באתר לתצוגה בלבד. השינויים נשמרים רק בדפדפן שלך,
-                והמפתח יכול תמיד לעדכן הכל ממסך המפתח.
-              </p>
-
-              <div class="form-group">
-                <label for="biz-hero-title">כותרת ראשית (דף הבית)</label>
-                <input id="biz-hero-title" name="heroTitle" type="text" />
-              </div>
-
-              <div class="form-group">
-                <label for="biz-hero-subtitle">תיאור ראשי קצר</label>
-                <textarea id="biz-hero-subtitle" name="heroSubtitle" rows="2"></textarea>
-              </div>
-
-              <div class="form-group">
-                <label for="biz-builder-subtitle">תיאור מגדל ההרכבה</label>
-                <textarea id="biz-builder-subtitle" name="builderSubtitle" rows="2"></textarea>
-              </div>
-
-              <div class="form-group">
-                <label for="biz-studio-intro">טקסט סטודיו 3D</label>
-                <textarea id="biz-studio-intro" name="studioIntro" rows="2"></textarea>
-              </div>
-
-              <div class="form-group">
-                <label for="biz-fleet-subtitle">תיאור הצי</label>
-                <textarea id="biz-fleet-subtitle" name="fleetSubtitle" rows="2"></textarea>
-              </div>
-
-              <div class="form-group">
-                <label for="biz-gallery-intro">טקסט גלריית השראה</label>
-                <textarea id="biz-gallery-intro" name="galleryIntro" rows="3"></textarea>
-              </div>
-
-              <p id="business-text-status" class="form-status" aria-live="polite"></p>
-              <button type="submit" class="btn-primary btn-sm">שמור טקסטים</button>
-            </form>
-          </div>
+          <p class="profile-hint">
+            לעריכת טקסטי האתר (כותרות ותיאורים) פתח <strong>הגדרות</strong> מהתפריט ובחר בטאב <strong>טקסטים (עסקי)</strong>.
+          </p>
         </div>
       </section>
 

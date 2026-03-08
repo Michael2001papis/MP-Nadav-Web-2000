@@ -564,6 +564,61 @@ body[data-theme="simple"] .nav-drawer-panel {
   border-color: var(--accent);
 }
 
+/* טאב טקסטים (עסקי) – פאנל מסודר בהגדרות */
+.settings-biz-texts-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.settings-panel-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 0 0 0.25rem 0;
+  color: var(--text);
+}
+.settings-panel-note {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin: 0 0 0.5rem 0;
+  line-height: 1.4;
+}
+.settings-biz-form .settings-biz-group {
+  margin-bottom: 0.75rem;
+}
+.settings-biz-form .settings-biz-group:last-of-type {
+  margin-bottom: 0.5rem;
+}
+.settings-biz-form label {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 0.25rem;
+}
+.settings-biz-form .settings-input,
+.settings-biz-form .settings-textarea {
+  width: 100%;
+  max-width: none;
+}
+.settings-textarea {
+  min-height: 4em;
+  resize: vertical;
+  padding: 8px 10px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 0.95rem;
+  font-family: inherit;
+}
+.settings-textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+.settings-biz-form .form-status {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+}
+
 .settings-danger-btn {
   color: #fca5a5;
   border-color: rgba(248, 113, 113, 0.5);
@@ -2995,6 +3050,16 @@ body[data-theme="simple"] .ship-form textarea {
 
 .profile-form {
   max-width: 420px;
+}
+
+.profile-hint {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  background: var(--bg-subtle);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
 }
 
 .auth-overlay {

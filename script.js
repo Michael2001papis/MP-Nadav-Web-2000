@@ -273,6 +273,9 @@ document.addEventListener("DOMContentLoaded", () => {
       document
         .querySelectorAll(".editor-access-only")
         .forEach((el) => el.classList.add("hidden"));
+      document
+        .querySelectorAll(".biz-only-tab")
+        .forEach((el) => el.classList.add("hidden"));
       return;
     }
     hideOverlay();
@@ -303,6 +306,10 @@ document.addEventListener("DOMContentLoaded", () => {
     document
       .querySelectorAll(".editor-access-only")
       .forEach((el) => el.classList.toggle("hidden", !hasEditorAccess));
+    const isBusiness = user.role === "business";
+    document
+      .querySelectorAll(".biz-only-tab")
+      .forEach((el) => el.classList.toggle("hidden", !isBusiness));
     if (hasEditorAccess && typeof initEditor3DOnView === "function") {
       setTimeout(initEditor3DOnView, 100);
     }
