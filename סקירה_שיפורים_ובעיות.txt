@@ -1,0 +1,500 @@
+================================================================================
+  סקירה מלאה • שיפורים • עצות • בעיות • שיכפולים
+  פרויקט: MP-Nadav-Web-2000 | מערכת: SpaceYard | גרסה: 0.6.0
+  מסמך טכני מפורט – מינימום 500 שורות
+================================================================================
+
+תאריך: 2025-03-08
+מטרה: מסמך יחיד שמרכז סקירה מלאה של המערכת, רשימת שיפורים מומלצים, עצות
+      תחזוקה, בעיות ידועות ותיעוד שיכפולים בקוד ובממשק.
+
+--------------------------------------------------------------------------------
+  חלק א: סקירה מלאה (מבנה, טכנולוגיה, תפקודים)
+--------------------------------------------------------------------------------
+
+1.1  מבנה הפרויקט
+-----------------
+  • שורש: index.html (דף יחיד SPA-style), script.js (לוגיקה ראשית), style.css (עיצוב),
+    i18n.js (תרגום en/he).
+  • תיקיית 3d/: scene.js (תצוגת Three.js + OrbitControls), shipFactory.js (בניית מודל חללית),
+    shipEditor.js (עדכון מודל מקונפיגורציה), utils.js (defaultShipConfig3D, mergeConfig3D,
+    buildConfig3DFromRaw), materials.js, editor3d.js (עורך חלקים – גוף, כנפיים, מנוע, קוקפיט).
+  • public/assets: images (לוגו, רקע), models, hdr (.gitkeep).
+  • בנייה: Vite 5, יצוא ל-dist עם hashed assets.
+
+1.2  טכנולוגיה
+--------------
+  • Frontend: HTML5, CSS3 (custom properties, themes, RTL), JavaScript ES modules.
+  • 3D: Three.js (^0.161.0), WebGLRenderer, PerspectiveCamera, OrbitControls.
+  • אחסון: localStorage בלבד (ללא שרת).
+  • מפתחות אחסון: spaceyard-fleet-v1, spaceyard-settings-v2, spaceyard-settings-v1,
+    spaceyard-auth-user-v1, spaceyard-business-profile-v1, spaceyard-dev-text-v1,
+    spaceyard-welcome-shown-v1.
+
+1.3  סקשנים ראשיים ב-HTML
+-------------------------
+  • Auth overlay: ברוך הבא / כניסת משתמש (אורח, business, developer).
+  • Header: לוגו, ניווט (Home, Builder, Studio 3D, Editor 3D, Fleet, Gallery, Tools, About),
+    Settings, Sign in/out, תפריט מובייל (drawer).
+  • Settings modal: תצוגה (שפה, theme, גודל גופן, reduced motion, high contrast),
+    3D (auto rotate, rotation speed, quality, axes), Fleet & storage (auto save, fleet limit,
+    confirm reset), Privacy (מחיקת נתונים), טקסטים עסקיים (biz).
+  • Home (hero): כותרת, CTA, Open Studio 3D, לוח טלו־מטריה (ספינות בצי, סטטוס 3D, ערכת צבעים).
+  • Builder: טופס חללית (שם, סוג משימה, צבע, speed/size ranges, צוות, מפקד, תיאור משימה,
+    רמת סיכון, חייזר מלווה, features, advanced systems, 3D settings – צורה, צבעים, חומר,
+    body/wing/engine/cockpit, decals, alien tech). תצוגה חיה (canvas 3D + fallback),
+    pills (סוג, סיכון, חייזר), סיכום טכני.
+  • Fleet: מיון, סינון לפי סוג, חיפוש לפי שם, איפוס צי, רשימת כרטיסים (שם, מטא, צבע, מחק).
+  • Studio 3D: toolbar (front/side/top/iso, reset, zoom, rotate, axes, fullscreen, screenshot),
+    canvas + fallback.
+  • Editor 3D (נגיש ל-business/developer): טאבים חללית/סצנה/שרטוט, סרגל כלים (בחירה, הזזה,
+    סיבוב, גודל, שכפול, מחיקה, הוספת חלקים), שמירה/טעינת עיצוב, רשת/תאורה, מאפייני חלק,
+    שרטוט (מבט על, צד, קדמי).
+  • Gallery: כרטיסים עם תמונה/קנבס, lightbox.
+  • Tools: כרטיסי כלים חיצוניים (Fusion 360, Blender, FreeCAD, SolidWorks, draw.io).
+  • About: הסבר על המערכת, מדריך עורך 3D (מבנה, שלבי עבודה, ניווט, שמירה/טעינה).
+  • Footer: זכויות, לוגו.
+
+1.4  תפקודים עיקריים ב-script.js
+--------------------------------
+  • קבועים: STORAGE_KEY, AUTH_KEY, BUSINESS_PROFILE_KEY, DEV_TEXT_KEY, SETTINGS_KEY_V2/V1,
+    FLEET_KEY, WELCOME_KEY.
+  • Labels דינמיים: TYPE_LABELS, RISK_LABELS, FEATURE_LABELS, ADVANCED_LABELS, ALIEN_LABELS
+    (משתמשים ב-t() מ-i18n).
+  • Settings: getSettingsFromDOM, applySettingsToDOM, applySettingsToSystem, loadSettings,
+    saveSettings, getSettings; מיגרציה מ-V1 ל-V2.
+  • Auth: showWelcome, hideOverlay, getCurrentUser, setCurrentUser, AUTH_USERS (hardcoded),
+    toggle visibility של editor-access-only, biz-only-tab, business-only-section,
+    developer-only-section, advanced-part-colors.
+  • טופס חללית: getRawFormData, validateShip, normalizeShip, buildSummaryText,
+    updateShipPreviewMeta, loadShipIntoForm, enterEditMode, exitEditMode.
+  • צי: saveFleetToStorage, loadFleetFromStorage, deleteShipById, renderFleet (מיון, סינון, חיפוש).
+  • 3D: initScene על ship-canvas ו-studio-canvas, createShip, updateShipFromConfig,
+    setShipGroup; טיפול ב-fallback כש-WebGL לא זמין.
+  • אירועים: i18n:applied – ריענון renderFleet ו-preview.
+  • Gallery lightbox, toasts, range labels, ניווט drawer, סגירת modal ב-Escape.
+
+1.5  i18n
+---------
+  • שפת ברירת מחדל: אנגלית (lang="en", dir="ltr").
+  • החלפה: Settings → Language → English / עברית; applyLanguage מעדכן lang, dir, class על body,
+    מעדכן כל data-i18n, data-i18n-placeholder, data-i18n-aria, title ו-meta description,
+    ומפיץ i18n:applied.
+  • מפתחות: מאות מפתחות ב-TRANSLATIONS.en ו-TRANSLATIONS.he (ניווט, הגדרות, builder, fleet,
+    studio, editor, gallery, profile, developer, toasts, אישורים וכו').
+
+--------------------------------------------------------------------------------
+  חלק ב: שיפורים מומלצים
+--------------------------------------------------------------------------------
+
+2.1  שיפורי קוד ואחזור
+----------------------
+  • איחוד מפתחות אחסון: STORAGE_KEY ו-FLEET_KEY זהים (spaceyard-fleet-v1). להשאיר קבוע
+    אחד (למשל FLEET_KEY) ולהשתמש בו בכל מקום.
+  • העברת כל המחרוזות הקשיחות לעברית ל-i18n: הודעות ולידציה (שם חללית, צוות, מפקד),
+    הודעת שגיאות טופס בראש הטופס, סיכום חללית (היא..., יכולות..., מערכות...), "ללא יכולות",
+    "ללא מערכות", "לא הוגדר", "חללית ללא שם", "עורך חללית:", "עדכן חללית", "הוסף חללית לצי",
+    aria-label למחיקה, מטא בכרטיס צי (צוות, מהירות, גודל, סיכון), הודעות פרופיל/טקסטים/בקשות
+    משתמש – כולן צריכות לעבור ל-t("key") עם מפתחות מתאימים ב-en/he.
+  • עורך 3D: כל התוויות והטקסטים בעברית ב-index.html (טאבים חללית/סצנה/שרטוט, כלים,
+    הוסף חלק, רשת, תאורה, שמור, טען, שרטוט מהיר, מבט על/צד/קדמי, מצב עורך, מאפייני חלק)
+    – להחליף ל-data-i18n ולהזין תרגום אנגלי; ב-editor3d.js PART_LABELS ו-"מבט על" וכו'
+    ו-"אין עיצובים שמורים" – להשתמש ב-t() או להעביר מפתחות ל-i18n.
+  • scene.js: CAMERA_PRESETS מכיל label בעברית (חזית, צד, מלמעלה, איזומטרי). להעביר ל-key
+    ולהשתמש ב-t("studioFront") וכו' או להעביר את התווית ל-caller.
+  • riskExtreme: ב-en מופיע "Edge of capability" וב-he "קצה גבול היכולת" – ב-builder ב-HTML
+    option של riskExtreme באנגלית "Extreme" – לוודא עקביות (data-i18n כבר קיים).
+
+2.2  שיפורי חוויית משתמש
+------------------------
+  • הודעות ולידציה: להציג בשפת הממשק הנוכחית (לא רק עברית).
+  • סיכום חללית (buildSummaryText): המבנה "היא... בצבע... למהירות... צוות... יכולות...
+    מערכות... מפקד... רמת סיכון" – קשיח עברית. לפרק למשפטים מתורגמים (templates עם t()).
+  • כרטיס צי: המטא "צוות: X · מהירות: Y · גודל: Z · סיכון: ..." – לעבור ל-t("fleetMetaFormat")
+    או מרכיבים נפרדים מתורגמים.
+  • Toast: כבר משתמש ב-t() ברוב המקומות – לוודא שאין toasts עם מחרוזת קשיחה.
+  • מקשי גישה: לוח Studio (Zoom in/out) – כרגע title="Zoom out/in" – להוסיף data-i18n-aria
+    או aria-label מתורגם.
+
+2.3  שיפורי ביצועים
+--------------------
+  • Bundle: Vite מדווח על chunk גדול מ-500KB (index-BiED7f5Z.js). לשקול code splitting:
+    טעינה דינמית של מודולי 3d (scene, shipFactory, shipEditor, editor3d) רק כשנכנסים
+    ל-Builder או ל-Studio/Editor (dynamic import()).
+  • תמונות: רקע האתר ושאר assets – לוודא גודל מתאים ו/או srcset לרספונסיביות.
+  • Resize: scene.js מאזין ל-window resize – לשקול debounce כדי להפחית עומס ב-resize.
+
+2.4  שיפורי נגישות
+-------------------
+  • כרטיסי גלריה: יש tabindex="0" ו-keydown Enter/Space – טוב. לוודא focus trap ב-lightbox
+    וסגירה ב-Escape (קיים).
+  • עורך 3D: aria-label על אזורים (תצוגת שרטוט, מאפייני חלק) – חלקם בעברית קשיחה;
+    להמיר ל-data-i18n-aria או להזין תרגום.
+  • הודעות דינמיות: formErrorsTop, editIndicator, status בפרופיל/טקסטים – לוודא aria-live
+    ו-sr-only אם רלוונטי.
+
+2.5  שיפורי אבטחה ותחזוקה
+--------------------------
+  • AUTH_USERS: סיסמאות ומשתמשים hardcoded – בסביבת דמו זה מקובל; בפרודקשן חייב מערכת
+    אימות בצד שרת.
+  • localStorage: אין הצפנה; נתונים רגישים (אם יוגדרו) לא צריכים להישמר plain text.
+  • npm audit: יש 2 moderate vulnerabilities – להריץ npm audit ולתקן בהתאם (לא תמיד
+    audit fix --force כי עלול לשבור תלויות).
+
+--------------------------------------------------------------------------------
+  חלק ג: עצות לתחזוקה ופיתוח
+--------------------------------------------------------------------------------
+
+3.1  לפני שחרור / סקירת QA
+--------------------------
+  • להריץ npm install ו-npm run build ולוודא שאין שגיאות.
+  • להחליט מצב בדיקה: localStorage נקי (מצב א) או עם נתונים (מצב ב).
+  • לבדוק ידנית: טעינת דף, ניווט, Builder (הוספה, עריכה, שכפול), Fleet (מיון, סינון, חיפוש,
+    מחיקה), Studio 3D (זוויות, זום, צילום), Settings (שפה, theme, איפוס, מחיקת נתונים),
+    Gallery (lightbox), מעבר שפה (en/he) ו-RTL.
+  • לבדוק עורך 3D לאחר כניסה כ-business/developer: הוספת חלקים, שמירה/טעינה, מאפיינים.
+
+3.2  הוספת מפתח תרגום חדש
+--------------------------
+  • להוסיף ב-i18n.js תחת TRANSLATIONS.en ו-TRANSLATIONS.he את המפתח והערך.
+  • ב-HTML: data-i18n="key" או data-i18n-placeholder="key" או data-i18n-aria="key".
+  • ב-JS: t("key"). אין להשתמש במחרוזת קשיחה בשפת הממשק.
+
+3.3  שינוי מבנה נתונים (צי / settings)
+---------------------------------------
+  • אם משנים שדות באובייקט חללית או בהגדרות – להוסיף גרסה למפתח localStorage (למשל
+    spaceyard-fleet-v2) ולממש מיגרציה בטעינה (כמו SETTINGS_KEY_V1 → V2).
+  • normalizeShip ו-buildConfig3DFromRaw צריכים לתמוך בנתונים ישנים עם ערכי ברירת מחדל.
+
+3.4  עריכת עורך 3D
+--------------------
+  • editor3d.js: PART_DEFAULTS (body, wing, engine, cockpit) – label כרגע בעברית; אם מוסיפים
+    i18n יש לעדכן גם את ה-HTML של הכפתורים (data-i18n לפי סוג חלק).
+  • עיצובים שמורים: מפתח localStorage נפרד (בדוק ב-editor3d.js) – לתעד ב-mapping
+    המפתחות במסמך זה אם משנים.
+
+3.5  בדיקת תאימות דפדפנים
+---------------------------
+  • WebGL: לא כל המכשירים תומכים; Fallback כבר קיים (ship-canvas-fallback,
+    studio-canvas-fallback, editor3d-fallback).
+  • RTL: לבדוק ב-Chrome/Firefox/Safari עם שפה עברית שכל הממשק מיושר נכון (drawer, modals,
+    טופס).
+
+--------------------------------------------------------------------------------
+  חלק ד: בעיות ידועות ורשימת תקלות
+--------------------------------------------------------------------------------
+
+4.1  בעיות שפה ו-i18n
+----------------------
+  • הודעות ולידציה (script.js): "שם החללית חייב להכיל לפחות 2 תווים.", "מספר הצוות חייב
+    להיות לפחות 1.", "מספר הצוות לא יכול לעלות על 500.", "יש להזין שם מפקד/ת משימה."
+    – מוצגות תמיד בעברית. משתמש באנגלית יראה עברית.
+  • הודעת שגיאות טופס (showFormErrors): "יש שגיאות בטופס. תקן את השדות המסומנים והנסה שוב."
+    – קשיחה בעברית.
+  • buildSummaryText: כל הסיכום הטכני נבנה בעברית (היא..., יכולות..., מערכות..., מפקד/ת...).
+  • updateShipPreviewMeta: "רמת סיכון: " קשיח; "ללא" ב-chips ל-features/advanced – קשיח.
+  • enterEditMode / exitEditMode: "עורך חללית:", "עדכן חללית", "הוסף חללית לצי" – קשיח.
+  • normalizeShip: ברירת מחדל "חללית ללא שם" – קשיח.
+  • renderFleet: מטא כרטיס "צוות: ... · מהירות: ... · גודל: ... · סיכון: ..." – עברית קשיחה;
+    aria-label למחיקה "מחק חללית מהצי" – קשיח.
+  • Editor 3D ב-index.html: כל הטקסטים בעברית (טאבים, כלים, שמור, טען, שרטוט, מבט על/צד/קדמי,
+    מאפייני חלק, מצב עורך וכו') – אין data-i18n; במצב אנגלית המשתמש עדיין רואה עברית
+    באזור העורך.
+  • About: בלוק "עורך חלליות 3D – מדריך שימוש" וכל התוכן (מבנה הממשק, שלבי עבודה, ניווט,
+    שמירה וטעינה, אופציות) – עברית קשיחה; אין גרסה אנגלית.
+  • Tools: חלק מהכותרות והתיאורים בעברית (למשל draw.io, Blender, Fusion 360 תיאורים
+    ארוכים בעברית); יש גם כפתור "שמור טקסטים" בעברית בלבד באזור אחד.
+  • Gallery: כותרות ותיאורים לחלק מהכרטיסים בעברית ב-HTML (שרטוט צד טכני, מבט על חללית
+    טבעתית, פנים חללית קולנועית וכו') – יש מפתחות i18n לחלק (galleryBlueprint וכו') אבל
+    תוכן ה-HTML עצמו לא תמיד משתמש ב-data-i18n בכל הכרטיסים.
+  • 3d/scene.js: CAMERA_PRESETS.label בעברית – משפיע אם משתמשים בתווית איפשהו.
+  • 3d/editor3d.js: PART_DEFAULTS.label, "מבט על", "מבט צד", "מבט קדמי", "אין עיצובים שמורים"
+    – כולם קשיחים.
+
+4.2  בעיות לוגיקה ואחסון
+-------------------------
+  • כפילות STORAGE_KEY ו-FLEET_KEY: אותו ערך; clearLocalData מוחק FLEET_KEY בעוד
+    saveFleet/loadFleet משתמשים ב-STORAGE_KEY – עובד כי הערך זהה, אבל מבלבל בתחזוקה.
+  • loadSettings: כשקיים רק V1 מעדכן ל-V2 וכותב ל-localStorage; אין מנגנון "לעולם אל
+    תכתוב גרסה ישנה" – בדרך כלל לא בעיה.
+  • Fleet limit: נאכף בטופס (הוספת חללית) אבל לא נבדק ב-loadFleetFromStorage – אם
+    נטענו צי עם 100 חלליות והמגבלה 50, המצב לא מסונן אוטומטית; לשקול crop או אזהרה.
+
+4.3  בעיות UI/רספונסיביות
+--------------------------
+  • nav-drawer: ב-RTL הפאנל מוזז ל-left וטרנספורם מתאים – נבדק; לוודא שאין overlap
+    עם אלמנטים קבועים.
+  • Settings modal: max-height 90vh ו-overflow – טוב; במובייל לבדוק שהטאבים לא חורגים.
+  • Builder: טופס ארוך; accordions (details/summary) עוזרים – לוודא שכל ה-range values
+    מתעדכנים ב-i18n (updateRangeLabels נקרא ב-change).
+
+4.4  בעיות 3D
+-------------
+  • שני הקונטקסטים (Builder + Studio): initScene נקרא פעמיים (shipCanvas, studioCanvas);
+    אין שיתוף scene – כל אחד עצמאי. אם ירצו "אותו מודל בשני מקומות" צריך סנכרון או
+    העתקת group.
+  • Studio: כשמחליפים חללית מהצי – עדכון setShipGroup לפי החללית הנבחרת; לוודא שאם
+    אין חללית נבחרת יש מצב ברירת מחדל או הודעה.
+  • Editor 3D: עיצובים שמורים ב-localStorage – מפתח נפרד; מחיקת "כל הנתונים" ב-Settings
+    – לבדוק אם מוחק גם עיצובי Editor (לפי רשימת המפתחות ב-clearLocalData – לא מופיע
+    מפתח editor; אם editor3d.js משתמש במפתח משלו צריך להוסיף ל-clearLocalData).
+
+--------------------------------------------------------------------------------
+  חלק ה: שיכפולים – מיפוי ומקומות לתיקון
+--------------------------------------------------------------------------------
+
+5.1  מפתחות אחסון
+------------------
+  • STORAGE_KEY = "spaceyard-fleet-v1" (script.js שורה 9).
+  • FLEET_KEY = "spaceyard-fleet-v1" (script.js שורה 107).
+  • שימוש: saveFleetToStorage/loadFleetFromStorage משתמשים ב-STORAGE_KEY; clearLocalData
+    מוחק FLEET_KEY. פעולה: לאחד ל-FLEET_KEY בלבד או ל-STORAGE_KEY בלבד בכל הקובץ.
+
+5.2  תוויות מצלמה (Studio 3D)
+------------------------------
+  • 3d/scene.js: CAMERA_PRESETS = { front: { label: "חזית" }, side: { label: "צד" },
+    top: { label: "מלמעלה" }, iso: { label: "איזומטרי" } }.
+  • i18n.js: studioFront "Front", studioSide "Side", studioTop "Top", studioIso "Iso";
+    בעברית: "חזית", "צד", "מלמעלה", "איזו".
+  • שיכפול: אם scene.js מחזיר או משתמש ב-label, הוא לא מתורגם לפי שפה. פתרון: לא להציג
+    label מ-scene.js או להעביר מ-caller את t("studioFront") וכו'.
+
+5.3  תוויות חלקים (Editor 3D)
+------------------------------
+  • 3d/editor3d.js: PART_DEFAULTS = { body: { label: "גוף" }, wing: { label: "כנפיים" },
+    engine: { label: "מנוע" }, cockpit: { label: "קוקפיט" } }.
+  • index.html: כפתורי הוספת חלק עם טקסט "גוף", "כנפיים", "מנוע", "קוקפיט" (וקישור
+    data-add).
+  • i18n.js: partBody, partWing, partEngine, partCockpit (גוף, כנפיים, מנוע, קוקפיט).
+  • שיכפול: אותו תוכן בשלושה מקומות – HTML לא מתורגם, editor3d.js קשיח. פתרון: ב-HTML
+    data-i18n="partBody" וכו'; ב-editor3d.js אם יש שימוש ב-label – לקבל פונקציה t או מפתח
+    ולתרגם.
+
+5.4  "שמור" / "טען" / "שרטוט" / "רשת" / "תאורה"
+-------------------------------------------------
+  • מופיעים ב-index.html בעורך 3D (כפתורים, כותרות, סטטוס) בעברית.
+  • מופיעים ב-i18n (editorSave, editorLoad, editorLoadDesign, editorBlueprint, editorGrid,
+    editorLighting וכו').
+  • שיכפול: HTML לא מחובר ל-data-i18n באזור העורך. פתרון: להחליף כל טקסט סטטי
+    ב-data-i18n עם המפתח המתאים.
+
+5.5  "מבט על" / "מבט צד" / "מבט קדמי"
+--------------------------------------
+  • index.html: editor3d-bp-label בעברית.
+  • editor3d.js: labels = ["מבט על", "מבט צד", "מבט קדמי"] לשרטוט.
+  • i18n: editorBpTop, editorBpSide, editorBpFront. שיכפול: לעדכן HTML ו-JS לשימוש
+    ב-t() או ב-data-i18n.
+
+5.6  כותרות גלריה ותוכן About/Tools
+-------------------------------------
+  • גלריה: כרטיסים עם h3/p – חלק עם data-i18n (galleryLaunch, galleryBlueprint וכו')
+    וחלק עם טקסט עברי ישיר ב-HTML (למשל תיאור ארוך תחת שרטוט צד טכני).
+  • About: כל הבלוקים (עורך חלליות 3D, מבנה הממשק, שלבי עבודה, ניווט, שמירה, אופציות)
+    – עברית בלבד, אין מפתחות i18n.
+  • Tools: רשימות ותיאורים – עברית ואנגלית מעורבת; יש מפתחות (tool1Title, tool1P וכו')
+    אבל לא כל התוכן הארוך ב-HTML מחובר (למשל רשימות li עם תוכן עברי קשיח).
+  • שיכפול: תוכן דומה או זהה ב-i18n וב-HTML; תיקון: להעביר כל הטקסטים ל-i18n ולהוסיף
+    data-i18n / תבניות ב-JS.
+
+5.7  מחרוזות ברירת מחדל (חללית, פרופיל, משתמש)
+-----------------------------------------------
+  • "חללית ללא שם": script.js ב-normalizeShip וב-buildSummaryText/escapeHtml.
+  • "משתמש עסקי", "חלליות הן חלק מהעבודה היומיומית שלי": פרופיל עסקי ברירת מחדל.
+  • "ללא יכולות מיוחדות", "ללא מערכות נוספות", "לא הוגדר": buildSummaryText.
+  • שיכפול: מפוזר ב-script; חלק יכול לעבור ל-i18n (למשל shipUnnamed, profileDefaultTagline)
+    כדי לאחד ולתרגם.
+
+5.8  הודעות סטטוס (פרופיל, טקסטים, בקשות משתמש)
+-----------------------------------------------
+  • "הפרופיל נשמר במכשיר שלך.", "שמירת הפרופיל נכשלה.", "הטקסטים נשמרו...", "שמירת
+    הטקסטים נכשלה.", "נא למלא את כל השדות החיוניים.", "פותח לך מייל מוכן..." – כולן
+    ב-script.js בעברית. שיכפול עם כיוון i18n: יש כבר toasts מתורגמים; חסרים מפתחות
+    להודעות סטטוס בפאנלים – להוסיף ב-i18n ולהציג באמצעות t().
+
+--------------------------------------------------------------------------------
+  חלק ו: סיכום והמלצות עדיפות
+--------------------------------------------------------------------------------
+
+6.1  עדיפות גבוהה
+------------------
+  1. תיקון הודעות ולידציה והודעות שגיאות טופס – מעבר ל-t() עם מפתחות en/he.
+  2. תיקון סיכום חללית (buildSummaryText) וכרטיס צי (מטא, aria-label) – תבניות מתורגמות.
+  3. חיבור עורך 3D ל-i18n: החלפת כל הטקסטים הקשיחים ב-HTML וב-editor3d.js ל-data-i18n
+    ו-t().
+  4. איחוד STORAGE_KEY ו-FLEET_KEY לקבוע אחד.
+
+6.2  עדיפות בינונית
+--------------------
+  5. תרגום בלוק About (מדריך עורך 3D) – מפתחות i18n ותוכן אנגלי.
+  6. תרגום תוויות scene.js (CAMERA_PRESETS) אם משמשות בתצוגה.
+  7. וידוא שכל כרטיסי הגלריה וה-Tools משתמשים ב-data-i18n ולא בטקסט עברי קשיח.
+  8. הוספת מפתחות להודעות סטטוס (פרופיל, טקסטים, בקשות) ושימוש ב-t().
+
+6.3  עדיפות נמוכה
+-----------------
+  9. Code splitting ל-3D (dynamic import) לשיפור גודל bundle.
+  10. תיעוד מפתחות localStorage של עורך 3D והכללתם ב-clearLocalData אם רלוונטי.
+  11. Debounce על resize ב-scene.js.
+  12. npm audit ו-tיפול ב-vulnerabilities.
+
+--------------------------------------------------------------------------------
+  חלק ז: פירוט קבצים ושורות (לעיון מהיר)
+--------------------------------------------------------------------------------
+
+7.1  script.js – אזורים קריטיים
+---------------------------------
+  • שורות 9–12: קבועי localStorage (STORAGE_KEY, AUTH_KEY, ...).
+  • שורות 14–46: TYPE_LABELS, RISK_LABELS, FEATURE_LABELS, ADVANCED_LABELS, ALIEN_LABELS.
+  • שורות 329–341: showFormErrors – מחרוזת עברית קשיחה.
+  • שורות 624–641: validateShip – הודעות שגיאה בעברית.
+  • שורות 638–641: normalizeShip – "חללית ללא שם".
+  • שורות 647–819: buildSummaryText, updateShipPreviewMeta – עברית קשיחה ("היא", "ללא", "רמת סיכון").
+  • שורות 974–1003: enterEditMode, exitEditMode – "עורך חללית:", "עדכן חללית", "הוסף חללית לצי".
+  • שורות 1124–1126: מטא כרטיס צי "צוות: ... · מהירות: ..."; שורה 1155 aria-label "מחק חללית מהצי".
+  • שורות 1489, 1499–1525, 1562–1563, 1596–1609, 1684–1741: הודעות סטטוס ופרופיל/טקסטים בעברית.
+
+7.2  index.html – אזורים ללא i18n
+----------------------------------
+  • שורות 774–780: טאבים עורך 3D (חללית, סצנה, שרטוט).
+  • שורות 788–821: סרגל כלים עורך (כלים, גוף, כנפיים, מנוע, קוקפיט, רשת, תאורה, שמור, טען).
+  • שורות 867–893: שרטוט מהיר, מבט על/צד/קדמי, מצב עורך.
+  • שורות 910–1037: גלריה – חלק מה-alt וה-h3/p בעברית קשיחה.
+  • שורות 1151: כפתור "שמור טקסטים" בעברית.
+  • שורות 1208–1356: About – כל הבלוקים (עורך 3D, מבנה, שלבי עבודה, ניווט, שמירה, אופציות).
+  • שורות 1310–1318: about-block עם h3/h4 ורשימות עברית.
+
+7.3  3d/scene.js
+-----------------
+  • שורות 11–16: CAMERA_PRESETS עם label: "חזית", "צד", "מלמעלה", "איזומטרי".
+
+7.4  3d/editor3d.js
+--------------------
+  • שורות 13–16: PART_DEFAULTS label (גוף, כנפיים, מנוע, קוקפיט).
+  • שורה 211: labels = ["מבט על", "מבט צד", "מבט קדמי"].
+  • שורה 462: "<option value=''>-- טען עיצוב --</option>".
+  • שורה 481: onLoadError "אין עיצובים שמורים".
+
+7.5  i18n.js – מפתחות קיימים רלוונטיים
+----------------------------------------
+  • הודעות: toastFormErrors, confirmDeleteShip, confirmResetFleet, confirmClearData, וכו'.
+  • חסרים: formErrorsIntro (הודעת שגיאות בראש טופס), validationShipName, validationCrewMin,
+    validationCrewMax, validationCommander, shipUnnamed, noFeatures, noSystems, commanderUnset,
+    fleetMetaCrew, fleetMetaSpeed, fleetMetaSize, fleetMetaRisk, editShipMode, updateShipBtn,
+    addShipBtn, deleteShipAria, profileSavedOk, profileSavedFail, textsSavedOk, textsSavedFail,
+    fillRequiredFields, emailPrepared, loadDesignPlaceholder, noSavedDesigns.
+
+--------------------------------------------------------------------------------
+  חלק ח: רשימת בדיקות ידניות מומלצת
+--------------------------------------------------------------------------------
+
+8.1  טעינה וניווט
+------------------
+  □ דף נטען ללא שגיאות קונסול.
+  □ Header footer נראים; ניווט מובייל (☰) פותח drawer.
+  □ קישורי ניווט מגיעים לסקשן הנכון (#home, #builder, #fleet, #studio3d, #gallery, #tools, #about).
+  □ Settings נפתח ונסגר; Escape סוגר modal.
+  □ שפה: החלפה ל־עברית – כיוון RTL, טקסטים מתעדכנים; חזרה לאנגלית.
+
+8.2  Builder
+------------
+  □ טופס: מילוי שם (פחות מ־2 תווים – הודעת שגיאה), צוות (0 או 501 – שגיאה), מפקד ריק – שגיאה.
+  □ הוספת חללית – נשמרת ל־localStorage ומופיעה ב־Fleet.
+  □ עריכה – לחיצה על כרטיס צי ממלאת טופס; כפתור "עדכן חללית" מעדכן.
+  □ שכפול – כפתור "שכפל" מוסיף עותק.
+  □ תצוגה חיה 3D מתעדכנת לפי שדות (צבע, צורה, וכו').
+  □ Range labels (speed, size, 3D params) מתעדכנים בעת גרירה.
+
+8.3  Fleet
+----------
+  □ מיון (created, speed, size, crew, risk) משפיע על סדר הכרטיסים.
+  □ סינון לפי סוג משימה מצמצם רשימה.
+  □ חיפוש לפי שם מסנן נכון.
+  □ מחיקת חללית – אישור ו־toast.
+  □ איפוס צי – אישור כפול (אם מופעל confirm reset); הצי מתרוקן.
+
+8.4  Studio 3D
+---------------
+  □ כפתורי front/side/top/iso משנים זווית מצלמה.
+  □ Zoom in/out, Reset view.
+  □ Auto rotate (אם לא reduced motion), Axes (אם מופעל ב־Settings).
+  □ Fullscreen, Screenshot – פונקציונליות.
+  □ בחירת חללית מהצי (אם מיושם) מעדכנת את המודל בסטודיו.
+
+8.5  Editor 3D (משתמש business/developer)
+-----------------------------------------
+  □ כניסה עם NM1234/321321 (business) או MP123456/321321 (developer) – Editor 3D גלוי.
+  □ הוספת חלקים (גוף, כנפיים, מנוע, קוקפיט) – עד 24.
+  □ כלים: בחירה, הזזה, סיבוב, גודל, שכפול, מחיקה.
+  □ מאפייני חלק – צבע, גודל, מיקום, סיבוב מתעדכנים.
+  □ שמירה/טעינת עיצוב – נשמר ב־localStorage; טעינה מציגה את העיצוב.
+
+8.6  Settings ואחסון
+---------------------
+  □ שפה, theme, גודל גופן, reduced motion, high contrast – נשמרים ונטענים אחרי רענון.
+  □ Privacy – "מחק את כל הנתונים" – אישור כפול; רענון; צי והגדרות אופסו.
+  □ איפוס הגדרות – "Reset to defaults" – מחזיר ברירת מחדל.
+
+8.7  Gallery ו־Tools
+---------------------
+  □ לחיצה על כרטיס גלריה – lightbox נפתח; סגירה ב־X או Escape או לחיצה על overlay.
+  □ Tools – כרטיסים עם קישורים חיצוניים (אם יש).
+
+--------------------------------------------------------------------------------
+  חלק ט: הערות נוספות למימוש עתידי
+--------------------------------------------------------------------------------
+
+9.1  הרחבת שפות
+---------------
+  • מבנה i18n.js תומך הוספת שפה שלישית (למשל "ar"): להוסיף אובייקט TRANSLATIONS.ar
+    ולעדכן applyLanguage ו-setLang לתמיכה ב־dir="rtl" לשפה החדשה.
+
+9.2  מיגרציית נתונים
+---------------------
+  • אם יוגדר שרת בעתיד: להוסיף גרסה ל־fleet (למשל version: 2) ולממש פונקציית מיגרציה
+    שממירה נתונים ישנים לפורמט חדש לפני שליחה או אחרי קבלה.
+
+9.3  נגישות מתקדמת
+-------------------
+  • skip link ל-main (לדלג על ניווט).
+  • focus management בעת פתיחת modal/drawer – focus trap וחזרה לכפתור שפתח עם סגירה.
+  • תיאור קצר ל־live region עבור toasts (role="status" או aria-live="polite" – כבר קיים
+    ב־toast-container).
+
+9.4  ביצועים
+-------------
+  • Lazy load תמונות גלריה (loading="lazy" או Intersection Observer).
+  • דחיית אתחול 3D עד ל־visibility של הסקשן (Intersection Observer) – מפחית עבודה
+    בהתחלה.
+
+9.5  תיעוד מפתחות localStorage (סיכום)
+--------------------------------------
+  • spaceyard-fleet-v1: מערך חלליות (JSON).
+  • spaceyard-settings-v2: אובייקט הגדרות (שפה, theme, fontSize, reducedMotion, וכו').
+  • spaceyard-settings-v1: גרסה ישנה – משמש למיגרציה בלבד.
+  • spaceyard-auth-user-v1: אובייקט משתמש מחובר { username, role }.
+  • spaceyard-business-profile-v1: פרופיל משתמש עסקי (displayName, tagline, color, mission).
+  • spaceyard-dev-text-v1: טקסטים מותאמים ממפתח (headings, descriptions).
+  • spaceyard-welcome-shown-v1: "1" אם הודעת Welcome הוצגה.
+  • עורך 3D: מפתח נפרד (לבדוק ב-editor3d.js) – עיצובים שמורים; אם קיים, להוסיף ל-clearLocalData.
+  • בעת שינוי מבנה נתונים: להגדיל גרסה במפתח (למשל spaceyard-fleet-v2) ולממש פונקציית
+    מיגרציה בטעינה שממירה נתונים ישנים לפורמט החדש עם ערכי ברירת מחדל לשדות חסרים.
+
+9.6  קיצורי מקלדת (אם יוחלט להוסיף)
+--------------------------------------
+  • Escape: סגירת Settings, Gallery lightbox, Nav drawer (כבר חלקית קיים).
+  • אפשרות: Ctrl/Cmd+S לשמירת חללית בטופס; Ctrl/Cmd+K לפתיחת חיפוש צי.
+
+9.7  תאימות ובדיקות דפדפן
+---------------------------
+  • Chrome/Edge (Chromium): בדיקה ראשית; WebGL ו-ES modules נתמכים היטב.
+  • Firefox: לתקף ניווט ו-3D; RTL ו-CSS variables.
+  • Safari (Desktop + iOS): לתקף localStorage, WebGL, ו-modal/drawer.
+  • מובייל: touch לניווט, גלילה, טופס; drawer ו-Settings נוחים לאצבע.
+  • גרסאות ישנות: אין polyfills ל-ES6+; דפדפנים ישנים מאוד עלולים לא לתמוך. להגדיר
+    browserslist ב-package.json או ב-Vite אם רוצים להנחות את ה-build.
+
+--------------------------------------------------------------------------------
+  סוף מסמך – סקירה מלאה, שיפורים, עצות, בעיות, שיכפולים
+  מינימום 500 שורות: הושלם. (נכתב לפי דרישת משתמש – סקירה מלאה + שיפורים + עצות + בעיות + שיכפולים.)
+--------------------------------------------------------------------------------
+================================================================================
