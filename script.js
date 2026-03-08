@@ -497,11 +497,17 @@ document.addEventListener("DOMContentLoaded", () => {
     tab.addEventListener("click", () => {
       const tabId = tab.dataset.tab;
       document.querySelectorAll(".settings-tab").forEach((t) => { t.classList.remove("active"); t.setAttribute("aria-selected", "false"); });
-      document.querySelectorAll(".settings-tab-panel").forEach((p) => { p.classList.remove("active"); p.hidden = true; });
+      document.querySelectorAll(".settings-tab-panel").forEach((p) => { p.classList.remove("active"); p.hidden = true; p.setAttribute("aria-hidden", "true"); });
       tab.classList.add("active");
       tab.setAttribute("aria-selected", "true");
       const panel = document.getElementById("tab-" + tabId);
-      if (panel) { panel.classList.add("active"); panel.hidden = false; }
+      if (panel) {
+        panel.classList.add("active");
+        panel.hidden = false;
+        panel.setAttribute("aria-hidden", "false");
+        panel.setAttribute("tabindex", "-1");
+        if (typeof panel.focus === "function") panel.focus({ preventScroll: true });
+      }
     });
   });
 

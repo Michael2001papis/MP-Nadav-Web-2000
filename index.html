@@ -102,15 +102,15 @@
           <h2 id="settings-modal-title" data-i18n="settingsTitle">Settings</h2>
           <button type="button" id="settings-modal-close" class="settings-modal-close" data-i18n-aria="close">×</button>
         </div>
-        <div class="settings-tabs" role="tablist">
-          <button type="button" class="settings-tab active" role="tab" aria-selected="true" data-tab="display" data-i18n="tabDisplay">Display</button>
-          <button type="button" class="settings-tab" role="tab" aria-selected="false" data-tab="3d" data-i18n="tab3d">3D</button>
-          <button type="button" class="settings-tab" role="tab" aria-selected="false" data-tab="storage" data-i18n="tabStorage">Fleet & storage</button>
-          <button type="button" class="settings-tab" role="tab" aria-selected="false" data-tab="privacy" data-i18n="tabPrivacy">Privacy</button>
-          <button type="button" class="settings-tab biz-only-tab hidden" role="tab" aria-selected="false" data-tab="biz-texts" data-i18n="tabBizTexts">Texts (business)</button>
+        <div class="settings-tabs" role="tablist" aria-label="Settings sections">
+          <button type="button" id="settings-tab-display" class="settings-tab active" role="tab" aria-selected="true" aria-controls="tab-display" data-tab="display" data-i18n="tabDisplay">Display</button>
+          <button type="button" id="settings-tab-3d" class="settings-tab" role="tab" aria-selected="false" aria-controls="tab-3d" data-tab="3d" data-i18n="tab3d">3D</button>
+          <button type="button" id="settings-tab-storage" class="settings-tab" role="tab" aria-selected="false" aria-controls="tab-storage" data-tab="storage" data-i18n="tabStorage">Fleet & storage</button>
+          <button type="button" id="settings-tab-privacy" class="settings-tab" role="tab" aria-selected="false" aria-controls="tab-privacy" data-tab="privacy" data-i18n="tabPrivacy">Privacy</button>
+          <button type="button" id="settings-tab-biz-texts" class="settings-tab biz-only-tab hidden" role="tab" aria-selected="false" aria-controls="tab-biz-texts" data-tab="biz-texts" data-i18n="tabBizTexts">Texts (business)</button>
         </div>
         <div class="settings-tab-panels">
-          <div id="tab-display" class="settings-tab-panel active" role="tabpanel">
+          <div id="tab-display" class="settings-tab-panel active" role="tabpanel" aria-labelledby="settings-tab-display" aria-hidden="false">
             <div class="settings-group">
               <label for="language-select">Language / שפה</label>
               <select id="language-select" class="settings-select">
@@ -145,7 +145,7 @@
               </label>
             </div>
           </div>
-          <div id="tab-3d" class="settings-tab-panel" role="tabpanel" hidden>
+          <div id="tab-3d" class="settings-tab-panel" role="tabpanel" aria-labelledby="settings-tab-3d" aria-hidden="true" hidden>
             <div class="settings-group">
               <label class="settings-check-label">
                 <input type="checkbox" id="auto-rotate" class="settings-checkbox" />
@@ -172,7 +172,7 @@
               </label>
             </div>
           </div>
-          <div id="tab-storage" class="settings-tab-panel" role="tabpanel" hidden>
+          <div id="tab-storage" class="settings-tab-panel" role="tabpanel" aria-labelledby="settings-tab-storage" aria-hidden="true" hidden>
             <div class="settings-group">
               <label class="settings-check-label">
                 <input type="checkbox" id="auto-save" class="settings-checkbox" checked />
@@ -190,10 +190,10 @@
               </label>
             </div>
           </div>
-          <div id="tab-privacy" class="settings-tab-panel" role="tabpanel" hidden>
+          <div id="tab-privacy" class="settings-tab-panel" role="tabpanel" aria-labelledby="settings-tab-privacy" aria-hidden="true" hidden>
             <button type="button" id="clear-local-data" class="btn-ghost settings-danger-btn" data-i18n="clearLocalData">Delete all local data</button>
           </div>
-          <div id="tab-biz-texts" class="settings-tab-panel" role="tabpanel" hidden aria-labelledby="biz-texts-panel-title">
+          <div id="tab-biz-texts" class="settings-tab-panel" role="tabpanel" aria-hidden="true" hidden aria-labelledby="biz-texts-panel-title">
             <div class="settings-biz-texts-panel">
               <h3 id="biz-texts-panel-title" class="settings-panel-title" data-i18n="bizTextsPanelTitle">Edit site texts (business user)</h3>
               <p class="field-note settings-panel-note" data-i18n="bizTextsPanelNote">
